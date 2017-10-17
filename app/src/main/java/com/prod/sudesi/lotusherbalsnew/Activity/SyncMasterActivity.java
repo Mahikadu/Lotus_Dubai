@@ -144,10 +144,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             .getExternalStorageDirectory(), "/sample.pdf");
 
                     readusermanual();
-					/*
-					 * Intent i = new Intent(MainActivity.this,
-					 * UserManual.class); startActivity(i);
-					 */
+
                 } catch (Exception e) {
 
                 }

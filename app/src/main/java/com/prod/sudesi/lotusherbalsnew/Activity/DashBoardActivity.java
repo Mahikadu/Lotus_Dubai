@@ -122,7 +122,7 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_notifi:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-               // startActivity(new Intent(getApplicationContext(), NotificationFragment.class));
+                startActivity(new Intent(getApplicationContext(), NotificationActivity.class));
                 break;
             case R.id.btn_master_sync:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
@@ -134,11 +134,11 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_dashboard:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                //startActivity(new Intent(getApplicationContext(), BocDashBoardActivity.class));
+                startActivity(new Intent(getApplicationContext(), BocDashBoardActivity.class));
                 break;
             case R.id.btn_totaloutletSales:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-               // startActivity(new Intent(getApplicationContext(), SupervisorAttendance.class));
+                startActivity(new Intent(getApplicationContext(), TotalOutletSaleActivity.class));
                 break;
             case R.id.btn_logout:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));

@@ -72,6 +72,21 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <activity
+            android:name=".Activity.NotificationActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.BocDashBoardActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.TotalOutletSaleActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
     </application>
 
 </manifest>
