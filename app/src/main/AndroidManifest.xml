@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.prod.sudesi.lotusherbalsnew">
+
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+
+    <supports-screens android:xlargeScreens="true" />
+    <supports-screens android:resizeable="true" />
+    <supports-screens android:largeScreens="true" />
+    <supports-screens android:anyDensity="true" />
+    <supports-screens
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".Activity.SyncMasterActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".Activity.AttendanceActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.LotusMainActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!--<activity
+            android:name=".Activity.SyncMasterActivity"
+            android:screenOrientation="portrait" >
+        </activity>-->
+
+        <activity
+            android:name=".Activity.DashBoardActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.ChangePasswordActivity"
+            android:label="ChangePassword"
+            android:screenOrientation="portrait" >
+        </activity>
+
+    </application>
+
+</manifest>

@@ -1,0 +1,153 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="#0b5571"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/include_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/headernew" />
+
+    <LinearLayout
+        android:id="@+id/ll_spinerlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_header"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Password"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:textColor="#FFFFFF"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardElevation="5dp"
+            card_view:cardUseCompatPadding="true">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
+
+                <EditText
+                    android:id="@+id/et_old_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/white"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="Old Password"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:longClickable="false"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/et_new_password"
+                    android:padding="@dimen/_5sdp" />
+            </android.support.design.widget.TextInputLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardElevation="5dp"
+            card_view:cardUseCompatPadding="true">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
+
+                <EditText
+                    android:id="@+id/et_new_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/white"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="New Password"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:longClickable="false"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/et_confirm_password"
+                    android:padding="@dimen/_5sdp" />
+            </android.support.design.widget.TextInputLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardElevation="5dp"
+            card_view:cardUseCompatPadding="true">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
+
+                <EditText
+                    android:id="@+id/et_confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/white"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="Confirm Password"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:longClickable="false"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/btn_change_password"
+                    android:padding="@dimen/_5sdp" />
+            </android.support.design.widget.TextInputLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <Button
+            android:id="@+id/btn_change_password"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/save_new"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+</RelativeLayout>
