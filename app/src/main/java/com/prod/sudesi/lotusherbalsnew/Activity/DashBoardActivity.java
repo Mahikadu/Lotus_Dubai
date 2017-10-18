@@ -110,7 +110,7 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_stock:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-              //  startActivity(new Intent(getApplicationContext(), StockNewActivity.class));
+                startActivity(new Intent(getApplicationContext(), StockActivity.class));
                 break;
             case R.id.btn_report:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
@@ -118,7 +118,7 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_sale:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                //startActivity(new Intent(getApplicationContext(), SaleNewActivity.class));
+                startActivity(new Intent(getApplicationContext(), SaleActivity.class));
                 break;
             case R.id.btn_notifi:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));

@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="list_heading" >
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
 </resources>
