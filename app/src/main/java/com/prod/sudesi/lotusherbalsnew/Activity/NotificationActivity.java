@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.prod.sudesi.lotusherbalsnew.R;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import java.io.File;
@@ -32,8 +33,8 @@ import java.util.HashMap;
 public class NotificationActivity extends Activity {
 
     Context context;
-    SharedPreferences sp;
-    SharedPreferences.Editor spe;
+
+    private SharedPref sharedPref;
 
     static public ArrayList<HashMap<String, String>> todaymessagelist = new ArrayList<HashMap<String, String>>();
 
@@ -41,7 +42,6 @@ public class NotificationActivity extends Activity {
 
     //private NotificationAdapter adapter;
 
-    String EmpID;
 
     LotusWebservice service;
     private ProgressDialog mProgress = null;
@@ -61,24 +61,19 @@ public class NotificationActivity extends Activity {
 
         context = getApplicationContext();
 
-        listView = (ListView) findViewById(android.R.id.list);
+        sharedPref = new SharedPref(context);
 
-        sp = context.getSharedPreferences("Lotus", context.MODE_PRIVATE);
-        spe = sp.edit();
+        listView = (ListView) findViewById(android.R.id.list);
 
         mProgress = new ProgressDialog(NotificationActivity.this);
         service = new LotusWebservice(NotificationActivity.this);
-
-
-        EmpID = sp.getString("username", "");
-        Log.e("", "username==" + EmpID);
 
         //------------------
 
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
-        username = sp.getString("username", "");
+        username = sharedPref.getLoginId();
         tv_h_username.setText(username);
 
         btn_logout.setOnClickListener(new View.OnClickListener() {

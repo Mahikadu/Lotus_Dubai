@@ -19,7 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.prod.sudesi.lotusherbalsnew.R;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -39,18 +40,11 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
     Context context;
     Button master_sync, data_upload, data_download, btn_usermanual,btn_changePass;
 
-    private DataBaseCon db;
     private ProgressDialog mProgress = null;
 
     LotusWebservice service;
 
-    // shredpreference
-    private SharedPreferences sharedpre = null;
-
-    private SharedPreferences.Editor saveuser = null;
-
-    SharedPreferences sp;
-    SharedPreferences.Editor spe;
+    private SharedPref sharedPref;
     //
     ConnectionDetector cd;
     TextView tv_h_username;
@@ -68,6 +62,9 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
         context = getApplicationContext();
 
+        sharedPref = new SharedPref(context);
+
+        LOTUS.dbCon = DataBaseCon.getInstance(context);
 
         //Button referances
         data_upload = (Button) findViewById(R.id.btn_data_upload);
@@ -77,25 +74,18 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         btn_usermanual = (Button) findViewById(R.id.btn_usermanual);
 
         cd = new ConnectionDetector(context);
-        db = new DataBaseCon(context);
         mProgress = new ProgressDialog(SyncMasterActivity.this);
         service = new LotusWebservice(SyncMasterActivity.this);
 
-        sharedpre = context
-                .getSharedPreferences("Sudesi", context.MODE_PRIVATE);
-        saveuser = sharedpre.edit();
 
-        sp = context.getSharedPreferences("Lotus", context.MODE_PRIVATE);
-        spe = sp.edit();
+        LOTUS.dbCon.open();
+       // outletcode = LOTUS.dbCon.getActiveoutletCode();
+        LOTUS.dbCon.close();
 
-        db.open();
-       // outletcode = db.getActiveoutletCode();
-        db.close();
-
-        producttype = sp.getString("producttype", "");
+        //producttype = sp.getString("producttype", "");
         Log.e("", "producttype==" + producttype);
 
-        username = sp.getString("username", "");
+        username = sharedPref.getLoginId();
         Log.e("", "username==" + username);
 
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);

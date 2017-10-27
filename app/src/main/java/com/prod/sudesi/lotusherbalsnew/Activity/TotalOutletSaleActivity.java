@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.R;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import java.text.ParseException;
@@ -37,8 +38,7 @@ import java.util.List;
 
 public class TotalOutletSaleActivity extends Activity {
 
-    SharedPreferences shp;
-    SharedPreferences.Editor shpeditor;
+    private SharedPref sharedPref;
 
     Context context;
 
@@ -81,11 +81,9 @@ public class TotalOutletSaleActivity extends Activity {
 
         context = TotalOutletSaleActivity.this;
 
+        sharedPref = new SharedPref(context);
         prgdialog = new ProgressDialog(context);
         service = new LotusWebservice(TotalOutletSaleActivity.this);
-
-        shp = context.getSharedPreferences("Lotus", context.MODE_PRIVATE);
-        shpeditor = shp.edit();
 
         //	lv_bam_report = (ListView) findViewById(R.id.listView_ba_month_report);
 
@@ -94,7 +92,7 @@ public class TotalOutletSaleActivity extends Activity {
         btn_logout = (Button) findViewById(R.id.btn_logout);
 
 
-        username = shp.getString("username", "");
+        username = sharedPref.getLoginId();
         Log.v("", "username==" + username);
 
         tv_h_username.setText(username);
@@ -129,13 +127,13 @@ public class TotalOutletSaleActivity extends Activity {
 
         //--------------/---------
         try{
-            current_year_n2 = shp.getString("current_year", "");
+            current_year_n2 = sharedPref.getCurrentYear();
             int_current_year_n2 = Integer.parseInt(current_year_n2);
 
             String comparedatewith = current_year_n2+"-03-26";
 
 
-            current_server_date = shp.getString("todaydate", "");
+            current_server_date = sharedPref.getTodayDate();
 
             Log.v("","current_server_date="+current_server_date);
 

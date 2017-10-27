@@ -1,4 +1,4 @@
-package com.prod.sudesi.lotusherbalsnew.dbConfig;
+package com.prod.sudesi.lotusherbalsnew.dbconfig;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -36,7 +36,23 @@ public class DatabaseCopy {
             // Database copied into application folder
 
             if (new File(DB_file_path).exists()) {
-
+                // what to do if it does exist
+                // System.out.println("DB already created");
+                // in = context.openFileInput(DB_file_path);
+                // File f_update = new File(DB_file_path_Update);
+                //
+                // try {
+                //
+                // Log.i("TAG", "delete status:" + f_update.delete()
+                // + "file path:" + f_update);
+                // } catch (Exception e) {
+                // // TODO Auto-generated catch block
+                // e.printStackTrace();
+                // }
+                // f_update.getParentFile().mkdirs();
+                // out = new FileOutputStream(f_update);
+                //
+                // copyFile(in, out);
                 isCopied = true;
             } else {
                 // what to do if it doesn't exist
@@ -49,7 +65,12 @@ public class DatabaseCopy {
                     System.out.println("DB created");
 
                     isCopied = true;
-
+                    // File f_update = new File(DB_file_path_Update);
+                    // f_update.getParentFile().mkdirs();
+                    // out = new FileOutputStream(f_update);
+                    //
+                    // copyFile(in, out);
+                    // System.out.println("DB created");
                 } catch (Exception e) {
                     // TODO: handle exception
                     System.out.println("error 1:" + e);

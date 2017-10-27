@@ -1,9 +1,8 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,9 +11,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -29,12 +31,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
+import com.prod.sudesi.lotusherbalsnew.Models.LoginDetailsModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DatabaseCopy;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DbHelper;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.Utils;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DatabaseCopy;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -51,6 +55,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class LoginActivity extends Activity {
 
@@ -58,18 +63,22 @@ public class LoginActivity extends Activity {
     LocationInfo locationInfo;
     EditText edt_username;
     EditText edt_password;
-    SharedPreferences sp;
-    SharedPreferences.Editor spe;
+    private SharedPref sharedPref;
     ConnectionDetector cd;
     Context context;
-    private ProgressDialog pd;
     LotusWebservice service;
-    String month, year, deviceId, username, pass;
-    private Utils utils;
+    String month, year, deviceId, username, pass,version,baname,serverdate,attendant;
+    String server_date, todaydate1;
+
     private static final int RECORD_REQUEST_CODE = 101;
     private double lon = 0.0, lat = 0.0;
     int logCounter = 0;
-    DataBaseCon db;
+    ProgressDialog progress;
+    int id = 0;
+    String ID;
+    private Utils utils;
+    private LoginDetailsModel loginDetailsModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +95,11 @@ public class LoginActivity extends Activity {
         edt_password = (EditText) findViewById(R.id.edt_password);
 
         context = getApplicationContext();
-        db = new DataBaseCon(context);
+        sharedPref = new SharedPref(context);
         utils = new Utils(context);
         cd = new ConnectionDetector(LoginActivity.this);
-        sp = getSharedPreferences("Lotus", MODE_PRIVATE);
-        spe = sp.edit();
 
-        pd = new ProgressDialog(LoginActivity.this);
+        progress = new ProgressDialog(LoginActivity.this);
         service = new LotusWebservice(LoginActivity.this); // webservice object
 
         // Calendar Details
@@ -103,33 +110,9 @@ public class LoginActivity extends Activity {
         month = String.valueOf(month1 + 1);
         year = String.valueOf(year1);
 
+
         //   Add permission for marshmallow device
-        int permission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            Log.i("", "Permission to record denied");
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Permission to access the photos,camera,storage and files is required for this app .")
-                        .setTitle("Permission required");
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.i("", "Clicked");
-                        makeRequest();
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            } else {
-                makeRequest();
-            }
-        }
+        checkPermission(LoginActivity.this);
 
         //  Copy Database from Asset folder
         DatabaseCopy databaseCopy = new DatabaseCopy();
@@ -138,9 +121,6 @@ public class LoginActivity extends Activity {
         LOTUS.dbCon = DataBaseCon.getInstance(getApplicationContext());
 
         exportDB();
-
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        deviceId = telephonyManager.getDeviceId();
 
         //  Getting location info
         refreshDisplay();
@@ -152,11 +132,11 @@ public class LoginActivity extends Activity {
                 v.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this, R.anim.button_click));
                 try {
 
-                    if (sp.getBoolean("Upload_data_flag", true) == true) {
+                   /* if (sp.getBoolean("Upload_data_flag", true) == true) {
                         Log.e("Upload Data Receivert", String.valueOf(sp.getBoolean("Upload_data_flag_true", true)));
                     } else {
                         //  DataUploadAlaramReceiver();
-                    }
+                    }*/
 
                     if (edt_username.getText().toString().equalsIgnoreCase("")) {
                         edt_username.setError(null);
@@ -168,9 +148,9 @@ public class LoginActivity extends Activity {
                         username = edt_username.getText().toString().toUpperCase();
                         pass = edt_password.getText().toString();
 
-                        db.open();
-                        int count = db.checkcount(username, pass);
-                        db.close();
+                        LOTUS.dbCon.open();
+                        int count = LOTUS.dbCon.checkcount(username, pass);
+                        LOTUS.dbCon.close();
 
                         if (count > 0) {
 
@@ -179,48 +159,51 @@ public class LoginActivity extends Activity {
                             String currentDateandTime = sdf.format(new Date())
                                     .toString();
 
-                            db.open();
-                            String attendance = db.getdatepresentorabsent(currentDateandTime, username);
-                            db.close();
+                            LOTUS.dbCon.open();
+                            String attendance = LOTUS.dbCon.getdatepresentorabsent(currentDateandTime, username);
+                            LOTUS.dbCon.close();
                             // String a="P";
 
                             if (attendance.equalsIgnoreCase("")) {
 
-                               // new Check_Login().execute();
+                               if (cd.isConnectingToInternet()) {
+                                    Check_Login login = new Check_Login();
+                                    login.execute();
+                                }  else {
+                                    cd.displayMessage("Time out or No Network or Wrong Credentials");
+
+                                }
                             }
                             if (attendance.equalsIgnoreCase("P")) {
 
                                 // SetClosingISOpeningOnlyOnce();
 
-                              /*  Intent i = new Intent(getApplicationContext(),
-                                        DashboardNewActivity.class);
-
+                                Intent i = new Intent(getApplicationContext(),
+                                        DashBoardActivity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                                startActivity(i);*/
+                                startActivity(i);
 
                             }
                             if (attendance.equalsIgnoreCase("A")) {
+                                cd.displayMessage("U r absent today");
 
-                                Toast.makeText(context, "U r absent today",
-                                        Toast.LENGTH_SHORT).show();
                             }
 
                         } else {
 
-                            db.open();
-                            int count1 = db.checkcount123();
-                            db.close();
+                            LOTUS.dbCon.open();
+                            int count1 = LOTUS.dbCon.getCountOfRows(DbHelper.TABLE_LOGIN);
+                            LOTUS.dbCon.close();
 
                             if (count1 == 1) {
-
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        "Please Enter Correct user name and password",
-                                        Toast.LENGTH_SHORT).show();
+                                cd.displayMessage("Please Enter Correct user name and password");
                             } else {
-
-                               // new Check_Login().execute();
+                                if (cd.isConnectingToInternet()) {
+                                    Check_Login login = new Check_Login();
+                                    login.execute();
+                                }  else {
+                                    cd.displayMessage("Time out or No Network or Wrong Credentials");
+                                }
                             }
 
                         }
@@ -253,7 +236,6 @@ public class LoginActivity extends Activity {
             destination.transferFrom(source, 0, source.size());
             source.close();
             destination.close();
-            //          Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -268,24 +250,6 @@ public class LoginActivity extends Activity {
                 RECORD_REQUEST_CODE);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case RECORD_REQUEST_CODE: {
-
-                if (grantResults.length == 0
-                        || grantResults[0] !=
-                        PackageManager.PERMISSION_GRANTED) {
-
-                    Log.i("", "Permission has been denied by user");
-                } else {
-                    Log.i("", "Permission has been granted by user");
-                }
-                return;
-            }
-        }
-    }
 
     private void refreshDisplay() {
         refreshDisplay(new LocationInfo(context));
@@ -297,10 +261,8 @@ public class LoginActivity extends Activity {
             lon = locationInfo.lastLong;
             logCounter = 1;
         } else {
+            cd.displayMessage("Unable to get GPS location! Try again later!!");
 
-            Toast.makeText(context,
-                    "Unable to get GPS location! Try again later!!",
-                    Toast.LENGTH_LONG).show();
         }
 
     }
@@ -329,163 +291,263 @@ public class LoginActivity extends Activity {
 
     }*/
 
-    /*public class Check_Login extends AsyncTask<Void, Void, SoapObject> {
 
-        private SoapObject soap_result = null;
-        private SoapPrimitive server_date_result = null;
-        private SoapPrimitive soap_result2 = null;
+    private void insertDataInDb() {
+        try {
 
-        String Flag = "";
 
-        @Override
-        protected SoapObject doInBackground(Void... params) {
+            String valuesArray[] = {username, pass, deviceId, serverdate, serverdate, baname, attendant};
+            // WHERE   clause
+            String selection = " username = ?";
 
-            Flag = "0";
-            if (!cd.isConnectingToInternet()) {
-                Flag = "0";
-            } else {
+            // WHERE clause arguments
+            String[] selectionArgs = {username};
+
+            boolean result = LOTUS.dbCon.updateBulk(DbHelper.TABLE_LOGIN, selection, valuesArray, utils.columnNamesLogin, selectionArgs);
+
+            if (result) {
+
                 try {
-                    String serverdate;
-                    server_date_result = service.GetServerDate();
+                    String where = " where username = '" + username + "'";
 
-                    PackageInfo pInfo = getPackageManager().getPackageInfo(
-                            getPackageName(), 0);
-                    String version = pInfo.versionName;
+                    Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_LOGIN, where);
+                    if (cursor != null && cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        do {
+                            loginDetailsModel = loginDetails(cursor);
+                        } while (cursor.moveToNext());
+                        cursor.close();
 
-                    soap_result = service.GetLogin(username, pass, version);
-
-                    if (soap_result.equals("anyType{}")) {
-
-                        Flag = "5";
                     } else {
-                        if (server_date_result != null) {
-
-                            serverdate = server_date_result.toString();
-
-                            if (soap_result != null) {
-                                for (int i = 0; i < soap_result
-                                        .getPropertyCount(); i++) {
-
-                                    SoapObject root = (SoapObject) soap_result.getProperty(i);
-
-                                    if (root.getProperty("bdecode") != null) {
-
-                                        if (!root.getProperty("bdecode").toString().equalsIgnoreCase("anyType{}")) {
-                                            bdecode = root.getProperty("bdecode").toString();
-                                            spe.putString("bdecode", bdecode);
-                                            spe.commit();
-
-                                        } else {
-                                            bdecode = "";
-                                        }
-                                    } else {
-                                        bdecode = "";
-                                    }
-
-                                    if (root.getProperty("bdename") != null) {
-
-                                        if (!root.getProperty("bdename").toString().equalsIgnoreCase("anyType{}")) {
-                                            bdename = root.getProperty("bdename").toString();
-                                            spe.putString("bdename", bdename);
-                                            spe.commit();
-
-                                        } else {
-                                            bdename = "";
-                                        }
-                                    } else {
-                                        bdename = "";
-                                    }
-
-                                    if (root.getProperty("div") != null) {
-
-                                        if (!root.getProperty("div").toString().equalsIgnoreCase("anyType{}")) {
-                                            div = root.getProperty("div").toString();
-                                            spe.putString("div", div);
-                                            spe.commit();
-
-                                        } else {
-                                            div = "";
-                                        }
-                                    } else {
-                                        div = "";
-                                    }
-                                    if (root.getProperty("status") != null) {
-
-                                        if (!root.getProperty("status").toString().equalsIgnoreCase("anyType{}")) {
-                                            status = root.getProperty("status").toString();
-
-                                        } else {
-                                            status = "";
-                                        }
-                                    } else {
-                                        status = "";
-                                    }
-                                    if (root.getProperty("username") != null) {
-
-                                        if (!root.getProperty("username").toString().equalsIgnoreCase("anyType{}")) {
-                                            username = root.getProperty("username").toString();
-                                            spe.putString("username", username);
-                                            spe.commit();
-
-                                        } else {
-                                            username = "";
-                                        }
-                                    } else {
-                                        username = "";
-                                    }
-                                }
-                            } else {
-                                Flag = "SOUP NULL";
-                                String errors = "Login soap giving null response. GetLogin Method";
-                                // we.writeToSD(errors.toString());
-                                final Calendar calendar = Calendar
-                                        .getInstance();
-                                SimpleDateFormat formatter = new SimpleDateFormat(
-                                        "MM/dd/yyyy HH:mm:ss");
-                                String Createddate = formatter.format(calendar
-                                        .getTime());
-
-                                int n = Thread.currentThread().getStackTrace()[2]
-                                        .getLineNumber();
-                                db.open();
-                                db.insertSyncLog(
-                                        "Soup is Null While GetLogin()",
-                                        String.valueOf(n), "GetLogin()",
-                                        Createddate, Createddate,
-                                        sp.getString("username", ""),
-                                        "Login Check", "Fail");
-                                db.close();
-
-                            }
-                        } else {
-
-                            Flag = "SOUP NULL";
-
-                            final Calendar calendar = Calendar.getInstance();
-                            SimpleDateFormat formatter = new SimpleDateFormat(
-                                    "MM/dd/yyyy HH:mm:ss");
-                            String Createddate = formatter.format(calendar
-                                    .getTime());
-
-                            int n = Thread.currentThread().getStackTrace()[2]
-                                    .getLineNumber();
-                            db.open();
-                            db.insertSyncLog(
-                                    "Soup is Null While GetServerDate()",
-                                    String.valueOf(n), "GetServerDate()",
-                                    Createddate, Createddate,
-                                    sp.getString("username", ""),
-                                    "Login Check", "Fail");
-                            db.close();
-
-                        }
+                        cd.displayMessage("No data found..!");
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                if (attendant.equalsIgnoreCase("True")) {
+
+
+           /* if (sp.getBoolean("Upload_data_flag", false) == false) {
+                Log.e("Upload Data Receiver", String.valueOf(sp.getBoolean("Upload_data_flag", true)));
+                DataUploadAlaramReceiver();
+                spe.putBoolean("Upload_data_flag", true);
+                spe.commit();
+
+            } else {
+
+            }*/
+
+                    Intent i = new Intent(getApplicationContext(), AttendanceActivity.class);
+                    i.putExtra("FromLoginpage", "L");
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+
+                }else{
+                    Intent i = new Intent(getApplicationContext(),
+                            DashBoardActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                }
+
             }
-            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }*/
+    }
+
+    public LoginDetailsModel loginDetails(Cursor cursor) {
+        loginDetailsModel = new LoginDetailsModel();
+        try {
+            loginDetailsModel.setUsername(cursor.getString(cursor.getColumnIndex("username")));
+            loginDetailsModel.setPassword(cursor.getString(cursor.getColumnIndex("password")));
+            loginDetailsModel.setAndroid_uid(cursor.getString(cursor.getColumnIndex("android_uid")));
+            loginDetailsModel.setCreated_date(cursor.getString(cursor.getColumnIndex("created_date")));
+            loginDetailsModel.setLast_modified_date(cursor.getString(cursor.getColumnIndex("last_modified_date")));
+            loginDetailsModel.setBa_name(cursor.getString(cursor.getColumnIndex("ba_name")));
+            loginDetailsModel.setAttendance(cursor.getString(cursor.getColumnIndex("attendance")));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return loginDetailsModel;
+
+    }
+
+    public class Check_Login extends AsyncTask<Void, Void, SoapObject> {
+
+        private SoapPrimitive server_date_result = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                if (progress != null && !progress.isShowing()) {
+                    progress.show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected SoapObject doInBackground(Void... params) {
+            PackageManager manager = getPackageManager();
+            deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
+            try {
+                PackageInfo pInfo = manager.getPackageInfo(getPackageName(), 0);
+                 version = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            SoapObject object2 = service.GetLogin(username, pass, deviceId, version);
+
+            server_date_result = service.GetServerDate();
+
+            return object2;
+
+        }
+
+        @Override
+        protected void onPostExecute(SoapObject soapObject) {
+            super.onPostExecute(soapObject);
+            try {
+                if (progress != null && progress.isShowing()) {
+                    progress.dismiss();
+                }
+
+                if (server_date_result != null) {
+
+                    serverdate = server_date_result.toString();
+
+                    if (soapObject != null) {
+                        String response = String.valueOf(soapObject);
+                        System.out.println("Response =>: " + response);
+
+                        SoapObject res = (SoapObject) soapObject.getProperty(0);
+                        String result = res.getPropertyAsString("Flag");
+                        String message = res.getPropertyAsString("Message");
+                        attendant= res.getPropertyAsString("attendance");
+
+                        if (result.equalsIgnoreCase("True")) {
+                            cd.displayMessage("You have login successfully..!");
+                            baname = res.getPropertyAsString("baname");
+                            sharedPref.clearPref();
+                            sharedPref.setLoginInfo(username, pass, baname);
+
+                            String[] serverdatearray = serverdate
+                                    .split(" ");
+
+                            server_date = serverdatearray[0];
+
+
+                            String[] serverdate1 = server_date
+                                    .split("-");
+
+                            String currentyear = serverdate1[2];
+
+
+                          /*  SimpleDateFormat sdf = new SimpleDateFormat(
+                                    "MM/dd/yyyy");*/
+
+                            SimpleDateFormat sdf = new SimpleDateFormat(
+                                    "dd-MM-yyyy", Locale.ENGLISH);
+
+                           // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
+
+                            Date curntdte = null;
+                            try {
+                                curntdte = sdf.parse(server_date);
+                            } catch (ParseException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+
+                            sdf.applyPattern("yyyy-MM-dd");
+                            todaydate1 = sdf.format(curntdte);
+                           sharedPref.setDateDetails(currentyear,serverdate,todaydate1);
+                            insertDataInDb();
+
+                        } else {
+                            if(message.equalsIgnoreCase("Username is incorrect")||
+                                    message.equalsIgnoreCase("Password is incorrect")){
+                                cd.displayMessage("Username or password is incorrect");
+                            }else if(message.equalsIgnoreCase("Update Version")){
+                               cd.displayMessage("Please Update to Newer Version!");
+                            }
+
+                        }
+                    } else {
+
+                        String errors = "Login soap giving null response. GetLogin Method";
+                        final Calendar calendar = Calendar
+                                .getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat(
+                                "MM/dd/yyyy HH:mm:ss");
+                        String Createddate = formatter.format(calendar
+                                .getTime());
+
+                        int n = Thread.currentThread().getStackTrace()[2]
+                                .getLineNumber();
+
+                        LOTUS.dbCon.open();
+
+                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                        String selection = "ID = ?";
+                        ID = String.valueOf(id);
+                        // WHERE clause arguments
+                        String[] selectionArgs = {ID};
+
+                        String valuesArray[] = {ID, "Soup is Null While GetLogin()", String.valueOf(n), "GetServerDate()",
+                                Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                        LOTUS.dbCon.close();
+
+                    }
+                }else{
+                    final Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat formatter = new SimpleDateFormat(
+                            "MM/dd/yyyy HH:mm:ss");
+                    String Createddate = formatter.format(calendar
+                            .getTime());
+
+                    int n = Thread.currentThread().getStackTrace()[2]
+                            .getLineNumber();
+
+                    LOTUS.dbCon.open();
+
+                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                    String selection = "ID = ?";
+                    ID = String.valueOf(id);
+                    // WHERE clause arguments
+                    String[] selectionArgs = {ID};
+
+                    String valuesArray[] = {ID, "Soup is Null While GetServerDate()", String.valueOf(n), "GetServerDate()",
+                            Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
+                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                    LOTUS.dbCon.close();
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static boolean checkPermission(final Context context) {
+        return ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
+
+    }
+
 
 }

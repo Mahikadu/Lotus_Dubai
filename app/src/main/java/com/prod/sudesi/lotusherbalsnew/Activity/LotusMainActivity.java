@@ -1,9 +1,13 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -16,6 +20,7 @@ import com.prod.sudesi.lotusherbalsnew.R;
 public class LotusMainActivity extends Activity {
 
     private static int SPLASH_TIME_OUT = 2000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

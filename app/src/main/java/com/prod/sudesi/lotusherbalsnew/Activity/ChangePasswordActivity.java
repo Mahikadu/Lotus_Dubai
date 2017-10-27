@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.R;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import org.ksoap2.serialization.SoapPrimitive;
@@ -49,12 +49,7 @@ public class ChangePasswordActivity extends Activity {
     String username;
 
     Context context;
-
-    SharedPreferences shp;
-    SharedPreferences.Editor shpeditor;
-
-    DataBaseCon db;
-
+    private SharedPref sharedPref;
     LotusWebservice service;
 
     SoapPrimitive soapObj=null;
@@ -69,19 +64,15 @@ public class ChangePasswordActivity extends Activity {
         setContentView(R.layout.activity_changepass);
 
         context = getApplicationContext();
-
-        shp = context.getSharedPreferences("Lotus", context.MODE_PRIVATE);
-        shpeditor = shp.edit();
+        sharedPref = new SharedPref(context);
 
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
-        username = shp.getString("username", "");
+        username = sharedPref.getLoginId();
         tv_h_username.setText(username);
 
         service = new LotusWebservice(ChangePasswordActivity.this);
-
-        db = new DataBaseCon(this);
 
         et_old_password = (EditText)findViewById(R.id.et_old_password);
         et_new_password = (EditText)findViewById(R.id.et_new_password);
@@ -171,9 +162,9 @@ public class ChangePasswordActivity extends Activity {
 
                 }else{
                     String checkpassword="";
-                    db.open();
-                    //checkpassword = db.check_password_from_db(username,str_old_password);
-                    db.close();
+                    LOTUS.dbCon.open();
+                    //checkpassword = LOTUS.dbCon.check_password_from_db(username,str_old_password);
+                    LOTUS.dbCon.close();
 
                     if(checkpassword.equalsIgnoreCase("0")){
 
@@ -232,7 +223,7 @@ public class ChangePasswordActivity extends Activity {
 
             try{
 
-                String usercode = shp.getString("username", "");
+                String usercode = sharedPref.getLoginId();
                 String password = params[0];
 
 
@@ -248,9 +239,9 @@ public class ChangePasswordActivity extends Activity {
                     if(flag.equalsIgnoreCase("TRUE")){
 
 
-                        db.open();
-                        db.updateChangepassword(usercode, password);
-                        db.close();
+                        LOTUS.dbCon.open();
+                        LOTUS.dbCon.updateChangepassword(usercode, password);
+                        LOTUS.dbCon.close();
                     }
 
 

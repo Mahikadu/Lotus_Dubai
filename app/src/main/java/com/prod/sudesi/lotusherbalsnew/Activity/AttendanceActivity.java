@@ -23,11 +23,9 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -56,7 +54,10 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibraryConstants;
 import com.prod.sudesi.lotusherbalsnew.Activity.LoginActivity;
 import com.prod.sudesi.lotusherbalsnew.R;
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -70,7 +71,6 @@ public class AttendanceActivity extends Activity implements OnClickListener {
     private ImageView nextMonth;
     private GridView calendarView;
     private GridCellAdapter adapter;
-    private DataBaseCon db = null;
     private Calendar _calendar;
     @SuppressLint("NewApi")
     private int month, year;
@@ -82,13 +82,16 @@ public class AttendanceActivity extends Activity implements OnClickListener {
     private double lon = 0.0, lat = 0.0;
     Context context = null;
     String attendanceDate = "", attendmonth;
-    SharedPreferences sp;
-    SharedPreferences.Editor spe;
+    private SharedPref sharedPref;
     int day1, year1, month1;
     String username;
     ConnectionDetector cd;
     LotusWebservice service;
     private ProgressDialog pd;
+
+    int id = 0;
+    String ID;
+    private Utils utils;
 
     String month_h, year_h;
 
@@ -108,8 +111,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
         setContentView(R.layout.activity_attendance);
 
         context =getApplicationContext();
-        db = new DataBaseCon(context);
 
+        LOTUS.dbCon = DataBaseCon.getInstance(context);
 
         mProgress = new ProgressDialog(AttendanceActivity.this);
         //service = new LotusWebservice(AttendanceFragment.this);
@@ -118,6 +121,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
         btn_logout =(Button)findViewById(R.id.btn_logout);
 
         cd = new ConnectionDetector(context);
+        utils = new Utils(context);
+        sharedPref = new SharedPref(context);
         pd = new ProgressDialog(context);
         service = new LotusWebservice(context);
 
@@ -126,9 +131,6 @@ public class AttendanceActivity extends Activity implements OnClickListener {
         year = _calendar.get(Calendar.YEAR);
         Log.d("", "Calendar Instance:= " + "Month: " + month + " " + "Year: "
                 + year);
-
-        sp = context.getSharedPreferences("Lotus", Context.MODE_PRIVATE);
-        spe = sp.edit();
 
         try{
             Intent i =  getIntent();
@@ -146,7 +148,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
             e.printStackTrace();
 
         }
-        username = sp.getString("username", "");
+        username = sharedPref.getLoginId();
 
         selectedDayMonthYearButton = (Button) findViewById(R.id.selectedDayMonthYear);
         selectedDayMonthYearButton.setText("Selected: ");
@@ -418,9 +420,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
             try {
 
                 String colnames[] = new String[] { "Adate", "attendance", "year" };
-                db.open();
+                LOTUS.dbCon.open();
                 // Cursor c=db.fetchallOrder("attendance", colnames, null);
-                Cursor c = db.fetchallSpecify("attendance", colnames, "month",String.valueOf(month), null);
+                Cursor c = LOTUS.dbCon.fetchallSpecify("attendance", colnames, "month",String.valueOf(month), null);
                 Log.v("", "c======" + c.getCount());
                 if (c != null && c.getCount() > 0) {
                     c.moveToFirst();
@@ -463,7 +465,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                         Log.e("selected DateMAp", arraymap.toString());
                     } while (c.moveToNext());
                 }
-                db.close();
+                LOTUS.dbCon.close();
                 // String[] dates =new
                 // String[]{"May-24-2014","May-22-2014","May-14-2014"};
                 //
@@ -631,26 +633,24 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                     + daa;
             Log.e("aattddate==", aattddate);
             // if(checkholiday(attendanceDate)){
-            db.open();
+            LOTUS.dbCon.open();
             //	if ((db.isholiday(attendanceDate)).toString().length() > 0) {
-            if ((db.isholiday(aattddate)).toString().length() > 0) {
+            if ((LOTUS.dbCon.isholiday(aattddate)).toString().length() > 0) {
 
-                Toast.makeText(context,
-                        "Its holliday for " + db.isholiday(aattddate),
-                        Toast.LENGTH_SHORT).show();
-                db.close();
+                cd.displayMessage("Its holliday for "+ LOTUS.dbCon.isholiday(aattddate));
+                LOTUS.dbCon.close();
             } else if (afterdateValidate(attendanceDate)) {
-                db.close();
-                Toast.makeText(context, "Select Current Date only",
-                        Toast.LENGTH_SHORT).show();
+                LOTUS.dbCon.close();
+
+                cd.displayMessage("Select Current Date only");
 
             } else if (beforedatevalidate(attendanceDate, currentDate)) {
-                db.close();
-                Toast.makeText(context, "Select Current Date only",
-                        Toast.LENGTH_SHORT).show();
+                LOTUS.dbCon.close();
+
+                cd.displayMessage("Select Current Date only");
 
             } else {
-                db.close();
+                LOTUS.dbCon.close();
 
                 Button present;
                 Button absent;
@@ -672,8 +672,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                     final String year = ddd[0];
 
                     Cursor c1 = null;
-                    db.open();
-                    c1 = db.getpreviousData1(sld1, username);
+                    LOTUS.dbCon.open();
+                    c1 = LOTUS.dbCon.getpreviousData(sld1, username);
 
                     Log.v("", "c.getcount=" + c1.getCount());
 
@@ -691,7 +691,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                             Log.e("logout_status", logout_status);
                             if(logout_status.equalsIgnoreCase("OUT"))
                             {
-                                Toast.makeText(AttendanceActivity.this, "Attendance is marked", Toast.LENGTH_LONG).show();
+                                cd.displayMessage("Attendance is marked");
                             }
                             else
                             {
@@ -707,7 +707,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                     @Override
                                     public void onClick(View v) {
                                         // TODO Auto-generated method stub
-                                        db.updateAttendance(sld1, username, sld1);
+                                        LOTUS.dbCon.updateAttendance(sld1, username, sld1);
                                         savelogout = new SaveLogoutTime();
                                         savelogout.execute();
 
@@ -745,7 +745,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                 @Override
                                 public void onClick(View v) {
                                     // TODO Auto-generated method stub
-                                    db.updateAttendance(sld1, username, sld1);
+                                    LOTUS.dbCon.updateAttendance(sld1, username, sld1);
                                     dialog.cancel();
                                     savelogout = new SaveLogoutTime();
                                     savelogout.execute();
@@ -796,10 +796,10 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                 if(cd.isConnectingToInternet())
                                 {
 
-                                    db.close();
+                                    LOTUS.dbCon.close();
 
                                     String attendmonth1 = getmonthNo1(attendmonth);
-                                    db.open();
+                                    LOTUS.dbCon.open();
 
                                     values = new String[] { username,
                                             attendanceDate1,
@@ -812,9 +812,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                             "",
                                             year };
 
-                                    db.insert(values, columns, "attendance");
+                                    LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
 
-                                    db.close();
+                                    LOTUS.dbCon.close();
 
                                     view.setBackgroundResource(R.drawable.green);
                                     dialog.dismiss();
@@ -822,14 +822,11 @@ public class AttendanceActivity extends Activity implements OnClickListener {
 
 
                                     new SaveAttendance().execute("b");
-                                    //Intent i = new Intent(getApplicationContext(), DashboardNewActivity.class);
-                                    //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    //startActivity(i);
 
                                 }
                                 else
                                 {
-                                    Toast.makeText(AttendanceActivity.this, "Please check internet Connectivity & Try Again", Toast.LENGTH_LONG).show();
+                                    cd.displayMessage("Please check internet Connectivity & Try Again");
                                 }
 
                             }
@@ -876,7 +873,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
 
 
                                                         String attendmonth1 = getmonthNo1(attendmonth);
-                                                        db.open();
+                                                        LOTUS.dbCon.open();
 
                                                         values = new String[] {
                                                                 username,
@@ -888,10 +885,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                                                 "0", attendmonth1,
                                                                 "", year };
 
-                                                        db.insert(values, columns,
-                                                                "attendance");
+                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
 
-                                                        db.close();
+                                                        LOTUS.dbCon.close();
 
                                                         view.setBackgroundResource(R.drawable.red);
 
@@ -913,7 +909,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
 
 
                                                         String attendmonth1 = getmonthNo1(attendmonth);
-                                                        db.open();
+                                                        LOTUS.dbCon.open();
 
                                                         values = new String[] {
                                                                 username,
@@ -925,10 +921,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                                                 "0", attendmonth1,
                                                                 "", year };
 
-                                                        db.insert(values, columns,
-                                                                "attendance");
+                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
 
-                                                        db.close();
+                                                        LOTUS.dbCon.close();
 
                                                         view.setBackgroundResource(R.drawable.red);
 
@@ -950,7 +945,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
 
 
                                                         String attendmonth1 = getmonthNo1(attendmonth);
-                                                        db.open();
+                                                        LOTUS.dbCon.open();
 
                                                         values = new String[] {
                                                                 username,
@@ -962,10 +957,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                                                 "0", attendmonth1,
                                                                 "", year };
 
-                                                        db.insert(values, columns,
-                                                                "attendance");
+                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
 
-                                                        db.close();
+                                                        LOTUS.dbCon.close();
 
                                                         view.setBackgroundResource(R.drawable.red);
 
@@ -989,7 +983,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
 
                                 }else
                                 {
-                                    Toast.makeText(AttendanceActivity.this, "Please check internet Connectivity & Try Again", Toast.LENGTH_LONG).show();
+                                    cd.displayMessage("Please check internet Connectivity & Try Again");
                                 }
 
                             }
@@ -1083,9 +1077,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
             // Toast.makeText(context, "Location Updated",
             // Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(context,
-                    "Unable to get GPS location! Try again later!!",
-                    Toast.LENGTH_LONG).show();
+
+            cd.displayMessage("Unable to get GPS location! Try again later!!");
         }
 
     }
@@ -1314,8 +1307,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                 Flag = "1";
 
                 try{
-                    db.open();
-                    attendance_array = db.getAttendanceData();
+                    LOTUS.dbCon.open();
+                    attendance_array = LOTUS.dbCon.getAttendanceData();
 
 
                     if (attendance_array.getCount() > 0) {
@@ -1354,8 +1347,8 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                     Log.v("", "soap_result_attendance=" + t);
                                     if (t.equalsIgnoreCase("TRUE")) {
 
-                                        db.update_Attendance_data(attendance_array.getString(0));
-                                        db.close();
+                                        LOTUS.dbCon.update_Attendance_data(attendance_array.getString(0));
+                                        LOTUS.dbCon.close();
 
                                     }else if(t.equalsIgnoreCase("SE")){
 
@@ -1367,7 +1360,19 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                                 .getTime());
 
                                         int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
-                                        db.insertSyncLog("SaveAttendace_SE",String.valueOf(n), "SaveAttendance()",Createddate,Createddate,sp.getString("username", ""),"Transaction Upload","Fail");
+                                        LOTUS.dbCon.open();
+
+                                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                                        String selection = "ID = ?";
+                                        ID = String.valueOf(id);
+                                        // WHERE clause arguments
+                                        String[] selectionArgs = {ID};
+
+                                        String valuesArray[] = {ID, "SaveAttendace_SE", String.valueOf(n), "SaveAttendance()",
+                                                Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
+                                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                                        LOTUS.dbCon.close();
 
                                     }
                                 }else{
@@ -1382,7 +1387,19 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                                             .getTime());
 
                                     int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
-                                    db.insertSyncLog("Internet Connection Lost, Soap in giving null while 'SaveAttendace'",String.valueOf(n), "SaveAttendance()",Createddate,Createddate,sp.getString("username", ""),"Transaction Upload","Fail");
+                                    LOTUS.dbCon.open();
+
+                                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                                    String selection = "ID = ?";
+                                    ID = String.valueOf(id);
+                                    // WHERE clause arguments
+                                    String[] selectionArgs = {ID};
+
+                                    String valuesArray[] = {ID, "Internet Connection Lost, Soap in giving null while 'SaveAttendace'", String.valueOf(n), "SaveAttendance()",
+                                            Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
+                                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                                    LOTUS.dbCon.close();
 
                                 }
 
@@ -1418,7 +1435,19 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                             .getTime());
 
                     int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
-                    db.insertSyncLog(Error,String.valueOf(n), "SaveAttendance()",Createddate,Createddate,sp.getString("username", ""),"Transaction Upload","Fail");
+                    LOTUS.dbCon.open();
+
+                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                    String selection = "ID = ?";
+                    ID = String.valueOf(id);
+                    // WHERE clause arguments
+                    String[] selectionArgs = {ID};
+
+                    String valuesArray[] = {ID, Error, String.valueOf(n), "SaveAttendance()",
+                            Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
+                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                    LOTUS.dbCon.close();
 
 
                 }
@@ -1436,16 +1465,16 @@ public class AttendanceActivity extends Activity implements OnClickListener {
             mProgress.dismiss();
             if(Flag.equalsIgnoreCase("3")){
 
-                Toast.makeText(getApplicationContext(), "Connectivity Error Please check internet ", Toast.LENGTH_SHORT).show();
+                cd.displayMessage("Connectivity Error Please check internet ");
             }
 
             if(ErroFlag.equalsIgnoreCase("0")){
 
-                Toast.makeText(getApplicationContext(), "Some error occure"+Erro_function, Toast.LENGTH_SHORT).show();
+                cd.displayMessage("Some error occure"+Erro_function);
             }
             if(ErroFlag.equalsIgnoreCase("1")){
 
-                Toast.makeText(getApplicationContext(), "Attendance Successfully Sync", Toast.LENGTH_SHORT).show();
+                cd.displayMessage("Attendance Successfully Sync");
 
                 if(absent_flag.equalsIgnoreCase("a")){
 
@@ -1455,13 +1484,9 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                     startActivity(i);
 
                 }else{
-
-
-
-
-                /*    Intent i = new Intent(getApplicationContext(), DashboardNewActivity.class);
+                    Intent i = new Intent(getApplicationContext(), DashBoardActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);*/
+                    startActivity(i);
                 }
 
             }
@@ -1487,7 +1512,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                     "yyyy-MM-dd HH:mm:ss");
 
             final String attendanceDate1 = form.format(date);
-            soap_result = service.SaveLogoutTime(username, attendanceDate1);
+            soap_result = service.Logout(username, attendanceDate1);
 
             return soap_result;
         }
@@ -1510,22 +1535,22 @@ public class AttendanceActivity extends Activity implements OnClickListener {
             progress.dismiss();
             if(result != null )
             {
-                if(result.toString().equalsIgnoreCase("true"))
+                if(result.toString().equalsIgnoreCase("success"))
                 {
-                    Toast.makeText(AttendanceActivity.this, "Uploaded Succesfully", Toast.LENGTH_LONG).show();
+                    cd.displayMessage("Uploaded Succesfully");
 
-                  /*  Intent i = new Intent(getApplicationContext(), DashboardNewActivity.class);
+                    Intent i = new Intent(getApplicationContext(), DashBoardActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);*/
+                    startActivity(i);
                 }
                 else
                 {
-                    Toast.makeText(AttendanceActivity.this, "Data Not uploaded", Toast.LENGTH_LONG).show();
+                    cd.displayMessage("Data Not uploaded");
                 }
             }
             else
             {
-                Toast.makeText(AttendanceActivity.this, "Please check internet Connectivity", Toast.LENGTH_LONG).show();
+                cd.displayMessage("Please check internet Connectivity");
             }
         }
 

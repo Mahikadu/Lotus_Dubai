@@ -1,4 +1,4 @@
-package com.prod.sudesi.lotusherbalsnew.dbConfig;
+package com.prod.sudesi.lotusherbalsnew.dbconfig;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,18 +9,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-
+import com.prod.sudesi.lotusherbalsnew.R;
 
 /**
- * Created by Admin on 27-10-2016.
+ * Created by Admin on 26-10-2017.
  */
 
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "LOTUS.sqlite";
 
-
     public static final String TABLE_LOGIN = "table_login";
+    public static final String SYNC_LOG = "SYNC_LOG";
+    public static final String TABLE_ATTENDANCE = "attendance";
 
 
     public static final int DATABASE_VERSION = 1;
@@ -30,9 +31,6 @@ public class DbHelper extends SQLiteOpenHelper {
     private Context _ctxt;
 
     //execute db string
-
-//    public String strUserfinanceDetail = "CREATE TABLE " + TABLE_FINANCE + " (id VARCHAR(50), level2 VARCHAR(100)," +
-//            " level3 VARCHAR(50),level4 VARCHAR(50),level5 VARCHAR(50),level6 VARCHAR(50))";
 
 
     public DbHelper(Context context) {
@@ -51,7 +49,12 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i("TAG", "In on create db");
-//        db.execSQL(strM_Parameter);
+       /* db.execSQL(strM_Parameter);
+        db.execSQL(strdirect_lead_category_dtls);
+        db.execSQL(strDirect_lead);
+        db.execSQL(strdirect_lead_st_dtls);
+        db.execSQL(strM_Category);
+        db.execSQL(strUserDetail);*/
     }
 
     // Open the database connection.
@@ -122,7 +125,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     private ContentValues createContentValues1(String[] values, String names[]) {
-        Log.e("", "inside create content values");
+        Log.e("Mahi", "inside create content values");
         ContentValues values1 = null;
         try {
             values1 = new ContentValues();
@@ -133,11 +136,9 @@ public class DbHelper extends SQLiteOpenHelper {
             for (int i = 0; i < names.length; i++) {
 
                 String valueArray = values[i];
-                Log.e("", "$$-->" + valueArray);
-              /*  String nameArray1=names[i];
-                Log.e("","inserted names"+nameArray1);*/
+                Log.e("Mahi", "$$-->" + valueArray);
                 values1.put(names[i], values[i]);
-                Log.v("", "value inserted");
+                Log.v("Mahi", "value inserted");
 
 
             }
@@ -153,25 +154,25 @@ public class DbHelper extends SQLiteOpenHelper {
             open();
         for (int i = 0; i < values.length; i++) {
             String values1 = values[i];
-            Log.e("", "-->" + values1);
+            Log.e("Mahi", "-->" + values1);
         }
 
         for (int i = 0; i < names.length; i++) {
             String names1 = names[i];
-            Log.e("", "values" + names1);
+            Log.e("Mahi", "values" + names1);
         }
 
         ContentValues initialValues = createContentValues1(values, names);
         long inserted = 0;
         try {
             inserted = db.insert(tbl, null, initialValues);
-            Log.e("", "values inserted" + inserted);
+            Log.e("Mahi", "values inserted" + inserted);
         } catch (Exception e) {
         }
         return inserted;
     }
 
-   /* long insert(String values[], String names[], String tbl) {
+    long insert(String values[], String names[], String tbl) {
         if (db != null && !db.isOpen())
             open();
 
@@ -182,7 +183,7 @@ public class DbHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
         }
         return inserted;
-    }*/
+    }
 
     Cursor fetch(String tbl, String names[], String where, String args[], String order, String limit,
                  boolean isDistinct, String groupBy, String having) {
@@ -235,7 +236,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    Cursor rawQuery(String query) {
+    public Cursor rawQuery(String query) {
 
         if (db != null && !db.isOpen())
             open();
@@ -246,6 +247,7 @@ public class DbHelper extends SQLiteOpenHelper {
             return null;
         }*/
     }
+
 
     boolean delete(String tbl, String where, String args[]) {
 
@@ -260,22 +262,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return isDeleted;
     }
 
-   /* public void updateIds(String id) {
-        if (db != null && !db.isOpen())
-            open();
-        
-        int count = KHIL.dbCon.getCountOfRows(DbHelper.TABLE_UPLOAD);
-        int startId = Integer.parseInt(id)+1;
-        int endId = count + 1;
-        try {
-            String query = "update table_upload set id=id-1 where id between " + startId + " and " + endId;
-            db.execSQL(query);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-  /*  boolean update(String where, String values[], String names[], String tbl, String args[]) {
+    boolean update(String where, String values[], String names[], String tbl, String args[]) {
 
         if (db != null && !db.isOpen())
             open();
@@ -296,7 +283,9 @@ public class DbHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return isUpdated;
-    }*/
+    }
+
+
 
     boolean alterTable(String tbl) {
         boolean isAlter = false;
@@ -316,7 +305,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (db != null && !db.isOpen())
             open();
         ContentValues updateValues = createContentValues(values, names);
-//        Log.d("Update Query=>", updateValues.toString());
+        Log.d("Update Query=>", updateValues.toString());
 
         boolean isUpdated = false;
         try {

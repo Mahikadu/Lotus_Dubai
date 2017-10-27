@@ -3,7 +3,9 @@ package com.prod.sudesi.lotusherbalsnew.libs;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
- 
+import android.view.Gravity;
+import android.widget.Toast;
+
 public class ConnectionDetector {
  
     private Context _context;
@@ -29,5 +31,10 @@ public class ConnectionDetector {
  
           }
           return false;
+    }
+
+    /*  method to display toast message*/
+    public void displayMessage(String message) {
+        Toast.makeText(_context, message, Toast.LENGTH_SHORT).show();
     }
 }

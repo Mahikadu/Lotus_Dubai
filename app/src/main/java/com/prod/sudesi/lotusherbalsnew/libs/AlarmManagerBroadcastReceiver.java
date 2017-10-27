@@ -19,19 +19,15 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.prod.sudesi.lotusherbalsnew.Activity.LOTUS;
 import com.prod.sudesi.lotusherbalsnew.Activity.LoginActivity;
-
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
 
 
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 	 
 	 final public static String ONE_TIME = "onetime";
-	 
 
-	DataBaseCon db;
-	
-	 
+
 	
 	 @Override
 	 public void onReceive(Context context, Intent intent) {
@@ -59,13 +55,12 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 	        
 	         String lastLogintime=null;
 	        try{
-	         db = new DataBaseCon(context);
+
+	         LOTUS.dbCon.open();
 	         
-	         db.open();
+	        lastLogintime = LOTUS.dbCon.getLastLogintime();
 	         
-	        lastLogintime = db.getLastLogintime();
-	         
-	         db.close();
+	         LOTUS.dbCon.close();
 	         
 	         
 	        }catch(Exception e){

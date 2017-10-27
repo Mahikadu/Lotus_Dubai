@@ -16,45 +16,103 @@ public class LotusWebservice {
 
 	Context context;
 
-	// -----------------
+	String url = "http://192.168.0.154/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017
 
-	//String url = "http://192.169.153.156/Lotusws/Service1.svc"; //New Production Link 12-10-2016 lotus server
-	String url = "http://sandboxws.lotussmartforce.com/Service1.svc"; //New UAT Link 15-10-2016 lotus server
-
-	//String url = "http://192.169.153.156/Lotusws/Service1.svc"; // New Production Link 05-10-2016 lotus server
-
-	//String url = "http://lotusws.lotussmartforce.com/Service1.svc";//07.10.2015 new production new lotus server
-
-
-
-
-	//String url = "http://192.168.0.136/LotusWCF/Service1.svc"; // local babita pc 05.03.2015;
-	          
-		//String url = "http://sandboxws.smartforcecrm.com/service1.svc"; // uat
-																	// 01.02.2015//04.05.2015//      ---
-		
-	//	String url = "http://sandboxws.lotussmartforce.com/Service1.svc"; //UAT 27-11-2015
-
-	// String url = "http://lotusws.smartforcecrm.com/service1.svc"; // prod // 01.02.2015 //04.05.2015//15.05.2015//09.07.2015.. not using
-
-	// -------------------------
-
-	// String url="http://lotusws.sudesi.in/Service1.svc";
-
-//	 String url= "http://lotusws.smartforcecrm.com/Service1.svc"; //--live
-	// production
-
-	// String url = "http://sandboxws.lotussmartforce.com/Service1.svc";// working
-	// now -17.11.2014 .......... last use 15.01.2015
-//	String url="http://sandboxws.lotussmartforce.com/Service1.svc";// Current UAT 15/04/2016
-//	 String url = "http://lotusws.smartforcecrm.com/Service1.svc";// start
-	// 15.01.2015
-
-	// String url = "http://lotussandboxws.sudesi.in/Service1.svc";//not working
-	// -17.11.2014
 
 	public LotusWebservice(Context con) {
 		context = con;
+	}
+
+	public SoapObject GetLogin(String EmpId, String Password,String UID, String version) {
+		SoapObject result = null;
+		try {
+			SoapObject request = new SoapObject("http://tempuri.org/","Get_login");
+			// /// send link
+			request.addProperty("bacode", EmpId);
+			request.addProperty("Password", Password);
+			request.addProperty("Android_Uid", UID);
+			request.addProperty("version", version);
+
+			Log.e("REQUEST", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http transport call
+			androidHttpTransport.call("http://tempuri.org/IService1/Get_login",envelope);
+
+			result = (SoapObject) envelope.getResponse();
+			Log.e("GetLogin=", result.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public SoapPrimitive GetServerDate() {
+		SoapPrimitive result = null;
+		try {
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"GetServerDate");
+			// /// send link
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call(
+					"http://tempuri.org/IService1/GetServerDate", envelope);
+
+			result = (SoapPrimitive) envelope.getResponse();
+
+			Log.e("GetServerDate=", result.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public SoapPrimitive Logout(String baCode,String Logout_time)
+	{
+		SoapPrimitive result = null;
+		try
+		{
+
+			SoapObject request = new SoapObject("http://tempuri.org/", "Logout");
+
+			request.addProperty("bacode", baCode);
+			request.addProperty("Logout", Logout_time);
+
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call(
+					"http://tempuri.org/IService1/Logout", envelope);
+
+			result = (SoapPrimitive) envelope.getResponse();
+			Log.e("Logout", result.toString());
+
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return result;
+
 	}
 
 	public SoapPrimitive SaveAttendance(String empid, String date,
@@ -65,12 +123,12 @@ public class LotusWebservice {
 			SoapObject request = new SoapObject("http://tempuri.org/",
 					"SaveAttendance");
 
-			request.addProperty("emp_id", empid);
-			request.addProperty("Adate", date);
-			request.addProperty("attendance", attend);
+			request.addProperty("bacode", empid);
+			request.addProperty("ADate", date);
+			request.addProperty("Attendance", attend);
 			request.addProperty("AbsentType", absent_type);
-			request.addProperty("lat", lat);
-			request.addProperty("lon", lon);
+			request.addProperty("LAT", lat);
+			request.addProperty("LON", lon);
 
 			Log.e("AttendanceValues", empid + "---" + date + "---" + attend
 					+ "---" + absent_type + "---" + lat + "---" + lon);
@@ -95,7 +153,78 @@ public class LotusWebservice {
 		return result;
 	}
 
-	public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,
+
+	public SoapPrimitive ChangePassword(String usercode, String password) {
+		SoapPrimitive result = null;
+
+		try {
+			Log.v("", "username=" + usercode);
+			Log.v("", "password=" + password);
+
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"SaveNewPassword");// soap object
+			request.addProperty("username", usercode);
+			request.addProperty("password", password);
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call(
+					"http://tempuri.org/IService1/SaveNewPassword", envelope);
+			// response soap object
+			result = (SoapPrimitive) envelope.getResponse();
+
+			if (result != null) {
+				// Log.e("syncLoginTable","Count -- " +
+				// String.valueOf(result.getPropertyCount()));
+				Log.v("", "CHANGE PASSWORD" + result.toString());
+			}
+
+			else {
+				Log.e("CHANGE PASSWORD", "NULL");
+			}
+
+			return result;
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public SoapObject MasterSync(String bacode) {
+		SoapObject result = null;
+		try {
+			SoapObject request = new SoapObject("http://tempuri.org/","MasterSync");
+			// /// send link
+			request.addProperty("bacode", bacode);
+
+			Log.e("REQUEST", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http transport call
+			androidHttpTransport.call("http://tempuri.org/IService1/MasterSync",envelope);
+
+			result = (SoapObject) envelope.getResponse();
+			Log.e("MasterSync=", result.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	/*public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,
 								   String EANCode, String empId, String ProductCategory,
 								   String product_type, String product_name, String shadeno,
 								   String Opening_Stock, String FreshStock, String Stock_inhand,
@@ -325,7 +454,7 @@ public class LotusWebservice {
 			e.printStackTrace();
 		}
 		return result;
-	}
+	}*/
 
 	/*
 	 * public SoapObject SendNotification() { SoapObject result = null; try {
@@ -345,7 +474,7 @@ public class LotusWebservice {
 	 * Log.e("SendNotification", result.toString()); return result; }
 	 */
 
-	public SoapObject GetNotification(String EmpID) {
+	/*public SoapObject GetNotification(String EmpID) {
 		SoapObject result = null;
 		try {
 			SoapObject request = new SoapObject("http://tempuri.org/",
@@ -371,7 +500,7 @@ public class LotusWebservice {
 		}
 		Log.e("GetNotification", result.toString());
 		return result;
-	}
+	}*/
 
 	/*
 	 * public SoapPrimitive ImageSaveData(String product_id, String emp_id,
@@ -400,7 +529,7 @@ public class LotusWebservice {
 	 * 
 	 * } catch(Exception e) { e.printStackTrace(); } return result; }
 	 */
-	public SoapPrimitive SaveVisibility(String product_type, String emp_id,
+	/*public SoapPrimitive SaveVisibility(String product_type, String emp_id,
 			String img_count, String Description, String Latitude,
 			String Longitude) {
 		SoapPrimitive result = null;
@@ -434,9 +563,9 @@ public class LotusWebservice {
 			e.printStackTrace();
 		}
 		return result;
-	}
+	}*/
 
-	public SoapPrimitive UploadImage(String ProductType, String ImageName,
+	/*public SoapPrimitive UploadImage(String ProductType, String ImageName,
 			int VisibilityID, String captureddate) {
 		SoapPrimitive result = null;
 		try {
@@ -472,39 +601,11 @@ public class LotusWebservice {
 			e.printStackTrace();
 		}
 		return result;
-	}
+	}*/
 
-	public SoapObject GetLogin(String EmpId, String Password,String version) {
-		SoapObject result = null;
-		try {
-			SoapObject request = new SoapObject("http://tempuri.org/","GetLogin");
-			// /// send link
-			request.addProperty("EmpId", EmpId);
-			request.addProperty("Password", Password);
-			request.addProperty("version", version);
-			
-			Log.e("REQUEST", request.toString());
 
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);// soap envelop with version
-			envelope.setOutputSoapObject(request); // set request object
-			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,60000);// http
-																			// transport
-																			// call
-			androidHttpTransport.call("http://tempuri.org/IService1/GetLogin",envelope);
-
-			result = (SoapObject) envelope.getResponse();
-			Log.e("GetLogin=", result.toString());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public SoapObject GetProducts(String Date, String username) {
+	/*public SoapObject GetProducts(String Date, String username) {
 		SoapObject result = null;
 		try {
 			SoapObject request = new SoapObject("http://tempuri.org/",
@@ -635,84 +736,14 @@ public class LotusWebservice {
 		}
 		Log.e("GetBAOutletmonthSales==", result.toString());
 		return result;
-	}
+	}*/
 
-	public SoapPrimitive GetServerDate() {
-		SoapPrimitive result = null;
-		try {
-			SoapObject request = new SoapObject("http://tempuri.org/",
-					"GetServerDate");
-			// /// send link
 
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);// soap envelop with version
-			envelope.setOutputSoapObject(request); // set request object
-			envelope.dotNet = true;
-
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
-																			// transport
-																			// call
-			androidHttpTransport.call(
-					"http://tempuri.org/IService1/GetServerDate", envelope);
-
-			result = (SoapPrimitive) envelope.getResponse();
-
-			Log.e("GetServerDate=", result.toString());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public SoapPrimitive ChangePassword(String usercode, String password) {
-		SoapPrimitive result = null;
-
-		try {
-			Log.v("", "username=" + usercode);
-			Log.v("", "password=" + password);
-
-			SoapObject request = new SoapObject("http://tempuri.org/",
-					"SaveNewPassword");// soap object
-			request.addProperty("username", usercode);
-			request.addProperty("password", password);
-
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);// soap envelop with version
-			envelope.setOutputSoapObject(request); // set request object
-			envelope.dotNet = true;
-
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
-																			// transport
-																			// call
-			androidHttpTransport.call(
-					"http://tempuri.org/IService1/SaveNewPassword", envelope);
-			// response soap object
-			result = (SoapPrimitive) envelope.getResponse();
-
-			if (result != null) {
-				// Log.e("syncLoginTable","Count -- " +
-				// String.valueOf(result.getPropertyCount()));
-				Log.v("", "CHANGE PASSWORD" + result.toString());
-			}
-
-			else {
-				Log.e("CHANGE PASSWORD", "NULL");
-			}
-
-			return result;
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	// cmd.Parameters.Add("@username", EmpId);
 	// public List<stock_details> SyncStockData(string EmpId)
 
-	public SoapObject SyncStockData(String empid, String lastsync_date) {
+	/*public SoapObject SyncStockData(String empid, String lastsync_date) {
 		SoapObject result = null;
 		try {
 			Log.v("", "sync stock service called");
@@ -1310,44 +1341,11 @@ public class LotusWebservice {
 		}
 		return result;
 		
-	}
+	}*/
 	
-	public SoapPrimitive SaveLogoutTime(String BA_id,String Logout_time)
-	{
-		SoapPrimitive result = null;
-		try
-		{
-			
-			SoapObject request = new SoapObject("http://tempuri.org/", "SaveLogoutTime");
-			
-			request.addProperty("BA_id", BA_id);
-			request.addProperty("Logout_time", Logout_time);
-			
 
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);// soap envelop with version
-			envelope.setOutputSoapObject(request); // set request object
-			envelope.dotNet = true;
-
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
-																			// transport
-																			// call
-			androidHttpTransport.call(
-					"http://tempuri.org/IService1/SaveLogoutTime", envelope);
-
-			result = (SoapPrimitive) envelope.getResponse();
-			Log.e("SaveLogoutTime", result.toString());
-			
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return result;
-		
-	}
 	
-	public SoapPrimitive Base64ToImage(String base64String, String imgName) {
+	/*public SoapPrimitive Base64ToImage(String base64String, String imgName) {
 		SoapPrimitive result = null;
 
 		try {
@@ -1385,7 +1383,7 @@ public class LotusWebservice {
 
 	}
 
-	/*public SoapPrimitive UpdateTableData(String Id, String Updatedata,
+	*//*public SoapPrimitive UpdateTableData(String Id, String Updatedata,
 			String EmpId) {
 		SoapPrimitive result = null;
 		try {
@@ -1418,7 +1416,7 @@ public class LotusWebservice {
 			e.printStackTrace();
 		}
 		return result;
-	}*/
+	}*//*
 	
 	// dashboard --  
 	
@@ -1537,7 +1535,7 @@ public class LotusWebservice {
 	
 	}
 
-	//*********************komal
+	/*//*********************komal
 
 	public SoapObject GetOutlet(String EmpID)
 	{
@@ -1609,7 +1607,7 @@ public class LotusWebservice {
 		Log.e("TotalOutletSaleAPK", result.toString());
 		return result;
 
-	}
+	}*/
 
 
 }

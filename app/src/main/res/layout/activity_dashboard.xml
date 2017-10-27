@@ -7,24 +7,18 @@
     <include layout="@layout/headernew" />
 
 
-
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-
-        <LinearLayout
+           <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1.2"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="1.0">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/btn_atten"
@@ -49,8 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/btn_outlet_atten"
@@ -75,8 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/btn_report"
@@ -88,45 +82,38 @@
 
 
                 <Button
-                    android:id="@+id/btn_sale"
+                    android:id="@+id/btn_notifi"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
-                    android:background="@drawable/sales" />
+                    android:background="@drawable/noti_dd" />
+                <!-- <Button
+                     android:id="@+id/btn_sale"
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+
+                     android:layout_weight="0.5"
+                     android:background="@drawable/sales" />-->
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.4"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:layout_weight="0.2"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-                <LinearLayout
+
+                <Button
+                    android:id="@+id/btn_master_sync"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
-                    android:weightSum="1"
-                    android:orientation="vertical">
+                    android:layout_gravity="center"
+                    android:background="@drawable/master_dd" />
 
-                    <Button
-                        android:id="@+id/btn_notifi"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/noti_dd" />
-
-
-                    <Button
-                        android:id="@+id/btn_master_sync"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/master_dd" />
-
-                </LinearLayout>
 
                 <Button
                     android:id="@+id/btn_ba_sale_yr"
@@ -142,8 +129,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/btn_dashboard"
@@ -166,150 +153,5 @@
 
         </LinearLayout>
 
-       <!-- <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:weightSum="0.8"
-            android:visibility="gone">
 
-            <TableRow
-                android:visibility="gone"
-                android:layout_weight="1">
-
-                <TableLayout android:layout_weight="1">
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_atten"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:background="@drawable/attendance_dd" />
-
-                    </TableRow>
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_outlet_atten"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:background="@drawable/supervisor_dd" />
-
-                    </TableRow>
-
-                </TableLayout>
-
-
-                <TableLayout android:layout_weight="1">
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_visibility"
-                            android:layout_gravity="left"
-                            android:layout_weight="1"
-                            android:background="@drawable/visibility_dd" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_stock"
-                            android:layout_gravity="left"
-                            android:layout_weight="1"
-                            android:background="@drawable/stocks_dd" />
-                    </TableRow>
-                </TableLayout>
-            </TableRow>
-
-            <TableRow
-                android:visibility="gone"
-                android:layout_weight="0.2">
-
-                <Button
-                    android:id="@+id/btn_report"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"
-                    android:background="@drawable/reports_dd" />
-
-                <Button
-                    android:id="@+id/btn_sale"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"
-                    android:background="@drawable/sales" />
-
-            </TableRow>
-
-            <TableRow
-                android:visibility="gone"
-                android:layout_weight="0.2">
-
-                <TableLayout android:layout_weight="1">
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_notifi"
-                            android:layout_gravity="left"
-                            android:layout_weight="1"
-                            android:background="@drawable/noti_dd" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_master_sync"
-                            android:layout_gravity="left"
-                            android:layout_weight="1"
-                            android:background="@drawable/master_dd" />
-                    </TableRow>
-                </TableLayout>
-
-                <Button
-                    android:id="@+id/btn_ba_sale_yr"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/ba_out" />
-
-            </TableRow>
-
-            <TableRow
-                android:visibility="gone"
-                android:layout_weight="0.2">
-
-                <TableLayout android:layout_weight="1">
-
-                    <TableRow>
-
-                        <Button
-                            android:id="@+id/btn_dashboard"
-                            android:layout_width="0dp"
-                            android:layout_height="@dimen/_65sdp"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:background="@drawable/dashboard1" />
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout android:layout_weight="1">
-
-                    <TableRow>
-
-
-                        <Button
-                            android:id="@+id/btn_totaloutletSales"
-                            android:layout_width="0dp"
-                            android:layout_height="@dimen/_65sdp"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:background="@drawable/total_outlet_sales" />
-                    </TableRow>
-                </TableLayout>
-
-            </TableRow>
-
-        </TableLayout>-->
-
-    </ScrollView>
 </LinearLayout>

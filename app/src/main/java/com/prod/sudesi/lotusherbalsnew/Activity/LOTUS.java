@@ -2,7 +2,8 @@ package com.prod.sudesi.lotusherbalsnew.Activity;
 
 import android.app.Application;
 
-import com.prod.sudesi.lotusherbalsnew.dbConfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
+
 
 /**
  * Created by Admin on 13-10-2017.
