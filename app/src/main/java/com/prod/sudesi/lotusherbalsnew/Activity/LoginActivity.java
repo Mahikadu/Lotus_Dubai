@@ -385,6 +385,8 @@ public class LoginActivity extends Activity {
             super.onPreExecute();
             try {
                 if (progress != null && !progress.isShowing()) {
+                    progress.setMessage("Login Please wait..");
+                    progress.setCancelable(false);
                     progress.show();
                 }
             } catch (Exception e) {
@@ -478,6 +480,8 @@ public class LoginActivity extends Activity {
                                 cd.displayMessage("Username or password is incorrect");
                             }else if(message.equalsIgnoreCase("Update Version")){
                                cd.displayMessage("Please Update to Newer Version!");
+                            }else if(message.equalsIgnoreCase("Activation Key expired")){
+                                cd.displayMessage("Activation Key expired");
                             }
 
                         }
@@ -507,6 +511,7 @@ public class LoginActivity extends Activity {
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
+                        cd.displayMessage("Soup is Null While GetLogin()");
 
                     }
                 }else{
@@ -532,6 +537,7 @@ public class LoginActivity extends Activity {
                     boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                     LOTUS.dbCon.close();
+                    cd.displayMessage("Soup is Null While GetServerDate()");
                 }
 
 

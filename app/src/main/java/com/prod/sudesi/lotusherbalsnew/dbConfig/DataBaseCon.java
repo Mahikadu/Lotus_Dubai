@@ -89,10 +89,34 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
-    public Cursor fetchFromSelectDistinct(String colName, String tbl, String where) {
+    public Cursor fetchFromSelectDistinctWhere(String colName, String tbl, String where) {
         String query = null;
         try {
             query = "select distinct " + colName + " from " + tbl + where;
+            Log.i("TAG", "query :" + query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dbHelper.rawQuery(query);
+    }
+
+    public Cursor fetchFromSelectDistinctWheremultiplecolumn(String colName1, String colName2, String colName3,
+                                                             String colName4, String colName5, String colName6,
+                                                             String tbl, String where) {
+        String query = null;
+        try {
+            query = "select distinct " + colName1 + ", " + colName2 + ", " + colName3 + ", " + colName4 + ", " + colName5 + ", " + colName6 + " from " + tbl + where;
+            Log.i("TAG", "query :" + query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dbHelper.rawQuery(query);
+    }
+
+    public Cursor fetchFromSelectDistinct(String colName, String tbl) {
+        String query = null;
+        try {
+            query = "select distinct " + colName + " from " + tbl;
             Log.i("TAG", "query :" + query);
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,13 +138,21 @@ public class DataBaseCon {
     public Cursor fetchAlldata(String tbl) {
         String query = null;
         try {
-            query = "select * from table_M_Category";
+            query = "select * from " + tbl ;
 
             Log.i("TAG", "query :" + query);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return dbHelper.rawQuery(query);
+    }
+
+    public void updateOutletStatus(long rowid) {
+        int id = (int) rowid;
+        String sql = "UPDATE outlet_attendance SET outletstatus = 'DeActive' WHERE id != '" + id + "'";
+        Log.e("local database", "sql=" + sql);
+        db.execSQL(sql);
+
     }
 
     public Cursor fetchNotificationdata(String tbl) {
@@ -135,16 +167,48 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
-    public Cursor fetchDistictFromSelect(String colName, String tbl, String where) {
-        String query = null;
-        try {
-            query = "select DISTINCT " + colName + " from " + tbl + where;
-            Log.i("TAG", "query :" + query);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public String fetchStockDbID(String productName, String mrp, String subcategory) {
+
+        String sql = "select A_Id from table_master_sync where ProductName like '%" + productName + "%' and PTT = '" + mrp + "' and SubCategory ='" + subcategory + "'";
+
+        Log.e("sql", sql);
+
+        String result = "";
+
+        Cursor c = dbHelper.rawQuery(sql);
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            result = c.getString(0);
+
+
         }
-        return dbHelper.rawQuery(query);
+
+        return result;
+
+
     }
+
+    public String getActiveoutletCode() {
+        // TODO Auto-generated method stub
+        String outletcode="";
+        String selectquery = "select outletcode from outlet_attendance where outletstatus = 'Active'";
+        Cursor cursor = dbHelper.rawQuery(selectquery);
+        if (cursor != null)
+        {
+            if (cursor.moveToFirst()) {
+                do {
+                    outletcode=cursor.getString(cursor.getColumnIndex("outletcode"));
+                } while (cursor.moveToNext());
+
+            }
+        } else
+        {
+            outletcode="";
+        }
+        return outletcode;
+    }
+
+
 
     public Cursor fetchAll2(String Category, String where1, String tbl) {
         String query = null;
@@ -223,6 +287,7 @@ public class DataBaseCon {
     public boolean update(String tbl, String where, String values[], String names[], String args[]) {
         return dbHelper.update(where, values, names, tbl, args);
     }
+
 
 
     public boolean updateBulk(String tbl, String where, String values[], String names[], String args[]) {

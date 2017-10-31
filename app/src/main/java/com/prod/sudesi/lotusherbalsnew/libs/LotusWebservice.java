@@ -16,7 +16,7 @@ public class LotusWebservice {
 
 	Context context;
 
-	String url = "http://192.168.0.154/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017
+	String url = "http://192.168.0.130/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017
 
 
 	public LotusWebservice(Context con) {
@@ -222,6 +222,80 @@ public class LotusWebservice {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public SoapObject GetOutlet(String bacode)
+	{
+		SoapObject result = null;
+		try {
+
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"GetOutlet");
+
+			request.addProperty("bacode", bacode);
+
+			Log.e("Request", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call("http://tempuri.org/IService1/GetOutlet", envelope);
+
+			androidHttpTransport.getServiceConnection().disconnect();  //23.04.2015
+
+			result = (SoapObject) envelope.getResponse();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.e("GetOutlet", result.toString());
+		return result;
+
+	}
+
+	public SoapPrimitive SaveOutletAttendance(String bacode, String ADate, String LAT, String LON, String OutletCode)
+	{
+		SoapPrimitive result = null;
+		try
+		{
+
+			SoapObject request = new SoapObject("http://tempuri.org/", "SaveOutletAttendance");
+
+			request.addProperty("bacode", bacode);
+			request.addProperty("ADate", ADate);
+			request.addProperty("LAT", LAT);
+			request.addProperty("LON", LON);
+			request.addProperty("OutletCode", OutletCode);
+
+			Log.e("SaveOutletAttendance", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call(
+					"http://tempuri.org/IService1/SaveOutletAttendance", envelope);
+
+			result = (SoapPrimitive) envelope.getResponse();
+			Log.e("SaveOutletAttendance", result.toString());
+
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return result;
+
 	}
 
 	/*public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,

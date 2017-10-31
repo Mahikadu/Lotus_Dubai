@@ -52,7 +52,7 @@
                     android:background="@color/white"
                     android:completionThreshold="1"
                     android:gravity="center_vertical"
-                    android:hint="BOC"
+                    android:hint="Month"
                     android:imeOptions="actionNext"
                     android:focusable="false"
                     android:clickable="false"

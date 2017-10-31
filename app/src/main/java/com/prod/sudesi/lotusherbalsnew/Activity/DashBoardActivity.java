@@ -114,7 +114,7 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_report:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-               // startActivity(new Intent(getApplicationContext(), ReportsForUser.class));
+                startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                 break;
             case R.id.btn_notifi:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));

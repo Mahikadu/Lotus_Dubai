@@ -104,6 +104,21 @@
         <activity android:name=".Activity.OutletAttendanceActivity"
             android:screenOrientation="portrait"></activity>
 
+        <activity
+            android:name=".Activity.ReportActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+
+        <activity
+            android:name=".Activity.BocCumulativeDashboardActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+
+        <activity
+            android:name=".Activity.StockAllActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+
     </application>
 
 </manifest>

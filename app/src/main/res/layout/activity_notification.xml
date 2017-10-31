@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:text="NOTIFICATION"
         android:textColor="#FFFFFF"
-        android:typeface="serif"
         android:textSize="@dimen/_18sdp"
         android:textStyle="italic"
+        android:layout_marginTop="@dimen/_10sdp"
         android:layout_gravity="center"
-        />
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <ListView
         android:id="@android:id/list"

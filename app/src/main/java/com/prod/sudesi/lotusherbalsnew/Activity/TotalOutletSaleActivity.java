@@ -161,13 +161,13 @@ public class TotalOutletSaleActivity extends Activity {
 
                 current_year_n1 = String.valueOf(int_current_year_n1);
 
-                int_previous_year_p1 = int_current_year_n1 - 1;
+                //int_previous_year_p1 = int_current_year_n1 - 1;
 
-                previous_year_p1 = String.valueOf(int_previous_year_p1);
+                //previous_year_p1 = String.valueOf(int_previous_year_p1);
 
                 firstyear = current_year_n1 + "-"+current_year_n2;//---------
 
-                sencondyear = previous_year_p1 +"-"+ current_year_n1;
+                //sencondyear = previous_year_p1 +"-"+ current_year_n1;
 
 
             }else{
@@ -183,15 +183,15 @@ public class TotalOutletSaleActivity extends Activity {
 
                 //tv_previous_year_p2.setText(current_year_n1);
 
-                int_previous_year_p1 = int_current_year_n1 - 1;
+                //int_previous_year_p1 = int_current_year_n1 - 1;
 
-                previous_year_p1 = String.valueOf(int_previous_year_p1);
+               // previous_year_p1 = String.valueOf(int_previous_year_p1);
 
                 //tv_previous_year_p1.setText(previous_year_p1);
 
                 firstyear = current_year_n1 +"-"+ current_year_n2;//---------
 
-                sencondyear = previous_year_p1 +"-"+ current_year_n1;
+                //sencondyear = previous_year_p1 +"-"+ current_year_n1;
             }
 
             //-------------/----------
@@ -275,7 +275,7 @@ public class TotalOutletSaleActivity extends Activity {
         List<String> list_year = new ArrayList<String>();
 
         list_year.add("Select");
-        list_year.add(sencondyear);
+        //list_year.add(sencondyear);
         list_year.add(firstyear);
 
         if (list_year.size() > 0) {

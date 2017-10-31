@@ -33,4 +33,5 @@ dependencies {
     compile 'com.intuit.sdp:sdp-android:1.0.3'
     compile files('libs/ksoap2-android-assembly-3.0.0-RC.4-jar-with-dependencies.jar')
     compile files('libs/littlefluffylocationlibrary_r15.jar')
+    compile 'cn.pedant.sweetalert:library:1.3'
 }
