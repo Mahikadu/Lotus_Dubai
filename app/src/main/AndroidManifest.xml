@@ -116,6 +116,16 @@
 
         <activity
             android:name=".Activity.StockAllActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.SaleDetailsActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".Activity.TotalOutletSaleReport"
             android:screenOrientation="landscape" >
         </activity>
 

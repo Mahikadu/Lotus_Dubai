@@ -18,7 +18,33 @@ public class ProductModel implements Serializable {
     String PTT;
     String SingleOffer;
     String size;
+    String Brand;
+    String Category;
+    String SubCategory;
 
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String brand) {
+        Brand = brand;
+    }
+
+    public String getCategory() {
+        return Category;
+    }
+
+    public void setCategory(String category) {
+        Category = category;
+    }
+
+    public String getSubCategory() {
+        return SubCategory;
+    }
+
+    public void setSubCategory(String subCategory) {
+        SubCategory = subCategory;
+    }
 
     public String getSize() {
         return size;

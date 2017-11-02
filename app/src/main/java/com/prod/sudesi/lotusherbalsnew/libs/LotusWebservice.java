@@ -298,6 +298,49 @@ public class LotusWebservice {
 
 	}
 
+	public SoapPrimitive DataUpload(String ProductId, String Bacode, String FreshStock,
+								   String Opening_Stock, String SoldStock, String ClosingBal,
+								   String GrossAmount, String Discount, String NetAmount,
+								   String AndroidCreatedDate, String OutletCode) {
+
+		SoapPrimitive result = null;
+		try {
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"DataUpload");
+
+			request.addProperty("ProductId", ProductId);
+			request.addProperty("Bacode", Bacode);
+			request.addProperty("FreshStock", FreshStock);
+			request.addProperty("Opening_Stock", Opening_Stock);
+			request.addProperty("SoldStock", SoldStock);
+			request.addProperty("ClosingBal", ClosingBal);
+			request.addProperty("GrossAmount", GrossAmount);
+			request.addProperty("Discount", Discount);
+			request.addProperty("NetAmount", NetAmount);
+			request.addProperty("AndroidCreatedDate", AndroidCreatedDate);
+			request.addProperty("OutletCode", OutletCode);
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call("http://tempuri.org/IService1/DataUpload",
+					envelope);
+
+			result = (SoapPrimitive) envelope.getResponse();
+			Log.e("DataUpload", result.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	/*public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,
 								   String EANCode, String empId, String ProductCategory,
 								   String product_type, String product_name, String shadeno,

@@ -25,6 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TABLE_MASTERSYNC = "table_master_sync";
     public static final String TABLE_OUTLET = "table_outlet";
     public static final String TABLE_OUTLET_ATTENDANCE = "outlet_attendance";
+    public static final String TABLE_STOCK = "table_stock";
 
     public static final int DATABASE_VERSION = 1;
     private static DbHelper dbInstance = null;

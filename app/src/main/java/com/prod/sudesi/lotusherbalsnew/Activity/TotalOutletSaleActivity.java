@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import java.text.ParseException;
@@ -70,6 +71,8 @@ public class TotalOutletSaleActivity extends Activity {
     String[] strBocArray = null;
     String[] strYearArray = null;
 
+    ConnectionDetector cd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,8 @@ public class TotalOutletSaleActivity extends Activity {
         sharedPref = new SharedPref(context);
         prgdialog = new ProgressDialog(context);
         service = new LotusWebservice(TotalOutletSaleActivity.this);
+
+        cd = new ConnectionDetector(this);
 
         //	lv_bam_report = (ListView) findViewById(R.id.listView_ba_month_report);
 
@@ -328,7 +333,7 @@ public class TotalOutletSaleActivity extends Activity {
             }
         });
 
-        btn_search = (Button)findViewById(R.id.btn_search);
+        btn_search = (Button)findViewById(R.id.btn_search1);
 
         btn_search.setOnClickListener(new View.OnClickListener() {
 
@@ -341,18 +346,20 @@ public class TotalOutletSaleActivity extends Activity {
 
                     if(selected_month.equalsIgnoreCase("")){
                         Log.v("", "sdfsfddfsf");
-                        Toast.makeText(getApplicationContext(), "Select Month", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Select Month", Toast.LENGTH_SHORT).show();
+                        cd.displayMessage("Select Month");
 
                     }else if(selected_year.equalsIgnoreCase("")){
                         Log.v("", "sdfsfddfsf1");
-                        Toast.makeText(getApplicationContext(), "Select Year", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Select Year", Toast.LENGTH_SHORT).show();
+                        cd.displayMessage("Select Year");
 
                     }else{
 
-                     /*   Intent i = new Intent(getApplicationContext(), BocCumulativeDashboardActivity.class);
+                        Intent i = new Intent(getApplicationContext(), TotalOutletSaleReport.class);
                         i.putExtra("month", selected_month);
                         i.putExtra("year", selected_year);
-                        startActivity(i);*/
+                        startActivity(i);
                     }
                 }catch(Exception e){
 

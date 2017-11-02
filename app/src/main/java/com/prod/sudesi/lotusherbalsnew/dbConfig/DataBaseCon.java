@@ -124,6 +124,26 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
+    public Cursor fetchonestock(CharSequence db_id, String outletcode)
+    {
+        String sql="SELECT DISTINCT opening_stock, sold_stock, total_gross_amount, total_net_amount, discount FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
+        Cursor c = dbHelper.rawQuery(sql);
+        return c;
+
+    }
+
+    public Cursor getstockdata(String d_id, String outletcode) {
+        // TODO Auto-generated method stub
+        //String sql = "select * from stock where " + " db_id ="+"'"+d_id+"'";
+
+        String sql = "select * from table_stock where outletcode = " + "'" + outletcode + "'" + " and A_id=" + "'" + d_id + "'";
+
+        Cursor c = dbHelper.rawQuery(sql);
+
+        return c;
+    }
+
+
     public Cursor fetchTwoFromTable(String colName1, String colName2, String tbl, String where) {
         String query = null;
         try {
@@ -240,6 +260,23 @@ public class DataBaseCon {
     public Cursor fetchallSpecify(String tbl, String names[], String fName,
                                   String fValue, String order) {
         return dbHelper.fetchallSpecify(tbl, names, fName, fValue, order);
+
+    }
+
+    public Cursor getStockdetails() {
+        // TODO Auto-generated method stub
+        Cursor stockddetails = null;
+        try {
+
+            Log.e("", "getStockdetails==");
+            String sql = "select * from table_stock where savedServer = '0'";
+
+            stockddetails = dbHelper.rawQuery(sql);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stockddetails;
 
     }
 

@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import java.text.ParseException;
@@ -71,6 +72,8 @@ public class BocDashBoardActivity extends Activity {
     String[] strBocArray = null;
     String[] strYearArray = null;
 
+    ConnectionDetector cd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,7 @@ public class BocDashBoardActivity extends Activity {
         sharedPref = new SharedPref(context);
         prgdialog = new ProgressDialog(context);
         service = new LotusWebservice(BocDashBoardActivity.this);
+        cd = new ConnectionDetector(context);
 
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         btn_home = (Button) findViewById(R.id.btn_home);
@@ -339,11 +343,13 @@ public class BocDashBoardActivity extends Activity {
 
                     if(selected_month.equalsIgnoreCase("")){
                         Log.v("", "sdfsfddfsf");
-                        Toast.makeText(getApplicationContext(), "Select Month", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Select Month", Toast.LENGTH_SHORT).show();
+                        cd.displayMessage("Select Month");
 
                     }else if(selected_year.equalsIgnoreCase("")){
                         Log.v("", "sdfsfddfsf1");
-                        Toast.makeText(getApplicationContext(), "Select Year", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Select Year", Toast.LENGTH_SHORT).show();
+                        cd.displayMessage("Select Year");
 
                     }else{
 

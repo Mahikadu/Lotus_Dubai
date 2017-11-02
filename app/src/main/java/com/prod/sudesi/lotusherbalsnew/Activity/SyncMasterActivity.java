@@ -20,6 +20,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
+import com.prod.sudesi.lotusherbalsnew.Models.StockModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
@@ -29,6 +31,7 @@ import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -60,11 +64,16 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
     TextView tv_h_username;
     Button btn_home, btn_logout;
 
+    private ArrayList<StockModel> stockDetailsArraylist;
+    StockModel stockModel;
+
     String outletcode, username, producttype, syncdate;
 
     int id = 0;
     String ID;
     private Utils utils;
+
+    String A_id, ba_code, stock_received, opening_stock, sold_stock, close_bal, total_gross_amount, discount, total_net_amount, stroutletcode;
 
     String Barcodes, Brand, Category, A_Id, Message, PTT, ProductName, ShortName, SingleOffer, SubCategory, order_flag, size, lastsyncdate;
     String O_Message, OutletCode, OutletName;
@@ -98,10 +107,13 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         mProgress = new ProgressDialog(SyncMasterActivity.this);
         service = new LotusWebservice(SyncMasterActivity.this);
 
-
-        LOTUS.dbCon.open();
-        // outletcode = LOTUS.dbCon.getActiveoutletCode();
-        LOTUS.dbCon.close();
+        try {
+            LOTUS.dbCon.open();
+            outletcode = LOTUS.dbCon.getActiveoutletCode();
+            LOTUS.dbCon.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         //producttype = sp.getString("producttype", "");
         Log.e("", "producttype==" + producttype);
@@ -134,7 +146,12 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         switch (id) {
             case R.id.btn_data_upload:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
-                // new syncAllData().execute();
+                if (cd.isConnectingToInternet()) {
+                    new syncAllData().execute();
+                } else {
+                    cd.displayMessage("Check Your Internet Connection!!!");
+                }
+
                 break;
             case R.id.btn_master_sync:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
@@ -587,6 +604,137 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public class syncAllData extends AsyncTask<Void, Void, SoapPrimitive> {
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            mProgress.setMessage("Please Wait");
+            mProgress.show();
+            mProgress.setCancelable(false);
+        }
+
+        @Override
+        protected SoapPrimitive doInBackground(Void... params) {
+            SoapPrimitive result = null;
+            if (cd.isConnectingToInternet()) {
+                try {
+                    LOTUS.dbCon.open();
+                    Cursor stock_array = LOTUS.dbCon.getStockdetails();
+                    //LOTUS.dbCon.close();
+
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "yyyy-MM-dd HH:mm:ss");
+                    String insert_timestamp = sdf.format(c
+                            .getTime());
+
+                    stockDetailsArraylist = new ArrayList<>();
+                    if (stock_array != null && stock_array.getCount() > 0) {
+                        stock_array.moveToFirst();
+                        do {
+                            stockModel = new StockModel();
+                            stockModel.setA_id(stock_array.getString(stock_array.getColumnIndex("A_id")));
+                            stockModel.setBa_code(stock_array.getString(stock_array.getColumnIndex("ba_code")));
+                            stockModel.setStock_received(stock_array.getString(stock_array.getColumnIndex("stock_received")));
+                            stockModel.setOpening_stock(stock_array.getString(stock_array.getColumnIndex("opening_stock")));
+                            stockModel.setSold_stock(stock_array.getString(stock_array.getColumnIndex("sold_stock")));
+                            stockModel.setClose_bal(stock_array.getString(stock_array.getColumnIndex("close_bal")));
+                            stockModel.setTotal_gross_amount(stock_array.getString(stock_array.getColumnIndex("total_gross_amount")));
+                            stockModel.setDiscount(stock_array.getString(stock_array.getColumnIndex("discount")));
+                            stockModel.setTotal_net_amount(stock_array.getString(stock_array.getColumnIndex("total_net_amount")));
+                            stockModel.setCurrentdate(insert_timestamp);
+                            stockModel.setStroutletcode(stock_array.getString(stock_array.getColumnIndex("outletcode")));
+                            stockDetailsArraylist.add(stockModel);
+
+                        } while (stock_array.moveToNext());
+                        stock_array.close();
+                    }
+                    if (stockDetailsArraylist.size() > 0) {
+                        //strMrpArray = new String[productDetailsArraylist.size()];
+                        for (int i = 0; i < stockDetailsArraylist.size(); i++) {
+                            stockModel = stockDetailsArraylist.get(i);
+
+                            result = service.DataUpload(stockModel.getA_id(), stockModel.getBa_code(), stockModel.getStock_received(),
+                                    stockModel.getOpening_stock(),stockModel.getSold_stock(),stockModel.getClose_bal(),
+                                    stockModel.getTotal_gross_amount(),stockModel.getDiscount(),stockModel.getTotal_net_amount(),
+                                    stockModel.getCurrentdate(),stockModel.getStroutletcode());
+
+                            String response = String.valueOf(result.toString());
+
+                            if(response.equalsIgnoreCase("success")){
+
+                                LOTUS.dbCon.update(DbHelper.TABLE_STOCK, "outletcode = ?", new String[]{"1"},
+                                        new String[]{"savedServer"}, new String[]{outletcode});
+                            }
+
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(SoapPrimitive result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+
+            mProgress.dismiss();
+            if (result != null) {
+                String response = String.valueOf(result.toString());
+
+                if (response.equalsIgnoreCase("success")) {
+
+                    new SweetAlertDialog(SyncMasterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                            .setTitleText("Data Upload")
+                            .setContentText("Data Upload Completed!!")
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    Intent intent = new Intent(SyncMasterActivity.this, DashBoardActivity.class);
+                                    startActivity(intent);
+
+                                    sDialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            }else{
+                final Calendar calendar = Calendar
+                        .getInstance();
+                SimpleDateFormat formatter = new SimpleDateFormat(
+                        "MM/dd/yyyy HH:mm:ss");
+                String Createddate = formatter.format(calendar
+                        .getTime());
+
+                int n = Thread.currentThread().getStackTrace()[2]
+                        .getLineNumber();
+
+                LOTUS.dbCon.open();
+
+                id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                String selection = "ID = ?";
+                String ID = String.valueOf(id);
+                // WHERE clause arguments
+                String[] selectionArgs = {ID};
+
+                String valuesArray[] = {ID, "Soup is Null While DataUpload()", String.valueOf(n), "DataUpload()",
+                        Createddate, Createddate, sharedPref.getLoginId(), "DataUpload", "Fail"};
+                boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                LOTUS.dbCon.close();
+
+                cd.displayMessage("Soup is Null While DataUpload()");
             }
         }
     }

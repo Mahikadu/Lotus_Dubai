@@ -13,6 +13,7 @@ public class Utils {
     public String[] columnNamesMasterSync= new String[50];
     public String[] columnNamesOutlet= new String[50];
     public String[] columnNamesOutletAttendance= new String[50];
+    public String[] columnNamesStock= new String[50];
 
 
     private Context mContext;
@@ -35,8 +36,14 @@ public class Utils {
         String[] outletArray = {"id","Message","OutletCode","OutletName"};
         columnNamesOutlet = Arrays.copyOf(outletArray, outletArray.length);
 
-        String[] outletAttendanceArray = {"id","BA_id","Adate","Actual_date","lat","lon","outletcode","outletname","outletstatus"};
+        String[] outletAttendanceArray = {"BA_id","Adate","Actual_date","lat","lon","outletcode","outletname","outletstatus","savedServer"};
         columnNamesOutletAttendance = Arrays.copyOf(outletAttendanceArray, outletAttendanceArray.length);
+
+        String[] stockArray = {"A_id","Barcodes","Brand","Category","SubCategory",
+                "ProductName","PTT","size","ba_code","opening_stock","stock_received","stock_in_hand","close_bal",
+        "sold_stock","total_gross_amount","total_net_amount","discount","savedServer","insert_date",
+        "last_modified_date","month","year","updateDate","outletcode"};
+        columnNamesStock = Arrays.copyOf(stockArray, stockArray.length);
 
 
 

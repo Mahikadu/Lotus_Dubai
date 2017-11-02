@@ -31,6 +31,7 @@
                 android:inputType="textCapCharacters"
                 android:background="@drawable/us"
                 android:ems="10"
+                android:text="9999"
                 android:maxLength="12"
                 android:singleLine="true"
                 android:paddingLeft="@dimen/_10sdp" >
@@ -43,6 +44,7 @@
                 android:layout_marginTop="@dimen/_30sdp"
                 android:background="@drawable/pass"
                 android:ems="10"
+                android:text="password"
                 android:maxLength="12"
                 android:singleLine="true"
                 android:gravity="center"

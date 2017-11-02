@@ -68,7 +68,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
     Button btn_submit, btn_home, btn_logout;
     private double lon = 0.0, lat = 0.0;
     LotusWebservice service;
-   // AttendanceAsync upload_attendance;
+    // AttendanceAsync upload_attendance;
     TextView tv_h_username;
     String outletName = "";
     Context context;
@@ -117,7 +117,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
         btn_submit = (Button) findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(this);
 
-        spin_outletname = (AutoCompleteTextView)findViewById(R.id.spin_outletname);
+        spin_outletname = (AutoCompleteTextView) findViewById(R.id.spin_outletname);
 
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
@@ -186,7 +186,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
                     outletstring = parent.getItemAtPosition(position).toString();
                     for (int i = 0; i < outletDetailsArraylist.size(); i++) {
                         String text = outletDetailsArraylist.get(i).getOutletName();
-                        String outletcode  = outletDetailsArraylist.get(i).getOutletCode();
+                        String outletcode = outletDetailsArraylist.get(i).getOutletCode();
                         if (text.equalsIgnoreCase(outletstring)) {
                             outletName = text;
                             outletCode = outletcode;
@@ -263,7 +263,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
             case R.id.btn_submit:
                 v.startAnimation(AnimationUtils.loadAnimation(OutletAttendanceActivity.this, R.anim.button_click));
                 int id = 0;
-                try{
+                try {
                     int hr = time_picker.getCurrentHour();
                     int mins = time_picker.getCurrentMinute();
                     String d1;
@@ -280,16 +280,11 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
                     SimpleDateFormat sdft = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
                     Actual_date = sdft.format(c.getTime());
 
-                    if (outletstring != null && outletstring.length()>0){
+                    if (outletstring != null && outletstring.length() > 0) {
                         try {
-                            int count = LOTUS.dbCon.getCountOfRows(DbHelper.TABLE_OUTLET_ATTENDANCE);
-                       if(count>0) {
-                           id = count + 1;
-                       }else{
-                           id = id + 1;
-                       }
-                        String valuesArray[] = {id +"",username, Adate, Actual_date, String.valueOf(lat), String.valueOf(lon), outletCode, outletName,"Active"};
-                        long rowid = LOTUS.dbCon.insert(DbHelper.TABLE_OUTLET_ATTENDANCE,  valuesArray, utils.columnNamesOutletAttendance);
+
+                            String valuesArray[] = {username, Adate, Actual_date, String.valueOf(lat), String.valueOf(lon), outletCode, outletName, "Active", "0"};
+                            long rowid = LOTUS.dbCon.insert(DbHelper.TABLE_OUTLET_ATTENDANCE, valuesArray, utils.columnNamesOutletAttendance);
 
 
                        /* if (rowid > 0) {
@@ -298,20 +293,24 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
                             LOTUS.dbCon.close();
 
                         }*/
+                       if(rowid > 0) {
+                           LOTUS.dbCon.update(DbHelper.TABLE_OUTLET_ATTENDANCE, "id != ?", new String[]{"DeActive"},
+                                   new String[]{"outletstatus"}, new String[]{String.valueOf(rowid)});
 
-                        if (rowid > -1) {
-                            saveOutletAttendance = new SaveOutletAttendance();
-                            saveOutletAttendance.execute();
+                       }
+                            if (rowid > -1) {
+                                saveOutletAttendance = new SaveOutletAttendance();
+                                saveOutletAttendance.execute();
 
-                        }
-                        }catch (Exception e){
+                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }else{
+                    } else {
                         cd.displayMessage("Please select outlet!!");
                     }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -337,7 +336,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
                 } while (cursor.moveToNext());
                 cursor.close();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -400,16 +399,6 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
         ProgressDialog progress;
 
         @Override
-        protected SoapPrimitive doInBackground(Void... params) {
-            // TODO Auto-generated method stub
-
-            soap_result = service.SaveOutletAttendance(username, Adate, String.valueOf(lat),
-                    String.valueOf(lon), outletCode);
-
-            return soap_result;
-        }
-
-        @Override
         protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
@@ -421,25 +410,61 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
         }
 
         @Override
+        protected SoapPrimitive doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+
+            soap_result = service.SaveOutletAttendance(username, Adate, String.valueOf(lat),
+                    String.valueOf(lon), outletCode);
+
+            return soap_result;
+        }
+
+
+        @Override
         protected void onPostExecute(SoapPrimitive result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             progress.dismiss();
+            int id = 0;
             if (result != null) {
                 if (result.toString().equalsIgnoreCase("Success")) {
                     cd.displayMessage("Data Uploaded Successfully!!");
                     startActivity(new Intent(OutletAttendanceActivity.this,
                             DashBoardActivity.class));
 
-                    /*dbcon.update("savedServer", new String[]{"1"},
-                            new String[]{"savedServer"},
-                            "supervisor_attendance", "0");*/
+                    LOTUS.dbCon.update(DbHelper.TABLE_OUTLET_ATTENDANCE, "outletcode = ?", new String[]{"1"},
+                            new String[]{"savedServer"}, new String[]{outletCode});
+
 
                 } else {
                     cd.displayMessage("Data Not uploaded");
                 }
             } else {
-                cd.displayMessage("Please check internet Connectivity!!");
+                final Calendar calendar = Calendar
+                        .getInstance();
+                SimpleDateFormat formatter = new SimpleDateFormat(
+                        "MM/dd/yyyy HH:mm:ss");
+                String Createddate = formatter.format(calendar
+                        .getTime());
+
+                int n = Thread.currentThread().getStackTrace()[2]
+                        .getLineNumber();
+
+                LOTUS.dbCon.open();
+
+                id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                String selection = "ID = ?";
+                String ID = String.valueOf(id);
+                // WHERE clause arguments
+                String[] selectionArgs = {ID};
+
+                String valuesArray[] = {ID, "Soup is Null While SaveOutletAttendance()", String.valueOf(n), "SaveOutletAttendance()",
+                        Createddate, Createddate, sharedPref.getLoginId(), "SaveOutletAttendance", "Fail"};
+                boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                LOTUS.dbCon.close();
+
+                cd.displayMessage("Soup is Null While SaveOutletAttendance()");
             }
         }
 

@@ -9,13 +9,13 @@
     android:paddingBottom="@dimen/_30sdp"
     android:stretchColumns="*"
     android:visibility="visible"
-    android:weightSum="4">
+    android:weightSum="3">
 
     <TextView
-        android:id="@+id/txtproduct"
+        android:id="@+id/txtproductsale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1.5"
+        android:layout_weight="1.6"
         android:gravity="center"
         android:text="Product"
         android:maxLines="4"
@@ -25,10 +25,10 @@
         android:typeface="serif" />
 
     <EditText
-        android:id="@+id/edtquantity"
+        android:id="@+id/edtquantitysale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.6"
+        android:layout_weight="0.7"
         android:gravity="center"
         android:hint="0"
         android:textColorHint="@android:color/white"
@@ -39,24 +39,12 @@
         android:typeface="serif" />
 
     <TextView
-        android:id="@+id/txtmrp"
+        android:id="@+id/txtmrpsale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
+        android:layout_weight="0.7"
         android:gravity="center"
         android:text="PTT"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/_8sdp"
-        android:textStyle="italic"
-        android:typeface="serif" />
-
-    <TextView
-        android:id="@+id/txtopeningbal"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1.4"
-        android:gravity="center"
-        android:text="Opening Bal"
         android:textColor="@android:color/white"
         android:textSize="@dimen/_8sdp"
         android:textStyle="italic"

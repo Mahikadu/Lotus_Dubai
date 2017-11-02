@@ -1,0 +1,83 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include layout="@layout/headernew" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/report_textview_heading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@layout/tableborder_stock"
+            android:gravity="center"
+            android:text="Total Outlet Sale"
+            android:textSize="@dimen/_14sdp" />
+    </TableRow>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:id="@+id/to_sales_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3">
+
+            <TextView
+                style="@style/report_textview_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_1sdp"
+                android:layout_weight="1"
+                android:background="@layout/tableborder_stock"
+                android:gravity="center"
+                android:text="Outlet Name"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                style="@style/report_textview_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_1sdp"
+                android:layout_weight="1"
+                android:background="@layout/tableborder_stock"
+                android:gravity="center"
+                android:text="Sold Stock"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                style="@style/report_textview_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_1sdp"
+                android:layout_weight="1"
+                android:background="@layout/tableborder_stock"
+                android:gravity="center"
+                android:text="Amount"
+                android:textSize="@dimen/_14sdp" />
+
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/lv_total_outlet_sales"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/_20sdp"></ListView>
+
+    </LinearLayout>
+
+</LinearLayout>
