@@ -132,6 +132,14 @@ public class DataBaseCon {
 
     }
 
+    public Cursor fetchonestockmultplecolumn(CharSequence db_id, String outletcode)
+    {
+        String sql="SELECT DISTINCT total_gross_amount,total_net_amount,discount,close_bal,sold_stock,opening_stock,stock_received,stock_in_hand FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
+        Cursor c = dbHelper.rawQuery(sql);
+        return c;
+
+    }
+
     public Cursor getstockdata(String d_id, String outletcode) {
         // TODO Auto-generated method stub
         //String sql = "select * from stock where " + " db_id ="+"'"+d_id+"'";

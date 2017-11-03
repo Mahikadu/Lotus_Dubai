@@ -5,8 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -26,7 +30,9 @@ import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Admin on 02-11-2017.
@@ -38,7 +44,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
     Button btn_save, btn_back, btn_home, btn_logout;
     private SharedPref sharedPref;
 
-    EditText edt_gross,edt_discount,edt_netamt;
+    EditText edt_gross, edt_discount, edt_netamt;
 
     String outletcode, username;
 
@@ -54,6 +60,13 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
     ProductModel productModel;
     ProductListModel productListModel;
 
+    private static int ecolor;
+    private static String namestring, fieldValue;
+    private static ForegroundColorSpan fgcspan;
+    private static SpannableStringBuilder ssbuilder;
+
+    String str_openingstock = "0", soldstock = "0", closebal = "0", old_stock_recive = "0", str_stockinhand = "0",
+            str_totalgrossamount = "0", str_totalnetamount = "0", Str_discount = "0", str_stockreceived = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +100,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
             LOTUS.dbCon.open();
             outletcode = LOTUS.dbCon.getActiveoutletCode();
             LOTUS.dbCon.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -101,7 +114,6 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         btn_back.setOnClickListener(this);
         btn_home.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
-
 
 
         productModel = new ProductModel();
@@ -169,7 +181,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                 try {
                     int etcount = 0;
                     int count = 0;
-                    if (tablel_sale_calculation.getChildCount() >0) {
+                    if (tablel_sale_calculation.getChildCount() > 0) {
                         for (int j = 0; j < tablel_sale_calculation.getChildCount(); j++) {
 
                             TableRow t = (TableRow) tablel_sale_calculation
@@ -201,6 +213,236 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                         if (!edt_gross.getText().toString().equals("")
                                 && !edt_netamt.getText().toString().equals("")) {
 
+                            float dis;
+                            if (!edt_discount.getText().toString()
+                                    .equalsIgnoreCase(" ")
+                                    || !edt_discount.getText().toString()
+                                    .equalsIgnoreCase("")) {
+                                dis = Float.parseFloat(edt_discount.getText()
+                                        .toString());
+                            } else {
+                                dis = 0.0f;
+                            }
+
+                            String tablecount = String.valueOf(tablel_sale_calculation
+                                    .getChildCount());
+
+                            float ttt = Float.parseFloat(tablecount);
+
+                            float a1 = dis / (ttt - 1);
+                            String adis = String.format("%.02f", a1);
+                            float a = Float.parseFloat(adis);
+
+                            float disss = 0;
+                            float net1;
+
+                            if (tablel_sale_calculation.getChildCount() != 1) {
+                                for (int k = 0, j = 0; k < tablel_sale_calculation.getChildCount() && newproductDetailsArraylist.size() > 0; k++, j++) {
+
+                                    TableRow t = (TableRow) tablel_sale_calculation
+                                            .getChildAt(k);
+                                    EditText edt_qty = (EditText) t
+                                            .getChildAt(1);
+                                    TextView tv_mrp = (TextView) t
+                                            .getChildAt(2);
+
+                                    productModel = newproductDetailsArraylist.get(j);
+
+                                    String Barcodes = productModel.getBarcodes();
+                                    String A_Id = productModel.getA_Id();
+                                    String size = productModel.getSize();
+                                    String Brand = productModel.getBrand();
+                                    String Category = productModel.getCategory();
+                                    String SubCategory = productModel.getSubCategory();
+                                    String ProductName = productModel.getProductName();
+
+                                    float calc_gross = Float.parseFloat(tv_mrp
+                                            .getText().toString())
+                                            * Integer.parseInt(edt_qty
+                                            .getText().toString());
+
+                                    float boc_date_net = calc_gross - a;
+                                    float gross = 0;
+                                    int net = 0, closing = 0, sold_stock = 0, discount = 0;
+                                    int stkinhand = 0;
+                                    int i_sold = 0;
+
+                                    LOTUS.dbCon.open();
+                                    Cursor cur = LOTUS.dbCon.fetchonestockmultplecolumn(A_Id, outletcode);
+
+                                    if (cur != null && cur.getCount() > 0) {
+                                        cur.moveToFirst();
+
+                                        str_openingstock = cur.getString(cur.getColumnIndex("opening_stock"));
+                                        str_totalgrossamount = cur.getString(cur.getColumnIndex("total_gross_amount"));
+                                        str_totalnetamount = cur.getString(cur.getColumnIndex("total_net_amount"));
+                                        Str_discount = cur.getString(cur.getColumnIndex("discount"));
+                                        closebal = cur.getString(cur.getColumnIndex("close_bal"));
+                                        soldstock = cur.getString(cur.getColumnIndex("sold_stock"));
+                                        str_stockreceived = cur.getString(cur.getColumnIndex("stock_received"));
+                                        str_stockinhand = cur.getString(cur.getColumnIndex("stock_in_hand"));
+
+                                        boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", str_openingstock);
+
+                                        if (boo == true) {
+
+                                            if (soldstock != null) {
+                                                if (soldstock.trim().equalsIgnoreCase("0")
+                                                        || soldstock.trim().equalsIgnoreCase("")) {
+
+                                                    i_sold = 0;
+
+                                                } else {
+                                                    i_sold = Integer.parseInt(soldstock.trim());
+                                                }
+                                            }
+                                            Log.e("old sold", String.valueOf(i_sold));
+
+                                            i_sold = i_sold + Integer.parseInt(edt_qty.getText().toString());
+                                            Log.e("new sold", String.valueOf(i_sold));
+
+                                            int i_stokinhand = 0;
+                                            if (str_stockinhand != null) {
+                                                if (str_stockinhand.trim().equalsIgnoreCase("0")
+                                                        || str_stockinhand.trim().equalsIgnoreCase("")) {
+
+                                                    i_stokinhand = 0;
+
+                                                } else {
+                                                    i_stokinhand = Integer.parseInt(str_stockinhand.trim());
+                                                }
+                                            }
+                                            Log.e("i_stokinhand", String.valueOf(i_stokinhand));
+
+                                            int i_clstk = i_stokinhand - i_sold;
+
+                                            Log.e("i_clstk", String.valueOf(i_clstk));
+
+                                            if (str_totalgrossamount != null) {
+                                                if (!str_totalgrossamount.equalsIgnoreCase("")) {
+
+                                                    if (!str_totalgrossamount.equalsIgnoreCase(" ")) {
+                                                        Float total_gross = Float.parseFloat(str_totalgrossamount);
+
+                                                        gross = total_gross + calc_gross;
+
+                                                    } else {
+                                                        gross = calc_gross;
+
+                                                    }
+
+                                                } else {
+                                                    gross = calc_gross;
+
+                                                }
+                                            } else {
+                                                gross = calc_gross;
+
+                                            }
+                                            if (Str_discount != null) {
+                                                if (!Str_discount.equalsIgnoreCase("")) {
+
+                                                    if (!Str_discount.contains(" ")) {
+
+                                                        disss = (Float.parseFloat(Str_discount) + a);
+
+                                                    } else {
+                                                        if (edt_discount.getText().toString().equals("")) {
+                                                            // discount = 0;//
+                                                            disss = 0;
+                                                        } else {
+
+                                                            disss = a;
+
+                                                        }
+
+                                                    }
+
+                                                } else {
+                                                    if (edt_discount.getText().toString().equals("")) {
+
+                                                        disss = 0;
+                                                    } else {
+
+                                                        disss = 0;
+
+                                                    }
+                                                }
+                                            } else {
+                                                if (edt_discount.getText().toString().equals("")) {
+                                                    // discount = 0;//
+                                                    disss = 0;
+                                                } else {
+
+                                                    disss = a;
+                                                }
+                                            }
+
+                                            if (str_totalnetamount != null) {
+                                                if (!str_totalnetamount.equalsIgnoreCase("")) {
+
+                                                    if (!str_totalnetamount.contains(" ")) {
+
+                                                        String cal_gross = String.valueOf(calc_gross);
+
+                                                        net1 = Float.parseFloat(str_totalnetamount)+ Float.parseFloat(cal_gross) - a;
+
+                                                    } else {
+                                                        String cal_gross = String.valueOf(calc_gross);
+
+                                                        net1 = (Float.parseFloat(cal_gross) - a);
+
+                                                    }
+
+                                                } else {
+                                                    String cal_gross = String.valueOf(calc_gross);
+
+                                                    net1 = (Float.parseFloat(cal_gross) - a);
+                                                }
+
+                                            } else {
+                                                String cal_gross = String.valueOf(calc_gross);
+
+                                                net1 = (Float.parseFloat(cal_gross) - a);
+                                            }
+
+                                            Calendar cal = Calendar
+                                                    .getInstance();
+                                            SimpleDateFormat month_date = new SimpleDateFormat(
+                                                    "MMMM");
+                                            String month_name = month_date
+                                                    .format(cal.getTime());
+
+                                            Calendar cal1 = Calendar
+                                                    .getInstance();
+                                            SimpleDateFormat year_format = new SimpleDateFormat(
+                                                    "yyyy");
+                                            String year_name = year_format
+                                                    .format(cal1.getTime());
+
+                                            Calendar cal2 = Calendar
+                                                    .getInstance();
+                                            SimpleDateFormat sdf = new SimpleDateFormat(
+                                                    "yyyy-MM-dd HH:mm:ss");
+                                            String insert_timestamp = sdf
+                                                    .format(cal2.getTime());
+
+                                            String[] insert_timestamps = insert_timestamp
+                                                    .split(" ");
+
+                                            String check_timestamp = insert_timestamps[0];
+
+
+                                        }
+
+                                    } else {
+                                        cd.displayMessage("Stock not available");
+                                    }
+
+                                }
+                            }
+
+
                         }
                         /*if (tablel_sale_calculation.getChildCount() >0) {
 
@@ -209,7 +451,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                         }
                         showAlertDialog(count);*/
 
-                    }else {
+                    } else {
 
                         cd.displayMessage("Please enter valid value in quantity fields");
                     }
@@ -323,5 +565,67 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
             // show it
             alertDialog.show();
         }
+    }
+
+    public boolean validateEdit(EditText edt, String errorString,
+                                String valueString) {
+
+        Boolean result = false;
+
+        if (valueString != null) {
+            if (!valueString.equals("")) {
+                if (!valueString.equalsIgnoreCase(" ")) {
+                    if (!valueString.equalsIgnoreCase("0")) {
+                        if (Integer.parseInt(edt.getText().toString()) > Integer
+                                .parseInt(valueString)) {
+                            result = false;
+                            ecolor = Color.RED; // whatever color you want
+                            namestring = errorString;
+                            fgcspan = new ForegroundColorSpan(ecolor);
+                            ssbuilder = new SpannableStringBuilder(namestring);
+                            ssbuilder.setSpan(fgcspan, 0, namestring.length(),
+                                    0);
+                            edt.setError(ssbuilder);
+                        } else {
+                            result = true;
+                        }
+                    } else {
+                        result = false;
+                        ecolor = Color.RED; // whatever color you want
+                        namestring = "No Stock Available";
+                        fgcspan = new ForegroundColorSpan(ecolor);
+                        ssbuilder = new SpannableStringBuilder(namestring);
+                        ssbuilder.setSpan(fgcspan, 0, namestring.length(), 0);
+                        edt.setError(ssbuilder);
+                    }
+                } else {
+                    result = false;
+                    ecolor = Color.RED; // whatever color you want
+                    namestring = "No Stock Available";
+                    fgcspan = new ForegroundColorSpan(ecolor);
+                    ssbuilder = new SpannableStringBuilder(namestring);
+                    ssbuilder.setSpan(fgcspan, 0, namestring.length(), 0);
+                    edt.setError(ssbuilder);
+                }
+            } else {
+                result = false;
+                ecolor = Color.RED; // whatever color you want
+                namestring = "No Stock Available";
+                ;
+                fgcspan = new ForegroundColorSpan(ecolor);
+                ssbuilder = new SpannableStringBuilder(namestring);
+                ssbuilder.setSpan(fgcspan, 0, namestring.length(), 0);
+                edt.setError(ssbuilder);
+            }
+        } else {
+            result = false;
+            ecolor = Color.RED; // whatever color you want
+            namestring = errorString;
+            fgcspan = new ForegroundColorSpan(ecolor);
+            ssbuilder = new SpannableStringBuilder(namestring);
+            ssbuilder.setSpan(fgcspan, 0, namestring.length(), 0);
+            edt.setError(ssbuilder);
+        }
+        return result;
     }
 }
