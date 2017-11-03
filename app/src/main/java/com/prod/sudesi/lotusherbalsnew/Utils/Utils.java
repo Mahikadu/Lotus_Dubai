@@ -14,6 +14,7 @@ public class Utils {
     public String[] columnNamesOutlet= new String[50];
     public String[] columnNamesOutletAttendance= new String[50];
     public String[] columnNamesStock= new String[50];
+    public String[] columnNamesDashboardDetails= new String[50];
 
 
     private Context mContext;
@@ -44,6 +45,9 @@ public class Utils {
         "sold_stock","total_gross_amount","total_net_amount","discount","savedServer","insert_date",
         "last_modified_date","month","year","updateDate","outletcode"};
         columnNamesStock = Arrays.copyOf(stockArray, stockArray.length);
+
+        String[] dashboardDetailsArray = {"Date","SoldQty","Soldvalue"};
+        columnNamesDashboardDetails = Arrays.copyOf(dashboardDetailsArray, dashboardDetailsArray.length);
 
 
 

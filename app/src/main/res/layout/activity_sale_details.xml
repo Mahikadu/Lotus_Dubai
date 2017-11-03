@@ -151,7 +151,9 @@
                         android:id="@+id/edt_gross"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Gross Total" />
+                        android:hint="Gross Total"
+                        android:focusable="false"
+                        android:windowSoftInputMode="stateHidden"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -195,7 +197,9 @@
                         android:id="@+id/edt_netamt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Net Total" />
+                        android:hint="Net Total"
+                        android:focusable="false"
+                        android:windowSoftInputMode="stateHidden"/>
 
                 </android.support.design.widget.TextInputLayout>
 

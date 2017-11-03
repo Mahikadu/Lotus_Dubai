@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="2000dp"
+    android:layout_height="@dimen/_40sdp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/tr_stock_report"
+        android:layout_width="2000dp"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:id="@+id/tr_label_stock"
+            android:layout_width="2000dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/txtaid"
+                style="@style/report_textview"
+                android:layout_width="80dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:gravity="center"
+                android:text="Id" />
+
+            <TextView
+                android:id="@+id/txtbrand"
+                style="@style/report_textview"
+                android:layout_width="80dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@layout/tableborder_for_fields"
+                android:text="Brand" />
+
+            <TextView
+                android:id="@+id/txtcat"
+                style="@style/report_textview"
+                android:layout_width="170dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:gravity="center"
+                android:text="Category" />
+
+            <TextView
+                android:id="@+id/txtsubcat"
+                style="@style/report_textview"
+                android:layout_width="170dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:gravity="center"
+                android:text="SubCategory" />
+
+            <TextView
+                android:id="@+id/txtproduct"
+                style="@style/report_textview"
+                android:layout_width="520dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="PorductName" />
+
+            <TextView
+                android:id="@+id/txtsize"
+                style="@style/report_textview"
+                android:layout_width="70dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Size" />
+
+            <TextView
+                android:id="@+id/txtptt"
+                style="@style/report_textview"
+                android:layout_width="70dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="PTT" />
+
+            <TextView
+                android:id="@+id/txtopening"
+                style="@style/report_textview"
+                android:layout_width="90dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Op-Bal" />
+
+            <TextView
+                android:id="@+id/txtreceive"
+                style="@style/report_textview"
+                android:layout_width="110dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Stk receive" />
+
+            <TextView
+                android:id="@+id/txtinhand"
+                style="@style/report_textview"
+                android:layout_width="110dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Stk in hand" />
+
+
+            <TextView
+                android:id="@+id/txtsold"
+                style="@style/report_textview"
+                android:layout_width="70dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Sold" />
+
+            <TextView
+                android:id="@+id/txtclosing"
+                style="@style/report_textview"
+                android:layout_width="100dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Close-Bal" />
+
+
+            <TextView
+                android:id="@+id/txttotal"
+                style="@style/report_textview"
+                android:layout_width="80dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Total" />
+
+
+            <TextView
+                android:id="@+id/txtdiscount"
+                style="@style/report_textview"
+                android:layout_width="70dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Dis" />
+
+            <TextView
+                android:id="@+id/txtnetamt"
+                style="@style/report_textview"
+                android:layout_width="80dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="NetAmt" />
+
+            <TextView
+                android:id="@+id/txtstatus"
+                style="@style/report_textview"
+                android:layout_width="50dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Status" />
+
+            <TextView
+                android:id="@+id/txtoutlet"
+                style="@style/report_textview"
+                android:layout_width="70dp"
+                android:padding="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:background="@layout/tableborder_for_fields"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Outlet" />
+
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

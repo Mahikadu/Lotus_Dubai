@@ -1,6 +1,7 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.adapter.TotalOutletSalesAdapter;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -45,14 +47,20 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
     SharedPref sharedPref;
     LotusWebservice service;
 
-    String str_BOC;
-    String year, year1;
+    String str_Month;
+    String year;
     ListView total_outlet_list;
     TextView tv_h_username;
     Button btn_home, btn_logout;
     String username;
     Date startdate, enddate;
     ArrayList<String> dates_array;
+    ProgressDialog progress;
+
+    private TotalOutletSalesAdapter adapter;
+
+    ArrayList<HashMap<String, String>> final_array;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +74,20 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
 
         cd = new ConnectionDetector(context);
         sharedPref = new SharedPref(context);
+        progress = new ProgressDialog(context);
 
         service = new LotusWebservice(TotalOutletSaleReport.this);
 
+        final_array = new ArrayList<HashMap<String, String>>();
+
+
         Intent intent = getIntent();
-        str_BOC = intent.getStringExtra("month");
+        str_Month = intent.getStringExtra("month");
         String y[] = intent.getStringExtra("year").split("-");
 //		str_year = intent.getStringExtra("");
-        Log.e("str_BOC", str_BOC);
+        Log.e("str_Month", str_Month);
         year = y[0];
-        year1 = y[1];
+        //year1 = y[1];
 
         total_outlet_list = (ListView) findViewById(R.id.lv_total_outlet_sales);
 
@@ -90,13 +102,14 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
         Log.v("", "username==" + username);
         tv_h_username.setText(username);
 
-       /* System.out.println("   startdate--" + getStartEnd(str_BOC, year, year1)[0]);
-        System.out.println("   enddate--" + getStartEnd(str_BOC, year, year1)[1]);
+        System.out.println("   startdate--" + getStartEnd(str_Month, year)[0]);
+        System.out.println("   enddate--" + getStartEnd(str_Month, year)[1]);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         try {
 
-            startdate = format.parse(getStartEnd(str_BOC, year, year1)[0]);
-            enddate = format.parse(getStartEnd(str_BOC, year, year1)[1]);
+
+            startdate = format.parse(getStartEnd(str_Month, year)[0]);
+            enddate = format.parse(getStartEnd(str_Month, year)[1]);
 
             System.out.println("   startdate1--" + startdate);
             System.out.println("   enddate1--" + enddate);
@@ -122,9 +135,9 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }*/
+        }
 
-       // new TotalOutletSale().execute();
+        new TotalOutletSale().execute();
 
     }
 
@@ -166,55 +179,65 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
         return dates;
     }
 
-
-    public String[] getStartEnd(String BOC, String year, String year1) {
+    public String[] getStartEnd(String Month, String year) {
         String startend[] = new String[2];
 
-        if (BOC.equalsIgnoreCase("BOC1")) {
-            startend[0] = year + "-03-26";
-            startend[1] = year + "-04-25";
-        } else if (BOC.equalsIgnoreCase("BOC2")) {
-            startend[0] = year + "-04-26";
-            startend[1] = year + "-05-25";
-        } else if (BOC.equalsIgnoreCase("BOC3")) {
-            startend[0] = year + "-05-26";
-            startend[1] = year + "-06-25";
-        } else if (BOC.equalsIgnoreCase("BOC4")) {
-            startend[0] = year + "-06-26";
-            startend[1] = year + "-07-25";
-        } else if (BOC.equalsIgnoreCase("BOC5")) {
-            startend[0] = year + "-07-26";
-            startend[1] = year + "-08-25";
-        } else if (BOC.equalsIgnoreCase("BOC6")) {
-            startend[0] = year + "-08-26";
-            startend[1] = year + "-09-25";
-        } else if (BOC.equalsIgnoreCase("BOC7")) {
-            startend[0] = year + "-09-26";
-            startend[1] = year + "-10-25";
-        } else if (BOC.equalsIgnoreCase("BOC8")) {
-            startend[0] = year + "-10-26";
-            startend[1] = year + "-11-25";
-        } else if (BOC.equalsIgnoreCase("BOC9")) {
-            startend[0] = year + "-11-26";
-            startend[1] = year + "-12-25";
-        } else if (BOC.equalsIgnoreCase("BOC10")) {
-            startend[0] = year + "-12-26";
-            startend[1] = year1 + "-01-25";
-        } else if (BOC.equalsIgnoreCase("BOC11")) {
-            startend[0] = year1 + "-01-26";
-            startend[1] = year1 + "-02-25";
-        } else if (BOC.equalsIgnoreCase("BOC12")) {
-            startend[0] = year1 + "-02-26";
-            startend[1] = year1 + "-03-25";
+        if (Month.equalsIgnoreCase("January")) {
+            startend[0] = year + "-01-01";
+            startend[1] = year + "-01-31";
+        } else if (Month.equalsIgnoreCase("February")) {
+            startend[0] = year + "-02-01";
+            startend[1] = year + "-02-28";
+        } else if (Month.equalsIgnoreCase("March")) {
+            startend[0] = year + "-03-01";
+            startend[1] = year + "-03-31";
+        } else if (Month.equalsIgnoreCase("April")) {
+            startend[0] = year + "-04-01";
+            startend[1] = year + "-04-30";
+        } else if (Month.equalsIgnoreCase("May")) {
+            startend[0] = year + "-05-01";
+            startend[1] = year + "-05-31";
+        } else if (Month.equalsIgnoreCase("June")) {
+            startend[0] = year + "-06-01";
+            startend[1] = year + "-06-30";
+        } else if (Month.equalsIgnoreCase("July")) {
+            startend[0] = year + "-07-01";
+            startend[1] = year + "-07-31";
+        } else if (Month.equalsIgnoreCase("Augest")) {
+            startend[0] = year + "-08-01";
+            startend[1] = year + "-08-31";
+        } else if (Month.equalsIgnoreCase("September")) {
+            startend[0] = year + "-09-01";
+            startend[1] = year + "-09-30";
+        } else if (Month.equalsIgnoreCase("October")) {
+            startend[0] = year + "-10-01";
+            startend[1] = year + "-10-31";
+        } else if (Month.equalsIgnoreCase("November")) {
+            startend[0] = year + "-11-01";
+            startend[1] = year + "-11-30";
+        } else if (Month.equalsIgnoreCase("December")) {
+            startend[0] = year + "-12-01";
+            startend[1] = year + "-12-31";
         }
 
         return startend;
     }
 
-    /*public class TotalOutletSale extends AsyncTask<Void, Void, SoapObject> {
+
+
+    public class TotalOutletSale extends AsyncTask<Void, Void, SoapObject> {
 
         SoapObject soap_result;
-//        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            progress.setTitle("Status");
+            progress.setMessage("Please wait...");
+            progress.show();
+            progress.show();
+        }
 
 
         @Override
@@ -222,23 +245,19 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             // TODO Auto-generated method stub
 
             if (!cd.isConnectingToInternet()) {
-
                 soap_result=null;
-            } else
-            {
-
-                DateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String startdate[] = getStartEnd(str_BOC, year, year1);
+            } else {
+                String startdate[] = getStartEnd(str_Month, year);
 
                 soap_result = service.TotalOutletSaleAPK(username,startdate[0],startdate[1]);
                 if (soap_result != null) {
                     for (int i = 0; i < soap_result.getPropertyCount(); i++)
                     {
                         SoapObject getmessaage = (SoapObject) soap_result.getProperty(i);
-                        if (getmessaage != null)
+
+                        if (getmessaage != null )
                         {
                             if(getmessaage.getProperty("outletname")!=null && !getmessaage.getProperty("outletname").toString().equalsIgnoreCase("anyType{}"))
-
                             {
                                 HashMap<String, String> map = new HashMap<String, String>();
                                 map.put("outletname", String.valueOf(getmessaage.getProperty("outletname")));
@@ -269,16 +288,7 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             return soap_result;
         }
 
-        @Override
-        protected void onPreExecute() {
-            // TODO Auto-generated method stub
-            super.onPreExecute();
-//            progress = new ProgressDialog(getApplicationContext());
-//            progress.setTitle("Status");
-//            progress.setMessage("Please wait...");
-//            progress.show();
-            progress.show();
-        }
+
 
         @Override
         protected void onPostExecute(SoapObject result) {
@@ -287,16 +297,14 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             progress.dismiss();
             if (result != null)
             {
-                adapter = new TotalOutletSalesAdapter(TotalOutletSales.this, final_array);
+                adapter = new TotalOutletSalesAdapter(TotalOutletSaleReport.this, final_array);
                 total_outlet_list.setAdapter(adapter);// add custom adapter to
 
 
             } else {
-                Toast.makeText(TotalOutletSales.this,
-                        "Please check internet Connectivity", Toast.LENGTH_LONG)
-                        .show();
+                cd.displayMessage("Please check internet Connectivity");
             }
         }
 
-    }*/
+    }
 }

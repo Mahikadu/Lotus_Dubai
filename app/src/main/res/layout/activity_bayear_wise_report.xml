@@ -1,0 +1,184 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include layout="@layout/headernew" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_150sdp"
+            android:layout_marginRight="@dimen/_150sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/outletcardview"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:background="@android:color/white"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/_3sdp"
+                app:cardElevation="@dimen/_2sdp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
+
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spin_outletname"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:clickable="false"
+                        android:completionThreshold="1"
+                        android:focusable="false"
+                        android:gravity="center_vertical"
+                        android:hint="Outlet Name"
+                        android:imeOptions="actionNext"
+                        android:inputType="none"
+                        android:maxLength="50"
+                        android:nextFocusDown="@+id/edt_sub_source"
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:paddingRight="@dimen/_5sdp"
+                        android:singleLine="true"
+                        android:textIsSelectable="true"
+                        android:textSize="@dimen/_7sdp"
+                        android:windowSoftInputMode="stateHidden" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/report_textview_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/tableborder_stock"
+                android:gravity="center"
+                android:text="BA OutLet Sale" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+
+
+                <TextView
+                    android:id="@+id/tv_bar_Previous_year_p1"
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#841F55"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="2017" />
+
+                <TextView
+                    android:id="@+id/tv_bar_Current_year_n1"
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#841F55"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="2018" />
+
+
+        </TableRow>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:id="@+id/tr_stock_report"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="6">
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="Month" />
+
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="NetBalance" />
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="Growth" />
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="Month" />
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="NetBalance" />
+
+                <TextView
+                    style="@style/report_textview_heading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@layout/tableborder_stock"
+                    android:gravity="center"
+                    android:text="Growth" />
+            </TableRow>
+        </TableLayout>
+
+        <ListView
+            android:id="@+id/listView_ba_year_report"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"></ListView>
+    </LinearLayout>
+
+</LinearLayout>

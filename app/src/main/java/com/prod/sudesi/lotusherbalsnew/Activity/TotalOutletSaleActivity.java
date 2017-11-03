@@ -279,9 +279,9 @@ public class TotalOutletSaleActivity extends Activity {
 
         List<String> list_year = new ArrayList<String>();
 
-        list_year.add("Select");
-        //list_year.add(sencondyear);
-        list_year.add(firstyear);
+        //list_year.add("Select");
+        list_year.add(current_year_n1);
+        list_year.add(current_year_n2);
 
         if (list_year.size() > 0) {
             strYearArray = new String[list_year.size()];

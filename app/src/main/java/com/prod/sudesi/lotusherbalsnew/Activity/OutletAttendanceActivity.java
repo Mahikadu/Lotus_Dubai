@@ -286,13 +286,6 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
                             String valuesArray[] = {username, Adate, Actual_date, String.valueOf(lat), String.valueOf(lon), outletCode, outletName, "Active", "0"};
                             long rowid = LOTUS.dbCon.insert(DbHelper.TABLE_OUTLET_ATTENDANCE, valuesArray, utils.columnNamesOutletAttendance);
 
-
-                       /* if (rowid > 0) {
-                            LOTUS.dbCon.open();
-                            LOTUS.dbCon.updateOutletStatus(rowid);
-                            LOTUS.dbCon.close();
-
-                        }*/
                        if(rowid > 0) {
                            LOTUS.dbCon.update(DbHelper.TABLE_OUTLET_ATTENDANCE, "id != ?", new String[]{"DeActive"},
                                    new String[]{"outletstatus"}, new String[]{String.valueOf(rowid)});

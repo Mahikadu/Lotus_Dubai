@@ -129,6 +129,11 @@
             android:screenOrientation="landscape" >
         </activity>
 
+        <activity
+            android:name=".Activity.BAYearWiseReport"
+            android:screenOrientation="landscape" >
+        </activity>
+
     </application>
 
 </manifest>

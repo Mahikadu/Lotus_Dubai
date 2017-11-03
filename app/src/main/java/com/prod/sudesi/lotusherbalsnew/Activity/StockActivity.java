@@ -50,7 +50,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class StockActivity extends Activity implements View.OnClickListener {
 
-    AutoCompleteTextView brand, product_category, product_subcategory;
+    AutoCompleteTextView brand, product_category, product_subcategory,offerAuto;
 
     Button btn_proceed, btn_home, btn_logout;
 
@@ -80,7 +80,11 @@ public class StockActivity extends Activity implements View.OnClickListener {
     String[] strCategoryArray = null;
     private ArrayList<String> listSubCategory;
     String[] strSubCategoryArray = null;
-    String brandstring, brandname, categorystring, categoryname, subcategorystring, subcategoryname;
+
+    private ArrayList<String> listoffer;
+    String[] strOfferArray = null;
+
+    String brandstring, brandname, categorystring, categoryname, subcategorystring, subcategoryname,offerstring,offername;
 
     private ArrayList<ProductModel> productDetailsArraylist;
     ProductModel productModel;
@@ -114,7 +118,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
         brand = (AutoCompleteTextView) findViewById(R.id.spin_brand);
         product_category = (AutoCompleteTextView) findViewById(R.id.spin_category);
         product_subcategory = (AutoCompleteTextView) findViewById(R.id.spin_subcategory);
-        // product_mode = (AutoCompleteTextView) findViewById(R.id.spin_mode);
+        offerAuto = (AutoCompleteTextView) findViewById(R.id.spin_offer);
         tl_productList = (TableLayout) findViewById(R.id.tl_productList);
         btn_proceed = (Button) findViewById(R.id.btn_proceed);
         btn_home = (Button) findViewById(R.id.btn_home);
@@ -257,6 +261,26 @@ public class StockActivity extends Activity implements View.OnClickListener {
 
             }
         });
+
+        offerAuto.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (offerAuto.length() > 0) {
+                    offerAuto.setError(null);
+                }
+
+            }
+        });
         fetchBrandDetails();
         /////////Details of Brand
         if (listBrand.size() > 0) {
@@ -296,6 +320,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 product_category.setText("");
                 product_subcategory.setText("");
+                offerAuto.setText("");
                 tl_productList.removeAllViews();
                 brand.showDropDown();
                 return false;
@@ -328,6 +353,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 product_subcategory.setText("");
+                offerAuto.setText("");
                 tl_productList.removeAllViews();
                 product_category.showDropDown();
                 return false;
@@ -347,7 +373,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                         }
                     }
                     if (categorystring != null && categorystring.length() > 0) {
-                        fetchSubCategoryDetails(categoryname);
+                        fetchSubCategoryDetails(brandname,categoryname);
 
                     }
                 }
@@ -358,6 +384,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                offerAuto.setText("");
                 tl_productList.removeAllViews();
                 product_subcategory.showDropDown();
                 return false;
@@ -377,11 +404,42 @@ public class StockActivity extends Activity implements View.OnClickListener {
                         }
                     }
 
+                    if (subcategorystring != null && subcategorystring.length() > 0) {
+                        fetchOfferDetails(brandname,categoryname,subcategoryname);
+
+                    }
+
+                }
+            }
+        });
+
+        offerAuto.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                tl_productList.removeAllViews();
+                offerAuto.showDropDown();
+                return false;
+            }
+        });
+
+        offerAuto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (strOfferArray != null && strOfferArray.length > 0) {
+
+                    offerstring = parent.getItemAtPosition(position).toString();
+                    for (int i = 0; i < listoffer.size(); i++) {
+                        String text = listoffer.get(i);
+                        if (text.equalsIgnoreCase(offerstring)) {
+                            offername = text;
+                        }
+                    }
 
                     try {
                         if (sale) {
                             tl_productList.addView(tr_header);
-                            getproductDetailsforSale(subcategoryname);
+                            getproductDetailsforSale(offername,subcategoryname,categoryname,brandname);
                             if(productDetailsArraylist.size() > 0) {
                                 for (int i = 0; i < productDetailsArraylist.size(); i++) {
                                     productModel = productDetailsArraylist.get(i);
@@ -389,6 +447,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                                         if (productModel.getBrand().equalsIgnoreCase(brandname)) {
                                             if (productModel.getCategory().equalsIgnoreCase(categoryname)) {
                                                 if (productModel.getSubCategory().equalsIgnoreCase(subcategoryname)) {
+                                                    if(productModel.getSingleOffer().equalsIgnoreCase(offername)){
                                                     //tl_productList.removeAllViews();
                                                     View tr = (TableRow) View.inflate(StockActivity.this, R.layout.inflate_stocksale_row, null);
 
@@ -411,10 +470,11 @@ public class StockActivity extends Activity implements View.OnClickListener {
                                                     spin.setAdapter(adapter);
 
                                                     tl_productList.addView(tr);
-                                                }else{
+                                                } else {
                                                     //tl_productList.removeAllViews();
                                                     //tl_productList.addView(tr_header);
                                                 }
+                                            }
                                             }
                                         }
                                     }
@@ -431,7 +491,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                         }else {
                             tl_productList.removeAllViews();
                             tl_productList.addView(tr_header);
-                            getproductsDetails(subcategoryname);
+                            getproductsDetails(offername,subcategoryname,categoryname,brandname);
 
                         }
 
@@ -455,69 +515,73 @@ public class StockActivity extends Activity implements View.OnClickListener {
                 if (brandstring != null && brandstring.length() > 0) {
                     if (categorystring != null && categorystring.length() > 0) {
                         if (subcategorystring != null && subcategorystring.length() > 0) {
+                            if (offerstring != null && offerstring.length() > 0) {
 
-                            for (int i = 1; i < tl_productList.getChildCount(); i++) {
-                                TableRow tr = (TableRow) tl_productList.getChildAt(i);
-                                CheckBox cb = (CheckBox) tr.getChildAt(0);
-                                if (cb.isChecked()) {
-                                    chckCount++;
-                                    break;
-                                }
-                            }
-
-                            if (chckCount == 0) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Please select atleast 1 product",
-                                        Toast.LENGTH_LONG).show();
-                            } else {
                                 for (int i = 1; i < tl_productList.getChildCount(); i++) {
                                     TableRow tr = (TableRow) tl_productList.getChildAt(i);
                                     CheckBox cb = (CheckBox) tr.getChildAt(0);
-                                    Spinner spin = (Spinner) tr.getChildAt(1);
                                     if (cb.isChecked()) {
-                                        liststockdbid.add(LOTUS.dbCon.fetchStockDbID(cb.getText().toString(), spin.getSelectedItem().toString(), subcategorystring));
-
+                                        chckCount++;
+                                        break;
                                     }
                                 }
-                                selectedproductArraylist = new ArrayList<>();
-                                for (int i = 0; i < liststockdbid.size(); i++) {
-                                    listCategory = new ArrayList<>();
-                                    String a_id = liststockdbid.get(i);
 
-                                    String where = " where A_Id = '" + a_id + "'";
+                                if (chckCount == 0) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Please select atleast 1 product",
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+                                    for (int i = 1; i < tl_productList.getChildCount(); i++) {
+                                        TableRow tr = (TableRow) tl_productList.getChildAt(i);
+                                        CheckBox cb = (CheckBox) tr.getChildAt(0);
+                                        Spinner spin = (Spinner) tr.getChildAt(1);
+                                        if (cb.isChecked()) {
+                                            liststockdbid.add(LOTUS.dbCon.fetchStockDbID(cb.getText().toString(), spin.getSelectedItem().toString(), offerstring));
 
-                                    Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_MASTERSYNC, where);
-                                    if (cursor != null && cursor.getCount() > 0) {
-                                        cursor.moveToFirst();
-                                        do {
-                                            productModel = new ProductModel();
-                                            productListModel = new ProductListModel();
-                                            productModel.setA_Id(cursor.getString(cursor.getColumnIndex("A_Id")));
-                                            productModel.setBarcodes(cursor.getString(cursor.getColumnIndex("Barcodes")));
-                                            productModel.setProductName(cursor.getString(cursor.getColumnIndex("ProductName")));
-                                            productModel.setPTT(cursor.getString(cursor.getColumnIndex("PTT")));
-                                            productModel.setSingleOffer(cursor.getString(cursor.getColumnIndex("SingleOffer")));
-                                            productModel.setSize(cursor.getString(cursor.getColumnIndex("size")));
-                                            productModel.setBrand(cursor.getString(cursor.getColumnIndex("Brand")));
-                                            productModel.setCategory(cursor.getString(cursor.getColumnIndex("Category")));
-                                            productModel.setSubCategory(cursor.getString(cursor.getColumnIndex("SubCategory")));
-                                            selectedproductArraylist.add(productModel);
-                                            productListModel.setProductListModels(selectedproductArraylist);
-
-                                        } while (cursor.moveToNext());
-                                        cursor.close();
+                                        }
                                     }
-                                }
-                                if(sale){
-                                    Intent intent = new Intent(StockActivity.this, SaleDetailsActivity.class);
-                                    intent.putExtra("Salelist", productListModel);
-                                    startActivity(intent);
-                                }else{
-                                    Intent intent = new Intent(StockActivity.this, StockAllActivity.class);
-                                    intent.putExtra("Stocklist", productListModel);
-                                    startActivity(intent);
-                                }
+                                    selectedproductArraylist = new ArrayList<>();
+                                    for (int i = 0; i < liststockdbid.size(); i++) {
+                                        listCategory = new ArrayList<>();
+                                        String a_id = liststockdbid.get(i);
 
+                                        String where = " where A_Id = '" + a_id + "'";
+
+                                        Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_MASTERSYNC, where);
+                                        if (cursor != null && cursor.getCount() > 0) {
+                                            cursor.moveToFirst();
+                                            do {
+                                                productModel = new ProductModel();
+                                                productListModel = new ProductListModel();
+                                                productModel.setA_Id(cursor.getString(cursor.getColumnIndex("A_Id")));
+                                                productModel.setBarcodes(cursor.getString(cursor.getColumnIndex("Barcodes")));
+                                                productModel.setProductName(cursor.getString(cursor.getColumnIndex("ProductName")));
+                                                productModel.setPTT(cursor.getString(cursor.getColumnIndex("PTT")));
+                                                productModel.setSingleOffer(cursor.getString(cursor.getColumnIndex("SingleOffer")));
+                                                productModel.setSize(cursor.getString(cursor.getColumnIndex("size")));
+                                                productModel.setBrand(cursor.getString(cursor.getColumnIndex("Brand")));
+                                                productModel.setCategory(cursor.getString(cursor.getColumnIndex("Category")));
+                                                productModel.setSubCategory(cursor.getString(cursor.getColumnIndex("SubCategory")));
+                                                selectedproductArraylist.add(productModel);
+                                                productListModel.setProductListModels(selectedproductArraylist);
+
+                                            } while (cursor.moveToNext());
+                                            cursor.close();
+                                        }
+                                    }
+                                    if (sale) {
+                                        Intent intent = new Intent(StockActivity.this, SaleDetailsActivity.class);
+                                        intent.putExtra("Salelist", productListModel);
+                                        startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(StockActivity.this, StockAllActivity.class);
+                                        intent.putExtra("Stocklist", productListModel);
+                                        startActivity(intent);
+                                    }
+
+                                }
+                            }else{
+                                cd.displayMessage("Please select Offer");
                             }
 
                         } else {
@@ -617,12 +681,12 @@ public class StockActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void fetchSubCategoryDetails(String categoryname) {
+    private void fetchSubCategoryDetails(String brandname,String categoryname) {
         try {
             listSubCategory = new ArrayList<>();
             String subcategory = "";
             String SubCategory = "SubCategory";
-            String where = " where Category = " + "'" + categoryname + "'";
+            String where = " where Category = " + "'" + categoryname + "' AND Brand = " + "'" + brandname + "'";
             Cursor cursor = LOTUS.dbCon.fetchFromSelectDistinctWhere(SubCategory, DbHelper.TABLE_MASTERSYNC, where);
 
             if (cursor != null && cursor.getCount() > 0) {
@@ -670,11 +734,65 @@ public class StockActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void getproductDetailsforSale(String subcategoryname){
+    private void fetchOfferDetails(String brandname,String categoryname,String subcategoryname) {
+        try {
+            listoffer = new ArrayList<>();
+            String offer = "";
+            String Offer = "SingleOffer";
+            String where = " where SubCategory = " + "'" + subcategoryname + "' AND Brand = " + "'" + brandname + "' AND Category = " + "'" + categoryname + "'";
+            Cursor cursor = LOTUS.dbCon.fetchFromSelectDistinctWhere(Offer, DbHelper.TABLE_MASTERSYNC, where);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                do {
+                    offer = cursor.getString(cursor.getColumnIndex("SingleOffer"));
+                    listoffer.add(offer);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            Collections.sort(listoffer);
+            if (listoffer.size() > 0) {
+                strOfferArray = new String[listoffer.size()];
+                for (int i = 0; i < listoffer.size(); i++) {
+                    strOfferArray[i] = listoffer.get(i);
+                }
+            }
+            if (listoffer != null && listoffer.size() > 0) {
+                ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strOfferArray) {
+                    @Override
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View v = null;
+                        // If this is the initial dummy entry, make it hidden
+                        if (position == 0) {
+                            TextView tv = new TextView(getContext());
+                            tv.setHeight(0);
+                            tv.setVisibility(View.GONE);
+                            v = tv;
+                        } else {
+                            // Pass convertView as null to prevent reuse of special case views
+                            v = super.getDropDownView(position, null, parent);
+                        }
+                        // Hide scroll bar because it appears sometimes unnecessarily, this does not prevent scrolling
+                        parent.setVerticalScrollBarEnabled(false);
+                        return v;
+                    }
+                };
+
+                adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                offerAuto.setAdapter(adapter1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getproductDetailsforSale(String Offername,String Subcategoryname,String Categoryname,String Brandname){
         try {
             productDetailsArraylist = new ArrayList<>();
 
-            String where = " where SubCategory = " + "'" + subcategoryname + "' AND outletcode = " + "'" + outletcode + "'";
+            String where = " where SingleOffer = " + "'" + Offername + "' AND SubCategory = " + "'" + Subcategoryname +
+                    "' AND Category = " + "'" + Categoryname + "' AND Brand = " + Brandname + "'";
             //Cursor cursor = LOTUS.dbCon.fetchFromSelectDistinctWheremultiplecolumn(A_Id, Barcodes, ProductName, PTT, SingleOffer, size, DbHelper.TABLE_MASTERSYNC, where);
             Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_STOCK,where);
             if (cursor != null && cursor.getCount() > 0) {
@@ -689,6 +807,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     productModel.setBrand(cursor.getString(cursor.getColumnIndex("Brand")));
                     productModel.setCategory(cursor.getString(cursor.getColumnIndex("Category")));
                     productModel.setSubCategory(cursor.getString(cursor.getColumnIndex("SubCategory")));
+                    productModel.setSingleOffer(cursor.getString(cursor.getColumnIndex("SingleOffer")));
                     productDetailsArraylist.add(productModel);
                 } while (cursor.moveToNext());
                 cursor.close();
@@ -698,7 +817,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void getproductsDetails(String subcategoryname) {
+    private void getproductsDetails(String Offername,String Subcategoryname,String Categoryname,String Brandname) {
         try {
             productDetailsArraylist = new ArrayList<>();
 
@@ -708,7 +827,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
             String PTT = "PTT";
             String SingleOffer = "SingleOffer";
             String size = "size";
-            String where = " where SubCategory = " + "'" + subcategoryname + "'";
+            String where = " where SingleOffer = " + "'" + Offername + "' AND SubCategory = " + "'" + Subcategoryname + "' AND Category = " + "'" + Categoryname + "' AND Brand = " + "'" + Brandname + "'";
             Cursor cursor = LOTUS.dbCon.fetchFromSelectDistinctWheremultiplecolumn(A_Id, Barcodes, ProductName, PTT, SingleOffer, size, DbHelper.TABLE_MASTERSYNC, where);
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();

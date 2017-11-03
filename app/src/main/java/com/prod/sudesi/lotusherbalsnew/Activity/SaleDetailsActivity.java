@@ -9,7 +9,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
+import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 
 import java.text.SimpleDateFormat;
@@ -114,6 +117,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         btn_back.setOnClickListener(this);
         btn_home.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+        edt_gross.setOnClickListener(this);
+        edt_netamt.setOnClickListener(this);
 
 
         productModel = new ProductModel();
@@ -153,12 +158,83 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
             }
         }
+        edt_discount.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+
+                edt_netamt.setText("");
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
+
+            case R.id.edt_gross:
+                try {
+                    Float total = 0.0f;
+                    for (int i = 0; i < tablel_sale_calculation.getChildCount(); i++) {
+
+                        TableRow t = (TableRow) tablel_sale_calculation.getChildAt(i);
+
+                        EditText edt_qty = (EditText) t.getChildAt(1);
+                        TextView tv_mrp = (TextView) t.getChildAt(2);
+                        Float int_quantity, int_mrp;
+
+                        if (!edt_qty.getText().toString().equals(""))
+                        {
+                            int_quantity = Float.parseFloat(edt_qty
+                                    .getText().toString().trim());
+                            int_mrp = Float.parseFloat(tv_mrp.getText()
+                                    .toString());
+                            Float multiply = int_quantity * int_mrp;
+                            total = total + multiply;
+                            edt_gross.setText(String.valueOf(total));
+                        }
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                break;
+
+            case R.id.edt_netamt:
+
+                if (edt_gross.getText().toString().equals("")) {
+
+                } else if (edt_discount.getText().toString().equals("")) {
+                    edt_netamt.setText(edt_gross.getText().toString());
+                } else if (!edt_gross.getText().toString().equals("")
+                        && !edt_discount.getText().toString()
+                        .equals("")) {
+                    Float gross = Float.parseFloat(edt_gross.getText()
+                            .toString());
+                    Float discount = Float.parseFloat(edt_discount
+                            .getText().toString());
+
+                    String str_net = String.valueOf(gross - discount);
+
+                    edt_netamt.setText(str_net);
+
+                }
+                break;
             case R.id.btn_home:
                 v.startAnimation(AnimationUtils.loadAnimation(SaleDetailsActivity.this, R.anim.button_click));
                 Intent i = new Intent(getApplicationContext(),
@@ -176,7 +252,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                 break;
 
-            case R.id.btn_save:
+            case R.id.btn_save_sale:
 
                 try {
                     int etcount = 0;
@@ -227,16 +303,25 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                             String tablecount = String.valueOf(tablel_sale_calculation
                                     .getChildCount());
 
-                            float ttt = Float.parseFloat(tablecount);
+                            float a = 0.0f;
+                            try {
+                                if(dis==0.0f){
+                                    a = dis;
+                                }else {
+                                    float ttt = Float.parseFloat(tablecount);
 
-                            float a1 = dis / (ttt - 1);
-                            String adis = String.format("%.02f", a1);
-                            float a = Float.parseFloat(adis);
+                                    float a1 = dis / (ttt - 1);
+                                    String adis = String.format("%.02f", a1);
+                                    a = Float.parseFloat(adis);
+                                }
 
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
                             float disss = 0;
                             float net1;
 
-                            if (tablel_sale_calculation.getChildCount() != 1) {
+                            if (tablel_sale_calculation.getChildCount() > 0) {
                                 for (int k = 0, j = 0; k < tablel_sale_calculation.getChildCount() && newproductDetailsArraylist.size() > 0; k++, j++) {
 
                                     TableRow t = (TableRow) tablel_sale_calculation
@@ -282,7 +367,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                         str_stockreceived = cur.getString(cur.getColumnIndex("stock_received"));
                                         str_stockinhand = cur.getString(cur.getColumnIndex("stock_in_hand"));
 
-                                        boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", str_openingstock);
+                                        boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", str_stockreceived);
 
                                         if (boo == true) {
 
@@ -300,6 +385,19 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                             i_sold = i_sold + Integer.parseInt(edt_qty.getText().toString());
                                             Log.e("new sold", String.valueOf(i_sold));
+
+                                            int i_stokreceive = 0;
+                                            if (str_stockreceived != null) {
+                                                if (str_stockreceived.trim().equalsIgnoreCase("0")
+                                                        || str_stockreceived.trim().equalsIgnoreCase("")) {
+
+                                                    i_stokreceive = 0;
+
+                                                } else {
+                                                    i_stokreceive = Integer.parseInt(str_stockreceived.trim());
+                                                }
+                                            }
+                                            Log.e("i_stokinhand", String.valueOf(i_stokreceive));
 
                                             int i_stokinhand = 0;
                                             if (str_stockinhand != null) {
@@ -432,6 +530,28 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                             String check_timestamp = insert_timestamps[0];
 
+                                            String price = tv_mrp.getText().toString()
+                                                    .trim();
+
+                                            if (price.equalsIgnoreCase("")) {
+                                                price = "0";
+                                            }
+
+
+                                            String selection = "A_id = ? AND outletcode = ?";
+                                            // WHERE clause arguments
+                                            String[] selectionArgs = {A_Id,outletcode};
+
+                                            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, ProductName, price, size, username,
+                                                    str_openingstock, String.valueOf(i_stokreceive), String.valueOf(i_stokinhand),
+                                                    String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross),String.valueOf(net1),
+                                                    String.valueOf(disss),"0",insert_timestamp, insert_timestamp,
+                                                    month_name,year_name,insert_timestamp,outletcode};
+                                            boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, selection, valuesArray, utils.columnNamesStock, selectionArgs);
+
+                                            if (output) {
+                                                count++;
+                                            }
 
                                         }
 
@@ -440,16 +560,92 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                     }
 
                                 }
+
+                                if (count == tablel_sale_calculation.getChildCount()) {
+
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SaleDetailsActivity.this);
+
+                                    // set title
+                                    alertDialogBuilder.setTitle("Saved Successfully!!");
+
+                                    // set dialog message
+                                    alertDialogBuilder
+                                            .setMessage("Go  TO  :")
+                                            .setCancelable(false)
+                                            .setNegativeButton(
+                                                    "Stock Page",
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(
+                                                                DialogInterface dialog,
+                                                                int id) {
+
+                                                            dialog.cancel();
+                                                            finish();
+                                                            startActivity(new Intent(SaleDetailsActivity.this,StockActivity.class));
+
+                                                        }
+                                                    })
+
+                                            .setPositiveButton(
+                                                    "Home",
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(
+                                                                DialogInterface dialog,
+                                                                int id) {
+
+                                                            dialog.cancel();
+                                                            finish();
+                                                            startActivity(new Intent(SaleDetailsActivity.this, DashBoardActivity.class));
+
+                                                        }
+                                                    });
+
+                                    // create alert dialog
+                                    AlertDialog alertDialog = alertDialogBuilder
+                                            .create();
+
+                                    // show it
+                                    alertDialog.show();
+                                }
+
+                                else {
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                            SaleDetailsActivity.this);
+
+                                    // set title
+                                    alertDialogBuilder
+                                            .setTitle("Data Not Saved!!!");
+
+                                    // set dialog message
+                                    alertDialogBuilder
+                                            .setMessage(
+                                                    "Please check the available stock for specified products")
+                                            .setCancelable(false)
+                                            .setNegativeButton(
+                                                    "OK",
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(
+                                                                DialogInterface dialog,
+                                                                int id) {
+
+                                                            dialog.cancel();
+                                                            finish();
+                                                            startActivity(new Intent(SaleDetailsActivity.this,StockActivity.class));
+
+                                                        }
+                                                    });
+
+                                    // create alert dialog
+                                    AlertDialog alertDialog = alertDialogBuilder
+                                            .create();
+
+                                    // show it
+                                    alertDialog.show();
+                                }
                             }
 
 
                         }
-                        /*if (tablel_sale_calculation.getChildCount() >0) {
-
-                            //count = saveData();
-
-                        }
-                        showAlertDialog(count);*/
 
                     } else {
 
@@ -462,7 +658,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                 break;
 
-            case R.id.btn_back:
+            case R.id.btn_back_sale:
                 v.startAnimation(AnimationUtils.loadAnimation(SaleDetailsActivity.this, R.anim.button_click));
                 finish();
                 startActivity(new Intent(SaleDetailsActivity.this,
