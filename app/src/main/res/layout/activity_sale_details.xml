@@ -152,6 +152,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Gross Total"
+                        android:textColorHint="@android:color/white"
+                        android:textColor="@android:color/white"
                         android:focusable="false"
                         android:windowSoftInputMode="stateHidden"/>
 
@@ -175,8 +177,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Discount"
+                        android:text="0"
+                        android:textColorHint="@android:color/white"
                         android:inputType="number"
-                        android:text="0" />
+                        android:textColor="@android:color/white"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -198,6 +202,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Net Total"
+                        android:textColorHint="@android:color/white"
+                        android:textColor="@android:color/white"
                         android:focusable="false"
                         android:windowSoftInputMode="stateHidden"/>
 

@@ -55,6 +55,10 @@
 
     </RadioGroup>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:id="@+id/stock_salelayout"
         android:layout_width="match_parent"
@@ -314,9 +318,12 @@
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_40sdp"
             android:background="@drawable/proceed"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            android:layout_marginBottom="@dimen/_20sdp"/>
 
 
     </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

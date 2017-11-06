@@ -27,6 +27,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TABLE_OUTLET_ATTENDANCE = "outlet_attendance";
     public static final String TABLE_STOCK = "table_stock";
     public static final String TABLE_DASHBOARD_DETAILS = "table_dashboard_details";
+    public static final String TABLE_BAYEARREPORT_DETAILS = "table_ba_year_report";
 
     public static final int DATABASE_VERSION = 1;
     private static DbHelper dbInstance = null;

@@ -3,6 +3,8 @@ package com.prod.sudesi.lotusherbalsnew.Activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +60,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import io.nlopez.smartlocation.SmartLocation;
+
 public class LoginActivity extends Activity {
 
     Button btn_login;
@@ -67,7 +72,7 @@ public class LoginActivity extends Activity {
     ConnectionDetector cd;
     Context context;
     LotusWebservice service;
-    String month, year, deviceId, username, pass,version,baname,serverdate,attendant;
+    String month, year, deviceId, username, pass, version, baname, serverdate, attendant;
     String server_date, todaydate1;
 
     private static final int RECORD_REQUEST_CODE = 101;
@@ -122,9 +127,6 @@ public class LoginActivity extends Activity {
 
         exportDB();
 
-        //  Getting location info
-        refreshDisplay();
-
         // Login btn setonclicklistner
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,11 +134,11 @@ public class LoginActivity extends Activity {
                 v.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this, R.anim.button_click));
                 try {
 
-                   /* if (sp.getBoolean("Upload_data_flag", true) == true) {
-                        Log.e("Upload Data Receivert", String.valueOf(sp.getBoolean("Upload_data_flag_true", true)));
+                    if (sharedPref.getvalue() == true) {
+                        Log.e("Upload Data Receivert", String.valueOf(sharedPref.getvalue()));
                     } else {
-                        //  DataUploadAlaramReceiver();
-                    }*/
+                        DataUploadAlaramReceiver();
+                    }
 
                     if (edt_username.getText().toString().equalsIgnoreCase("")) {
                         edt_username.setError(null);
@@ -166,10 +168,10 @@ public class LoginActivity extends Activity {
 
                             if (attendance.equalsIgnoreCase("")) {
 
-                               if (cd.isConnectingToInternet()) {
+                                if (cd.isConnectingToInternet()) {
                                     Check_Login login = new Check_Login();
                                     login.execute();
-                                }  else {
+                                } else {
                                     cd.displayMessage("Time out or No Network or Wrong Credentials");
 
                                 }
@@ -201,7 +203,7 @@ public class LoginActivity extends Activity {
                                 if (cd.isConnectingToInternet()) {
                                     Check_Login login = new Check_Login();
                                     login.execute();
-                                }  else {
+                                } else {
                                     cd.displayMessage("Time out or No Network or Wrong Credentials");
                                 }
                             }
@@ -241,31 +243,35 @@ public class LoginActivity extends Activity {
         }
     }
 
-    //    Permissions marshmallow
-    protected void makeRequest() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION
-                        , Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS},
-                RECORD_REQUEST_CODE);
-    }
 
+    private void DataUploadAlaramReceiver() {
 
-    private void refreshDisplay() {
-        refreshDisplay(new LocationInfo(context));
-    }
+        try {
+            Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
+            // create the object
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+           /* Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());*/
 
-    private void refreshDisplay(final LocationInfo locationInfo) {
-        if (locationInfo.anyLocationDataReceived()) {
-            lat = locationInfo.lastLat;
-            lon = locationInfo.lastLong;
-            logCounter = 1;
-        } else {
-            cd.displayMessage("Unable to get GPS location! Try again later!!");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 24);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            //set the alarm for particular time
+            //1000 * 60 * 180
+            //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 180, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 300000 , PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
 
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -273,24 +279,6 @@ public class LoginActivity extends Activity {
         super.onBackPressed();
         finish();
     }
-
-   /* private void DataUploadAlaramReceiver() {
-
-        try {
-            Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
-            // create the object
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            //set the alarm for particular time
-            //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 180, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }*/
-
 
     private void insertDataInDb() {
         try {
@@ -329,22 +317,20 @@ public class LoginActivity extends Activity {
                 if (attendant.equalsIgnoreCase("True")) {
 
 
-           /* if (sp.getBoolean("Upload_data_flag", false) == false) {
-                Log.e("Upload Data Receiver", String.valueOf(sp.getBoolean("Upload_data_flag", true)));
-                DataUploadAlaramReceiver();
-                spe.putBoolean("Upload_data_flag", true);
-                spe.commit();
+                    if (sharedPref.getvalue() == false) {
+                        DataUploadAlaramReceiver();
+                        sharedPref.setKeyNodata(true);
 
-            } else {
+                    } else {
 
-            }*/
+                    }
 
                     Intent i = new Intent(getApplicationContext(), AttendanceActivity.class);
                     i.putExtra("FromLoginpage", "L");
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
 
-                }else{
+                } else {
                     Intent i = new Intent(getApplicationContext(),
                             DashBoardActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -402,7 +388,7 @@ public class LoginActivity extends Activity {
 
             try {
                 PackageInfo pInfo = manager.getPackageInfo(getPackageName(), 0);
-                 version = pInfo.versionName;
+                version = pInfo.versionName;
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
@@ -433,7 +419,7 @@ public class LoginActivity extends Activity {
                         SoapObject res = (SoapObject) soapObject.getProperty(0);
                         String result = res.getPropertyAsString("Flag");
                         String message = res.getPropertyAsString("Message");
-                        attendant= res.getPropertyAsString("attendance");
+                        attendant = res.getPropertyAsString("attendance");
 
                         if (result.equalsIgnoreCase("True")) {
                             cd.displayMessage("You have login successfully..!");
@@ -459,7 +445,7 @@ public class LoginActivity extends Activity {
                             SimpleDateFormat sdf = new SimpleDateFormat(
                                     "dd-MM-yyyy", Locale.ENGLISH);
 
-                           // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
+                            // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
 
                             Date curntdte = null;
                             try {
@@ -471,16 +457,16 @@ public class LoginActivity extends Activity {
 
                             sdf.applyPattern("yyyy-MM-dd");
                             todaydate1 = sdf.format(curntdte);
-                           sharedPref.setDateDetails(currentyear,serverdate,todaydate1);
+                            sharedPref.setDateDetails(currentyear, serverdate, todaydate1);
                             insertDataInDb();
 
                         } else {
-                            if(message.equalsIgnoreCase("Username is incorrect")||
-                                    message.equalsIgnoreCase("Password is incorrect")){
+                            if (message.equalsIgnoreCase("Username is incorrect") ||
+                                    message.equalsIgnoreCase("Password is incorrect")) {
                                 cd.displayMessage("Username or password is incorrect");
-                            }else if(message.equalsIgnoreCase("Update Version")){
-                               cd.displayMessage("Please Update to Newer Version!");
-                            }else if(message.equalsIgnoreCase("Activation Key expired")){
+                            } else if (message.equalsIgnoreCase("Update Version")) {
+                                cd.displayMessage("Please Update to Newer Version!");
+                            } else if (message.equalsIgnoreCase("Activation Key expired")) {
                                 cd.displayMessage("Activation Key expired");
                             }
 
@@ -514,7 +500,7 @@ public class LoginActivity extends Activity {
                         cd.displayMessage("Soup is Null While GetLogin()");
 
                     }
-                }else{
+                } else {
                     final Calendar calendar = Calendar.getInstance();
                     SimpleDateFormat formatter = new SimpleDateFormat(
                             "MM/dd/yyyy HH:mm:ss");

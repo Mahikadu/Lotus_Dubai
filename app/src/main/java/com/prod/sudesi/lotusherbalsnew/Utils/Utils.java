@@ -15,6 +15,7 @@ public class Utils {
     public String[] columnNamesOutletAttendance= new String[50];
     public String[] columnNamesStock= new String[50];
     public String[] columnNamesDashboardDetails= new String[50];
+    public String[] columnNamesBAyearReport= new String[50];
 
 
     private Context mContext;
@@ -40,7 +41,7 @@ public class Utils {
         String[] outletAttendanceArray = {"BA_id","Adate","Actual_date","lat","lon","outletcode","outletname","outletstatus","savedServer"};
         columnNamesOutletAttendance = Arrays.copyOf(outletAttendanceArray, outletAttendanceArray.length);
 
-        String[] stockArray = {"A_id","Barcodes","Brand","Category","SubCategory",
+        String[] stockArray = {"A_id","Barcodes","Brand","Category","SubCategory","SingleOffer",
                 "ProductName","PTT","size","ba_code","opening_stock","stock_received","stock_in_hand","close_bal",
         "sold_stock","total_gross_amount","total_net_amount","discount","savedServer","insert_date",
         "last_modified_date","month","year","updateDate","outletcode"};
@@ -48,6 +49,10 @@ public class Utils {
 
         String[] dashboardDetailsArray = {"Date","SoldQty","Soldvalue"};
         columnNamesDashboardDetails = Arrays.copyOf(dashboardDetailsArray, dashboardDetailsArray.length);
+
+        String[] bayearreportArray = {"GrowthCSkin","GrowthPSkin","Message","NetAmountCSkin","NetAmountPSkin","years_MonthsC",
+                "years_MonthsP"};
+        columnNamesBAyearReport = Arrays.copyOf(bayearreportArray, bayearreportArray.length);
 
 
 

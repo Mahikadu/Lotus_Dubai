@@ -792,7 +792,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
             productDetailsArraylist = new ArrayList<>();
 
             String where = " where SingleOffer = " + "'" + Offername + "' AND SubCategory = " + "'" + Subcategoryname +
-                    "' AND Category = " + "'" + Categoryname + "' AND Brand = " + Brandname + "'";
+                    "' AND Category = " + "'" + Categoryname + "' AND Brand = " + "'" + Brandname + "'";
             //Cursor cursor = LOTUS.dbCon.fetchFromSelectDistinctWheremultiplecolumn(A_Id, Barcodes, ProductName, PTT, SingleOffer, size, DbHelper.TABLE_MASTERSYNC, where);
             Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_STOCK,where);
             if (cursor != null && cursor.getCount() > 0) {

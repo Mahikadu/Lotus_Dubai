@@ -9,23 +9,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.prod.sudesi.lotusherbalsnew.Models.DashboardDetailsModel;
-import com.prod.sudesi.lotusherbalsnew.Models.OutletModel;
-import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
@@ -42,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,7 +58,6 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
     String strDate, strSoldQty, strSoldvalue;
     private Utils utils;
     TableLayout tl_cumulative;
-    DashboardDetailsModel dashboardDetailsModel;
 
 
     @Override
@@ -83,6 +74,8 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
         sharedPref = new SharedPref(context);
         prgdialog = new ProgressDialog(context);
         utils = new Utils(context);
+
+        service = new LotusWebservice(context);
 
 
         txtboc = (TextView) findViewById(R.id.txt_boc);
@@ -115,7 +108,6 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         try {
 
-
             startdate = format.parse(getStartEnd(str_Month, year)[0]);
             enddate = format.parse(getStartEnd(str_Month, year)[1]);
 
@@ -144,6 +136,9 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        DashbardData dashbardData = new DashbardData();
+        dashbardData.execute();
 
 
     }
@@ -261,7 +256,50 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
 
                     if (outletcode != null || outletcode != "") {
 
+                        //2017-11-01   2017-11-30  9999
                         results = service.GetDashboardData(startdate[0], startdate[1], outletcode, username);
+
+                        for (int i = 0; i < results.getPropertyCount(); i++) {
+
+                            SoapObject root = (SoapObject) results.getProperty(i);
+
+                            if (root.getPropertyAsString("Date") != null) {
+
+                                if (!root.getPropertyAsString("Date").equalsIgnoreCase("anyType{}")) {
+                                    strDate = root.getPropertyAsString("Date");
+                                } else {
+                                    strDate = "";
+                                }
+                            } else {
+                                strDate = "";
+                            }
+
+                            if (root.getPropertyAsString("SoldQty") != null) {
+
+                                if (!root.getPropertyAsString("SoldQty").equalsIgnoreCase("anyType{}")) {
+                                    strSoldQty = root.getPropertyAsString("SoldQty");
+                                } else {
+                                    strSoldQty = "";
+                                }
+                            } else {
+                                strSoldQty = "";
+                            }
+
+                            if (root.getPropertyAsString("Soldvalue") != null) {
+
+                                if (!root.getPropertyAsString("Soldvalue").equalsIgnoreCase("anyType{}")) {
+                                    strSoldvalue = root.getPropertyAsString("Soldvalue");
+                                } else {
+                                    strSoldvalue = "";
+                                }
+                            } else {
+                                strSoldvalue = "";
+                            }
+
+                            String valuesArray[] = {strDate, strSoldQty, strSoldvalue};
+                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_DASHBOARD_DETAILS, " Date = ?", valuesArray, utils.columnNamesDashboardDetails, new String[]{strDate});
+
+                        }
 
                     } else {
 
@@ -308,84 +346,78 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
             prgdialog.dismiss();
 
             if (soapObject != null) {
-                for (int i = 0; i < soapObject.getPropertyCount(); i++) {
 
-                    SoapObject root = (SoapObject) soapObject.getProperty(i);
+                try {
 
-                    if (root.getPropertyAsString("Date ") != null) {
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "yyyy-MM-dd");
+                    String insert_timestamp = sdf.format(cal
+                            .getTime());
 
-                        if (!root.getPropertyAsString("Date ").equalsIgnoreCase("anyType{}")) {
-                            strDate = root.getPropertyAsString("Date ");
-                        } else {
-                            strDate = "";
-                        }
-                    } else {
-                        strDate = "";
-                    }
+                    String[] items1 = insert_timestamp.split("-");
+                    String Month = items1[1];
 
-                    if (root.getPropertyAsString("SoldQty  ") != null) {
+                    String whereclause = " where Date like '%-" + Month + "-%'";
+                    LOTUS.dbCon.open();
+                    Cursor c = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_DASHBOARD_DETAILS, whereclause);
+                    tl_cumulative.removeAllViews();
+                    if (c != null && c.getCount() > 0) {
 
-                        if (!root.getPropertyAsString("SoldQty  ").equalsIgnoreCase("anyType{}")) {
-                            strSoldQty = root.getPropertyAsString("SoldQty  ");
-                        } else {
-                            strSoldQty = "";
-                        }
-                    } else {
-                        strSoldQty = "";
-                    }
+                        c.moveToFirst();
+                        do {
+                            String date = String.valueOf(c.getString(c.getColumnIndex("Date")));
+                            String qty = String.valueOf(c.getString(c.getColumnIndex("SoldQty")));
+                            String value = String.valueOf(c.getString(c.getColumnIndex("Soldvalue")));
 
-                    if (root.getPropertyAsString("Soldvalue   ") != null) {
 
-                        if (!root.getPropertyAsString("Soldvalue   ").equalsIgnoreCase("anyType{}")) {
-                            strSoldvalue = root.getPropertyAsString("Soldvalue   ");
-                        } else {
-                            strSoldvalue = "";
-                        }
-                    } else {
-                        strSoldvalue = "";
-                    }
+                            View tr = (TableRow) View.inflate(BocCumulativeDashboardActivity.this,
+                                    R.layout.inflate_commulative_row, null);
 
-                    String valuesArray[] = {strDate, strSoldQty, strSoldvalue};
-                    long rowid = LOTUS.dbCon.insert(DbHelper.TABLE_DASHBOARD_DETAILS, valuesArray, utils.columnNamesDashboardDetails);
-
-                    if (rowid > 0) {
-
-                        try {
-                            LOTUS.dbCon.open();
-                            Cursor c = LOTUS.dbCon.fetchAll(DbHelper.TABLE_DASHBOARD_DETAILS);
-                            if (c != null && c.getCount() > 0) {
-                                c.moveToFirst();
-                                do {
-                                    dashboardDetailsModel = new DashboardDetailsModel();
-                                    dashboardDetailsModel.setStrDate(c.getString(c.getColumnIndex("Date")));
-                                    dashboardDetailsModel.setStrSoldQty(c.getString(c.getColumnIndex("SoldQty")));
-                                    dashboardDetailsModel.setStrSoldvalue(c.getString(c.getColumnIndex("Soldvalue")));
-
-                                    View tr = (TableRow) View.inflate(BocCumulativeDashboardActivity.this,
-                                            R.layout.inflate_commulative_row, null);
-
-                                    TextView txtdate = (TextView) tr.findViewById(R.id.txtdate);
-                                    TextView txtsaleValue = (TextView) tr.findViewById(R.id.txtvalue);
-                                    TextView txtsaleUnit = (TextView) tr.findViewById(R.id.txtunit);
+                            TextView txtdate = (TextView) tr.findViewById(R.id.txtdate);
+                            TextView txtsaleValue = (TextView) tr.findViewById(R.id.txtvalue);
+                            TextView txtsaleUnit = (TextView) tr.findViewById(R.id.txtunit);
 //
 
-                                    txtdate.setText(dashboardDetailsModel.getStrDate());
-                                    txtsaleValue.setText(dashboardDetailsModel.getStrSoldvalue());
-                                    txtsaleUnit.setText(dashboardDetailsModel.getStrSoldQty());
+                            txtdate.setText(date);
+                            txtsaleValue.setText(qty);
+                            txtsaleUnit.setText(value);
 
-                                    tl_cumulative.addView(tr);
+                            tl_cumulative.addView(tr);
 
-                                } while (c.moveToNext());
-                            }
-                            LOTUS.dbCon.close();
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-
+                        } while (c.moveToNext());
                     }
+                    LOTUS.dbCon.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            }else{
+                final Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat formatter = new SimpleDateFormat(
+                        "MM/dd/yyyy HH:mm:ss");
+                String Createddate = formatter.format(calendar
+                        .getTime());
+
+                int n = Thread.currentThread().getStackTrace()[2]
+                        .getLineNumber();
+
+                LOTUS.dbCon.open();
+
+                int id = 0;
+                id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                String selection = "ID = ?";
+                String ID = String.valueOf(id);
+                // WHERE clause arguments
+                String[] selectionArgs = {ID};
+
+                String valuesArray[] = {ID, "Soup is Null While GetDashboardData()", String.valueOf(n), "GetDashboardData()",
+                        Createddate, Createddate, sharedPref.getLoginId(), "Get Dashboard Data", "Fail"};
+                boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                LOTUS.dbCon.close();
+                cd.displayMessage("Soup is Null While GetDashboardData()");
             }
 
         }

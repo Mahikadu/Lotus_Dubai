@@ -378,6 +378,7 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
             String Brand = productModel.getBrand();
             String Category = productModel.getCategory();
             String SubCategory = productModel.getSubCategory();
+            String SingleOffer = productModel.getSingleOffer();
             String ProductName = productModel.getProductName();
 
             String s = getLastInsertIDofStock1(A_Id, outletcode);
@@ -484,7 +485,7 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
             // WHERE clause arguments
             String[] selectionArgs = {A_Id,outletcode};
 
-            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, ProductName, price, size, username,
+            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                     str_openingstock, String.valueOf(new_fresh_stock), String.valueOf(stock_in_hand),
                      String.valueOf(closing_stock), soldstock, "0", "0", "0","0",insert_timestamp, insert_timestamp,
                     month_name,year_name,insert_timestamp,outletcode};

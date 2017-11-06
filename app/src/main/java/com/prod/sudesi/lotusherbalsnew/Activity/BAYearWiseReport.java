@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +19,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.prod.sudesi.lotusherbalsnew.Models.BAYearWiseModel;
 import com.prod.sudesi.lotusherbalsnew.Models.OutletModel;
+import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
+import com.prod.sudesi.lotusherbalsnew.adapter.BAYearWiseReportAdapter;
 import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
+import org.ksoap2.serialization.SoapObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created by Admin on 04-11-2017.
@@ -54,6 +66,12 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     String outletCode = "";
     String outletName = "";
 
+    private ArrayList<BAYearWiseModel> bayearDetailsArraylist;
+    BAYearWiseModel baYearWiseModel;
+    ListView lv_ba_report;
+    String GrowthCSkin,GrowthPSkin,Message,NetAmountCSkin,NetAmountPSkin,years_MonthsC,years_MonthsP;
+    private BAYearWiseReportAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +92,8 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
         username = sharedPref.getLoginId();
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         tv_h_username.setText(username);
+
+        lv_ba_report = (ListView) findViewById(R.id.listView_ba_year_report);
 
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
@@ -127,7 +147,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
         sp_outletName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String text = "",outletcode = "";
+                String text = "", outletcode = "";
                 if (strOutletArray != null && strOutletArray.length > 0) {
 
                     outletstring = parent.getItemAtPosition(position).toString();
@@ -141,9 +161,8 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
                     }
 
                     if (text != null && text.length() > 0) {
-                        /*ReportActivity.ShowReportofStock showReportofStock = new ReportActivity.ShowReportofStock();
-                        showReportofStock.execute(outletCode);*/
-                    }else{
+                        new GetBAYearWisereport().execute();
+                    } else {
                         cd.displayMessage("Please Select outlet");
                     }
 
@@ -197,6 +216,198 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public class GetBAYearWisereport extends AsyncTask<Void, Void, SoapObject> {
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            prgdialog.setMessage("Please Wait...");
+            prgdialog.show();
+            prgdialog.setCancelable(false);
+        }
+
+        @Override
+        protected SoapObject doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+
+            SoapObject result = null;
+            try {
+                if (cd.isConnectingToInternet()) {
+
+                    result = service.BAOutletSale(username,outletCode);
+
+                    if (result != null) {
+                        for (int i = 0; i < result.getPropertyCount(); i++) {
+
+                            SoapObject root = (SoapObject) result.getProperty(i);
+
+                            if (root.getPropertyAsString("GrowthCSkin") != null) {
+
+                                if (!root.getPropertyAsString("GrowthCSkin").equalsIgnoreCase("anyType{}")) {
+                                    GrowthCSkin = root.getPropertyAsString("GrowthCSkin");
+                                } else {
+                                    GrowthCSkin = "";
+                                }
+                            } else {
+                                GrowthCSkin = "";
+                            }
+
+                            if (root.getPropertyAsString("GrowthPSkin") != null) {
+
+                                if (!root.getPropertyAsString("GrowthPSkin").equalsIgnoreCase("anyType{}")) {
+                                    GrowthPSkin = root.getPropertyAsString("GrowthPSkin");
+                                } else {
+                                    GrowthPSkin = "";
+                                }
+                            } else {
+                                GrowthPSkin = "";
+                            }
+
+                            if (root.getPropertyAsString("Message") != null) {
+
+                                if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
+                                    Message = root.getPropertyAsString("Message");
+                                } else {
+                                    Message = "";
+                                }
+                            } else {
+                                Message = "";
+                            }
+
+
+                            if (root.getPropertyAsString("NetAmountCSkin") != null) {
+
+                                if (!root.getPropertyAsString("NetAmountCSkin").equalsIgnoreCase("anyType{}")) {
+                                    NetAmountCSkin = root.getPropertyAsString("NetAmountCSkin");
+                                } else {
+                                    NetAmountCSkin = "";
+                                }
+                            } else {
+                                NetAmountCSkin = "";
+                            }
+
+                            if (root.getPropertyAsString("NetAmountPSkin") != null) {
+
+                                if (!root.getPropertyAsString("NetAmountPSkin").equalsIgnoreCase("anyType{}")) {
+                                    NetAmountPSkin = root.getPropertyAsString("NetAmountPSkin");
+                                } else {
+                                    NetAmountPSkin = "";
+                                }
+                            } else {
+                                NetAmountPSkin = "";
+                            }
+
+                            if (root.getPropertyAsString("years_MonthsC") != null) {
+
+                                if (!root.getPropertyAsString("years_MonthsC").equalsIgnoreCase("anyType{}")) {
+                                    years_MonthsC = root.getPropertyAsString("years_MonthsC");
+                                } else {
+                                    years_MonthsC = "";
+                                }
+                            } else {
+                                years_MonthsC = "";
+                            }
+
+                            if (root.getPropertyAsString("years_MonthsP") != null) {
+
+                                if (!root.getPropertyAsString("years_MonthsP").equalsIgnoreCase("anyType{}")) {
+                                    years_MonthsP = root.getPropertyAsString("years_MonthsP");
+                                } else {
+                                    years_MonthsP = "";
+                                }
+                            } else {
+                                years_MonthsP = "";
+                            }
+
+                            String valuesArray[] = {GrowthCSkin,GrowthPSkin,Message,NetAmountCSkin,NetAmountPSkin,years_MonthsC,years_MonthsP};
+                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_BAYEARREPORT_DETAILS, " years_MonthsC = ?", valuesArray, utils.columnNamesBAyearReport, new String[]{years_MonthsC});
+
+
+                        }
+                    } else {
+                        final Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat(
+                                "MM/dd/yyyy HH:mm:ss");
+                        String Createddate = formatter.format(calendar
+                                .getTime());
+
+                        int n = Thread.currentThread().getStackTrace()[2]
+                                .getLineNumber();
+
+                        LOTUS.dbCon.open();
+
+                        int id = 0;
+                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                        String selection = "ID = ?";
+                        String ID = String.valueOf(id);
+                        // WHERE clause arguments
+                        String[] selectionArgs = {ID};
+
+                        String valuesArray[] = {ID, "Soup is Null While BAOutletSale()", String.valueOf(n), "BAOutletSale()",
+                                Createddate, Createddate, sharedPref.getLoginId(), "BA Outlet Sale", "Fail"};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                        LOTUS.dbCon.close();
+                        cd.displayMessage("Soup is Null While BAOutletSale()");
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.getMessage();
+            }
+            return result;
+
+        }
+
+        @Override
+        protected void onPostExecute(SoapObject soapObject) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(soapObject);
+
+            prgdialog.dismiss();
+
+            if(soapObject != null){
+                try {
+                    bayearDetailsArraylist = new ArrayList<BAYearWiseModel>();
+                    Cursor cursor = LOTUS.dbCon.fetchAlldata(DbHelper.TABLE_BAYEARREPORT_DETAILS);
+                    if (cursor != null && cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        do {
+                            baYearWiseModel = new BAYearWiseModel();
+                            baYearWiseModel.setGrowthCSkin(cursor.getString(cursor.getColumnIndex("GrowthCSkin")));
+                            baYearWiseModel.setGrowthPSkin(cursor.getString(cursor.getColumnIndex("GrowthPSkin")));
+                            baYearWiseModel.setMessage(cursor.getString(cursor.getColumnIndex("Message")));
+                            baYearWiseModel.setNetAmountCSkin(cursor.getString(cursor.getColumnIndex("NetAmountCSkin")));
+                            baYearWiseModel.setNetAmountPSkin(cursor.getString(cursor.getColumnIndex("NetAmountPSkin")));
+                            baYearWiseModel.setYears_MonthsC(cursor.getString(cursor.getColumnIndex("years_MonthsC")));
+                            baYearWiseModel.setYears_MonthsP(cursor.getString(cursor.getColumnIndex("years_MonthsP")));
+
+                            bayearDetailsArraylist.add(baYearWiseModel);
+                        } while (cursor.moveToNext());
+                        cursor.close();
+                    }
+
+                    loadReports();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+        }
+    }
+
+
+    private void loadReports() {
+        adapter = new BAYearWiseReportAdapter(BAYearWiseReport.this, bayearDetailsArraylist);
+        lv_ba_report.setAdapter(adapter);// add custom adapter to listview
     }
 }
 

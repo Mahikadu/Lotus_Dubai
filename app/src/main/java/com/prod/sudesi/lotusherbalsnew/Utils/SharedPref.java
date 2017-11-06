@@ -73,11 +73,16 @@ public class SharedPref {
     }
 
 
+
     public void setKeyNodata(boolean isData) {
         editor.putBoolean(KEY_NODATA, isData);
         editor.commit();
     }
 
+    public boolean getvalue(){
+        Boolean value = sharedPref.getBoolean(KEY_NODATA,false);
+        return value;
+    }
     public void clearPref() {
         try {
             editor.remove(KEY_LoginId);

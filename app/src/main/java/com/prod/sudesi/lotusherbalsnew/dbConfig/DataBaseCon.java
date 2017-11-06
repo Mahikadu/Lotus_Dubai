@@ -195,9 +195,9 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
-    public String fetchStockDbID(String productName, String mrp, String subcategory) {
+    public String fetchStockDbID(String productName, String mrp, String offer) {
 
-        String sql = "select A_Id from table_master_sync where ProductName like '%" + productName + "%' and PTT = '" + mrp + "' and SubCategory ='" + subcategory + "'";
+        String sql = "select A_Id from table_master_sync where ProductName like '%" + productName + "%' and PTT = '" + mrp + "' and SingleOffer ='" + offer + "'";
 
         Log.e("sql", sql);
 

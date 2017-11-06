@@ -26,7 +26,6 @@
         android:xlargeScreens="true" />
 
     <application
-        android:name=".Activity.TestApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -43,7 +42,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.littlefluffytoys.littlefluffylocationlibrary.LocationBroadcastService" />
+       <!-- <service android:name="com.littlefluffytoys.littlefluffylocationlibrary.LocationBroadcastService" />
 
         <receiver
             android:name="com.littlefluffytoys.littlefluffylocationlibrary.StartupBroadcastReceiver"
@@ -61,6 +60,9 @@
                     android:name="com.android.lotusherbal.littlefluffylocationlibrary.LOCATION_CHANGED"
                     android:exported="false" />
             </intent-filter>
+        </receiver>-->
+
+        <receiver android:name="libs.AlarmManagerBroadcastReceiver" >
         </receiver>
 
         <activity
@@ -133,6 +135,9 @@
             android:name=".Activity.BAYearWiseReport"
             android:screenOrientation="landscape" >
         </activity>
+
+        <receiver android:name=".Activity.UploadDataBrodcastReceiver"/>
+        <service android:name=".Activity.BackgroundService"></service>
 
     </application>
 

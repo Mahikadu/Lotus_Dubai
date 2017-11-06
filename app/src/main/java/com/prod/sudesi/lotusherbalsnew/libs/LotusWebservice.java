@@ -16,7 +16,7 @@ public class LotusWebservice {
 
 	Context context;
 
-	String url = "http://192.168.0.130/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017
+	String url = "http://192.168.0.141/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017
 
 
 	public LotusWebservice(Context con) {
@@ -40,7 +40,7 @@ public class LotusWebservice {
 			envelope.setOutputSoapObject(request); // set request object
 			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http transport call
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,6000);// http transport call
 			androidHttpTransport.call("http://tempuri.org/IService1/Get_login",envelope);
 
 			result = (SoapObject) envelope.getResponse();
@@ -64,7 +64,7 @@ public class LotusWebservice {
 			envelope.setOutputSoapObject(request); // set request object
 			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,6000);// http
 			// transport
 			// call
 			androidHttpTransport.call(
@@ -414,6 +414,39 @@ public class LotusWebservice {
 		Log.e("TotalOutletSaleAPK", result.toString());
 		return result;
 
+	}
+
+	public SoapObject BAOutletSale(String bacode, String OutletCode) {
+
+		SoapObject result = null;
+		try {
+
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"BAOutletSale");
+
+			request.addProperty("bacode", bacode);
+			request.addProperty("OutletCode", OutletCode);
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,30000);// http
+			// transport
+			// call
+			androidHttpTransport.call("http://tempuri.org/IService1/BAOutletSale", envelope);
+
+			androidHttpTransport.getServiceConnection().disconnect();  //23.04.2015
+
+			result = (SoapObject) envelope.getResponse();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.e("BAOutletSale==", result.toString());
+		return result;
 	}
 
 	/*public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,

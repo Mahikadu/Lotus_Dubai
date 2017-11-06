@@ -92,7 +92,7 @@
                     android:background="#841F55"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="2017" />
+                    android:text="2016" />
 
                 <TextView
                     android:id="@+id/tv_bar_Current_year_n1"
@@ -102,7 +102,7 @@
                     android:background="#841F55"
                     android:gravity="center"
                     android:layout_weight="1"
-                    android:text="2018" />
+                    android:text="2017" />
 
 
         </TableRow>

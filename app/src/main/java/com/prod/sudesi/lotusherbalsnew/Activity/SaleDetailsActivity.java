@@ -177,7 +177,6 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
             @Override
             public void afterTextChanged(Editable s) {
                 // TODO Auto-generated method stub
-
                 edt_netamt.setText("");
             }
         });
@@ -253,7 +252,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                 break;
 
             case R.id.btn_save_sale:
-
+                v.startAnimation(AnimationUtils.loadAnimation(SaleDetailsActivity.this, R.anim.button_click));
                 try {
                     int etcount = 0;
                     int count = 0;
@@ -291,8 +290,6 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                             float dis;
                             if (!edt_discount.getText().toString()
-                                    .equalsIgnoreCase(" ")
-                                    || !edt_discount.getText().toString()
                                     .equalsIgnoreCase("")) {
                                 dis = Float.parseFloat(edt_discount.getText()
                                         .toString());
@@ -339,6 +336,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                     String Brand = productModel.getBrand();
                                     String Category = productModel.getCategory();
                                     String SubCategory = productModel.getSubCategory();
+                                    String SingleOffer = productModel.getSingleOffer();
                                     String ProductName = productModel.getProductName();
 
                                     float calc_gross = Float.parseFloat(tv_mrp
@@ -542,7 +540,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             // WHERE clause arguments
                                             String[] selectionArgs = {A_Id,outletcode};
 
-                                            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, ProductName, price, size, username,
+                                            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                                                     str_openingstock, String.valueOf(i_stokreceive), String.valueOf(i_stokinhand),
                                                     String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross),String.valueOf(net1),
                                                     String.valueOf(disss),"0",insert_timestamp, insert_timestamp,
@@ -670,98 +668,6 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         }
     }
 
-    public void showAlertDialog(int count) {
-        if (count == tablel_sale_calculation.getChildCount()) {
-
-            // mProgress.dismiss();
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                    SaleDetailsActivity.this);
-
-            // set title
-            alertDialogBuilder.setTitle("Saved Successfully!!");
-
-            // set dialog message
-            alertDialogBuilder
-                    .setMessage("Go  TO  :")
-                    .setCancelable(false)
-
-                    .setNegativeButton(
-                            "Stock Page",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(
-                                        DialogInterface dialog,
-                                        int id) {
-
-                                    dialog.cancel();
-//*******************
-                                    finish();
-                                    startActivity(new Intent(
-                                            SaleDetailsActivity.this,
-                                            StockActivity.class));
-                                }
-                            })
-
-                    .setPositiveButton(
-                            "Home",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(
-                                        DialogInterface dialog,
-                                        int id) {
-
-                                    dialog.cancel();
-
-                                    finish();
-                                    startActivity(new Intent(
-                                            SaleDetailsActivity.this,
-                                            DashBoardActivity.class));
-
-                                }
-                            });
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder
-                    .create();
-
-            // show it
-            alertDialog.show();
-        } else {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                    SaleDetailsActivity.this);
-
-            // set title
-            alertDialogBuilder.setTitle("Data Not Saved!!!");
-
-            // set dialog message
-            alertDialogBuilder
-                    .setMessage("Problem with Insert")
-                    .setCancelable(false)
-
-                    .setNegativeButton(
-                            "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(
-                                        DialogInterface dialog,
-                                        int id) {
-
-                                    dialog.cancel();
-
-                                    finish();
-                                    startActivity(new Intent(
-                                            SaleDetailsActivity.this,
-                                            StockActivity.class));
-
-                                }
-                            });
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder
-                    .create();
-
-            // show it
-            alertDialog.show();
-        }
-    }
 
     public boolean validateEdit(EditText edt, String errorString,
                                 String valueString) {
