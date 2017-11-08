@@ -1,11 +1,15 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.Models.StockModel;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
@@ -20,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * Created by Mahi on 06-11-2017.
  */
@@ -28,8 +34,9 @@ public class BackgroundService extends Service {
 
     private boolean isRunning;
     private Context context;
-    Context this_context;
+//    Context context;
     private Thread backgroundThread;
+
 
     private ConnectionDetector cd;
     LotusWebservice service;
@@ -47,29 +54,36 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         this.context = this;
-        this_context=this;
+//        context=this;
         this.isRunning = false;
         this.backgroundThread = new Thread(myTask);
     }
+
+
 
     private Runnable myTask = new Runnable() {
         public void run() {
 
             SoapPrimitive result = null;
 
-            cd = new ConnectionDetector(this_context);
-            service = new LotusWebservice(this_context);
-            sharedPref = new SharedPref(this_context);
-            utils = new Utils(this_context);
+            cd = new ConnectionDetector(context);
+            service = new LotusWebservice(context);
+            sharedPref = new SharedPref(context);
+            utils = new Utils(context);
 
             username = sharedPref.getLoginId();
 
             if (!cd.isConnectingToInternet()) {
 
-                cd.displayMessage("Check Your Internet Connection!!!");
+               // cd.displayMessage("Check Your Internet Connection!!!");
 
             }else{
+                //cd.displayMessage("Service calling");
+
                 try {
+
+                   // Toast.makeText(context,"Service calling",Toast.LENGTH_SHORT).show();
+
                     LOTUS.dbCon.open();
                     Cursor stock_array = LOTUS.dbCon.getStockdetails();
                     //LOTUS.dbCon.close();
@@ -147,7 +161,7 @@ public class BackgroundService extends Service {
 
                                 LOTUS.dbCon.close();
 
-                                cd.displayMessage("Soup is Null While DataUpload()");
+                               // cd.displayMessage("Soup is Null While DataUpload()");
                             }
 
                         }
@@ -156,7 +170,7 @@ public class BackgroundService extends Service {
                    e.printStackTrace();
                 }
             }
-
+            stopSelf();
         }
     };
 
@@ -173,4 +187,5 @@ public class BackgroundService extends Service {
         }
         return START_STICKY;
     }
+
 }

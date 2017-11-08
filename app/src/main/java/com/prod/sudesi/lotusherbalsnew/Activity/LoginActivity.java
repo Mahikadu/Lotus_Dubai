@@ -19,6 +19,7 @@ import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -244,11 +245,46 @@ public class LoginActivity extends Activity {
     private void DataUploadAlaramReceiver() {
 
         try {
+
+            AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, UploadDataBrodcastReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 24);  //24
+            calendar.set(Calendar.MINUTE, 0);   //0
+            calendar.set(Calendar.SECOND,0 );
+
+            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),AlarmManager.INTERVAL_DAY ,//1800000
+                    pendingIntent);
+
+
+          /*  AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            //Create pending intent & register it to your alarm notifier class
             Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
-            // create the object
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-           /* Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());*/
+
+            intentAlarm.putExtra("uur", "1e"); // if you wanst
+            boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, intentAlarm, PendingIntent.FLAG_NO_CREATE) != null);
+            if(!alarmRunning) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intentAlarm, 0);
+                //set timer you want alarm to work (here I have set it to 24.00)
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 0);  //24
+                calendar.set(Calendar.MINUTE, 2);   //0
+                calendar.set(Calendar.SECOND,0 );
+
+                //set that timer as a RTC Wakeup to alarm manager object
+                mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//            mAlarmManger.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 180, pendingIntent); //1800000
+
+            }*/
+
+
+              // create the object
+         /*   AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+           *//* Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());*//*
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -259,10 +295,10 @@ public class LoginActivity extends Activity {
             //1000 * 60 * 180
             //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
             //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 180, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
-            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 300000 , PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+           // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000 * 2 , PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+                    AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));*///Using UAT server
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -433,14 +469,17 @@ public class LoginActivity extends Activity {
                             String[] serverdate1 = server_date
                                     .split("-");
 
+                           /* String[] serverdate1 = server_date
+                                    .split("/");*///using UAt server
+
                             String currentyear = serverdate1[2];
 
 
-                          /*  SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "MM/dd/yyyy");*/
-
                             SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "dd-MM-yyyy", Locale.ENGLISH);
+                                    "dd-MM-yyyy");
+
+                            /*SimpleDateFormat sdf = new SimpleDateFormat(
+                                    "dd/MM/yyyy", Locale.ENGLISH);*///Using UAT server
 
                             // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
 

@@ -1,6 +1,8 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +19,8 @@ import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.libs.AlarmManagerBroadcastReceiver;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
+
+import java.util.Calendar;
 
 /**
  * Created by Admin on 16-10-2017.
@@ -36,7 +40,12 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
     String username;
     ConnectionDetector cd;
 
-    private AlarmManagerBroadcastReceiver alarm;
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        DataUploadAlaramReceiver();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +75,6 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
         btn_dashboard = (Button) findViewById(R.id.btn_dashboard);
         btn_total_outlet_sales = (Button) findViewById(R.id.btn_totaloutletSales);
 
-        alarm = new AlarmManagerBroadcastReceiver();
-
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
@@ -90,6 +97,68 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
         btn_total_outlet_sales.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
 
+
+    }
+
+    private void DataUploadAlaramReceiver() {
+
+        try {
+
+            AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, UploadDataBrodcastReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 24);  //24
+            calendar.set(Calendar.MINUTE, 0);   //0
+            calendar.set(Calendar.SECOND,0 );
+
+            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),AlarmManager.INTERVAL_DAY ,//1800000
+                    pendingIntent);
+
+           /* AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            //Create pending intent & register it to your alarm notifier class
+            Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
+
+            intentAlarm.putExtra("uur", "1e"); // if you wanst
+            boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, intentAlarm, PendingIntent.FLAG_NO_CREATE) != null);
+            if(!alarmRunning) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intentAlarm, 0);
+                //set timer you want alarm to work (here I have set it to 24.00)
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 0);  //24
+                calendar.set(Calendar.MINUTE, 2);   //0
+                calendar.set(Calendar.SECOND,0 );
+
+                //set that timer as a RTC Wakeup to alarm manager object
+                mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//            mAlarmManger.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 180, pendingIntent); //1800000
+
+            }*/
+
+
+            // create the object
+         /*   AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+           *//* Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());*//*
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 24);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            //set the alarm for particular time
+            //1000 * 60 * 180
+            //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 180, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+           // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000 * 2 , PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));*///Using UAT server
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
