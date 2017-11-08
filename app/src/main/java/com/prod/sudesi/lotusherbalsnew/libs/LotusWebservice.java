@@ -449,6 +449,81 @@ public class LotusWebservice {
 		return result;
 	}
 
+	public SoapObject GetAttendance(String bacode, String Fromdate, String Todate)
+	{
+		SoapObject result = null;
+		try {
+
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"GetAttendance");
+
+			request.addProperty("bacode", bacode);
+			request.addProperty("Fromdate", Fromdate);
+			request.addProperty("Todate", Todate);
+
+			Log.e("Request", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call("http://tempuri.org/IService1/GetAttendance", envelope);
+
+			androidHttpTransport.getServiceConnection().disconnect();  //23.04.2015
+
+			result = (SoapObject) envelope.getResponse();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.e("GetAttendance", result.toString());
+		return result;
+
+	}
+
+	public SoapObject DataDownload(String bacode, String Fromdate, String Todate, String outletcode)
+	{
+		SoapObject result = null;
+		try {
+
+			SoapObject request = new SoapObject("http://tempuri.org/",
+					"DataDownload");
+
+			request.addProperty("bacode", bacode);
+			request.addProperty("Fromdate", Fromdate);
+			request.addProperty("Todate", Todate);
+			request.addProperty("outletcode", outletcode);
+
+			Log.e("Request", request.toString());
+
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);// soap envelop with version
+			envelope.setOutputSoapObject(request); // set request object
+			envelope.dotNet = true;
+
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			// transport
+			// call
+			androidHttpTransport.call("http://tempuri.org/IService1/DataDownload", envelope);
+
+			androidHttpTransport.getServiceConnection().disconnect();  //23.04.2015
+
+			result = (SoapObject) envelope.getResponse();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.e("DataDownload", result.toString());
+		return result;
+
+	}
+
 	/*public SoapPrimitive SaveStock(String id, String Pid, String CatCodeId,
 								   String EANCode, String empId, String ProductCategory,
 								   String product_type, String product_name, String shadeno,

@@ -56,7 +56,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     LotusWebservice service;
 
     String str_Month, year, username;
-    TextView txtboc, txtyear, tv_h_username;
+    TextView txtboc, txtyear, tv_h_username,tvcurrentyear,tvNextyear;
 
     private ArrayList<OutletModel> outletDetailsArraylist;
     OutletModel outletModel;
@@ -71,6 +71,8 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     ListView lv_ba_report;
     String GrowthCSkin,GrowthPSkin,Message,NetAmountCSkin,NetAmountPSkin,years_MonthsC,years_MonthsP;
     private BAYearWiseReportAdapter adapter;
+
+    String NextYear,CurrentYear;
 
 
     @Override
@@ -93,6 +95,29 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         tv_h_username.setText(username);
 
+        try{
+            String current_year_n2 = sharedPref.getCurrentYear();
+            int int_current_year_n2 = Integer.parseInt(current_year_n2);
+
+            if(!current_year_n2.equalsIgnoreCase("")){
+
+                int int_previous_year_n22 =  int_current_year_n2 + 1 ;
+
+                 NextYear = String.valueOf(int_previous_year_n22);
+
+                 CurrentYear = String.valueOf(int_current_year_n2);
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        tvNextyear = (TextView) findViewById(R.id.tvCurrentyear);
+        tvcurrentyear = (TextView) findViewById(R.id.tvPreviousyear);
+
+        tvNextyear.setText(NextYear);
+        tvcurrentyear.setText(CurrentYear);
+
         lv_ba_report = (ListView) findViewById(R.id.listView_ba_year_report);
 
         btn_home = (Button) findViewById(R.id.btn_home);
@@ -101,6 +126,8 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
 
         btn_home.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+
+        cd.displayMessage("Please Select outlet");
 
         fetchOutletDetails();
 

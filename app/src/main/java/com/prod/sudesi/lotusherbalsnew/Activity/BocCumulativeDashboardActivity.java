@@ -263,10 +263,10 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
 
                             SoapObject root = (SoapObject) results.getProperty(i);
 
-                            if (root.getPropertyAsString("Date") != null) {
+                            if (root.getPropertyAsString("Datenew") != null) {
 
-                                if (!root.getPropertyAsString("Date").equalsIgnoreCase("anyType{}")) {
-                                    strDate = root.getPropertyAsString("Date");
+                                if (!root.getPropertyAsString("Datenew").equalsIgnoreCase("anyType{}")) {
+                                    strDate = root.getPropertyAsString("Datenew");
                                 } else {
                                     strDate = "";
                                 }

@@ -16,6 +16,7 @@ public class Utils {
     public String[] columnNamesStock= new String[50];
     public String[] columnNamesDashboardDetails= new String[50];
     public String[] columnNamesBAyearReport= new String[50];
+    public String[] columnNamesServerAttendance= new String[50];
 
 
     private Context mContext;
@@ -53,6 +54,9 @@ public class Utils {
         String[] bayearreportArray = {"GrowthCSkin","GrowthPSkin","Message","NetAmountCSkin","NetAmountPSkin","years_MonthsC",
                 "years_MonthsP"};
         columnNamesBAyearReport = Arrays.copyOf(bayearreportArray, bayearreportArray.length);
+
+        String[] serverAttendanceArray = {"ADatenew","AbsentType","Attendance","Message"};
+        columnNamesServerAttendance = Arrays.copyOf(serverAttendanceArray, serverAttendanceArray.length);
 
 
 

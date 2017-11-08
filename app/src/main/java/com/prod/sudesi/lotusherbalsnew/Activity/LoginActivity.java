@@ -116,9 +116,6 @@ public class LoginActivity extends Activity {
         year = String.valueOf(year1);
 
 
-        //   Add permission for marshmallow device
-        checkPermission(LoginActivity.this);
-
         //  Copy Database from Asset folder
         DatabaseCopy databaseCopy = new DatabaseCopy();
         AssetManager assetManager = this.getAssets();
@@ -150,9 +147,9 @@ public class LoginActivity extends Activity {
                         username = edt_username.getText().toString().toUpperCase();
                         pass = edt_password.getText().toString();
 
-                        LOTUS.dbCon.open();
+                        //LOTUS.dbCon.open();
                         int count = LOTUS.dbCon.checkcount(username, pass);
-                        LOTUS.dbCon.close();
+                        //LOTUS.dbCon.close();
 
                         if (count > 0) {
 
@@ -468,6 +465,8 @@ public class LoginActivity extends Activity {
                                 cd.displayMessage("Please Update to Newer Version!");
                             } else if (message.equalsIgnoreCase("Activation Key expired")) {
                                 cd.displayMessage("Activation Key expired");
+                            }else if(message.equalsIgnoreCase("This device is already assign to another handset")){
+                                cd.displayMessage("This device is already assign to another handset");
                             }
 
                         }
@@ -531,14 +530,6 @@ public class LoginActivity extends Activity {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static boolean checkPermission(final Context context) {
-        return ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
-
     }
 
 

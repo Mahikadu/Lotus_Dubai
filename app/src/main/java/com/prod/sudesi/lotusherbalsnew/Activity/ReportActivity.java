@@ -30,17 +30,33 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prod.sudesi.lotusherbalsnew.Models.BAYearWiseModel;
 import com.prod.sudesi.lotusherbalsnew.Models.OutletModel;
 import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
+import com.prod.sudesi.lotusherbalsnew.Models.ServerAttendanceModel;
 import com.prod.sudesi.lotusherbalsnew.Models.StockReportModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
+import com.prod.sudesi.lotusherbalsnew.adapter.AttendanceAdapter;
+import com.prod.sudesi.lotusherbalsnew.adapter.BAYearWiseReportAdapter;
 import com.prod.sudesi.lotusherbalsnew.adapter.ReportAdapter;
 import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
+import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
+import org.ksoap2.serialization.SoapObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Admin on 30-10-2017.
@@ -61,6 +77,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
     AutoCompleteTextView sp_outletName;
 
     ReportAdapter adapter;
+    AttendanceAdapter adapterAttend;
 
     ListView stocklistview,attendancelist;
 
@@ -80,6 +97,17 @@ public class ReportActivity extends Activity implements View.OnClickListener{
 
     CardView outletcard;
 
+    Date startdate, enddate;
+    ArrayList<String> dates_array;
+    private LotusWebservice service;
+    String str_Month, year;
+
+    private Utils utils;
+    String ADatenew,AbsentType,Attendance,Message;
+
+    private ArrayList<ServerAttendanceModel> serverAttendanceArraylist;
+    ServerAttendanceModel serverAttendanceModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -93,6 +121,10 @@ public class ReportActivity extends Activity implements View.OnClickListener{
         sharedPref = new SharedPref(context);
 
         cd = new ConnectionDetector(context);
+
+        service = new LotusWebservice(context);
+
+        utils = new Utils(context);
 
         mProgress = new ProgressDialog(context);
 
@@ -174,8 +206,8 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                     stocklistview.setVisibility(View.GONE);
                     attendancelist.setVisibility(View.VISIBLE);
                     rbstock.setChecked(false);
-                    /*report_attendance = new ShowReportofAttendance();
-                    report_attendance.execute();*/
+                    GetAttendance getAttendance = new GetAttendance();
+                    getAttendance.execute();
                 } else {
 
                     attendancelist.setVisibility(View.GONE);
@@ -185,6 +217,53 @@ public class ReportActivity extends Activity implements View.OnClickListener{
 
         btn_home.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "yyyy-MMM-dd");
+        String insert_timestamp = sdf.format(cal
+                .getTime());
+
+        String[] items1 = insert_timestamp.split("-");
+         year = items1[0];
+         str_Month = items1[1];
+
+
+        System.out.println("   startdate--" + getStartEnd(str_Month, year)[0]);
+        System.out.println("   enddate--" + getStartEnd(str_Month, year)[1]);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        try {
+
+            startdate = format.parse(getStartEnd(str_Month, year)[0]);
+            enddate = format.parse(getStartEnd(str_Month, year)[1]);
+
+            System.out.println("   startdate1--" + startdate);
+            System.out.println("   enddate1--" + enddate);
+
+            List<Date> dates = getDaysBetweenDates(startdate, enddate);
+
+            Log.e("dates", dates.toString());
+
+            dates_array = new ArrayList<String>();
+
+            for (int i = 0; i < dates.size(); i++) {
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+                String reportDate = df.format(dates.get(i));
+                Log.d("Date is", " " + reportDate);
+                dates_array.add(reportDate);
+
+                // Print what date is today!
+                System.out.println("Report Date: " + reportDate);
+            }
+
+
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
 
         fetchOutletDetails();
 
@@ -303,6 +382,63 @@ public class ReportActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    public static List<Date> getDaysBetweenDates(Date startdate, Date enddate) {
+        List<Date> dates = new ArrayList<Date>();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(startdate);
+
+        while (calendar.getTime().before(enddate) || calendar.getTime().equals(enddate)) {
+            Date result = calendar.getTime();
+            dates.add(result);
+            calendar.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
+
+    public String[] getStartEnd(String Month, String year) {
+        String startend[] = new String[2];
+
+        if (Month.equalsIgnoreCase("Jan")) {
+            startend[0] = year + "-01-01";
+            startend[1] = year + "-01-31";
+        } else if (Month.equalsIgnoreCase("Feb")) {
+            startend[0] = year + "-02-01";
+            startend[1] = year + "-02-28";
+        } else if (Month.equalsIgnoreCase("Mar")) {
+            startend[0] = year + "-03-01";
+            startend[1] = year + "-03-31";
+        } else if (Month.equalsIgnoreCase("Apr")) {
+            startend[0] = year + "-04-01";
+            startend[1] = year + "-04-30";
+        } else if (Month.equalsIgnoreCase("May")) {
+            startend[0] = year + "-05-01";
+            startend[1] = year + "-05-31";
+        } else if (Month.equalsIgnoreCase("Jun")) {
+            startend[0] = year + "-06-01";
+            startend[1] = year + "-06-30";
+        } else if (Month.equalsIgnoreCase("Jul")) {
+            startend[0] = year + "-07-01";
+            startend[1] = year + "-07-31";
+        } else if (Month.equalsIgnoreCase("Aug")) {
+            startend[0] = year + "-08-01";
+            startend[1] = year + "-08-31";
+        } else if (Month.equalsIgnoreCase("Sept")) {
+            startend[0] = year + "-09-01";
+            startend[1] = year + "-09-30";
+        } else if (Month.equalsIgnoreCase("Oct")) {
+            startend[0] = year + "-10-01";
+            startend[1] = year + "-10-31";
+        } else if (Month.equalsIgnoreCase("Nov")) {
+            startend[0] = year + "-11-01";
+            startend[1] = year + "-11-30";
+        } else if (Month.equalsIgnoreCase("Dec")) {
+            startend[0] = year + "-12-01";
+            startend[1] = year + "-12-31";
+        }
+
+        return startend;
+    }
+
     public class ShowReportofStock extends AsyncTask<String, String, String> {
 
         @Override
@@ -378,5 +514,163 @@ public class ReportActivity extends Activity implements View.OnClickListener{
             // }
         }
 
+    }
+
+    public class GetAttendance extends AsyncTask<Void, Void, SoapObject> {
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            mProgress.setMessage("Please Wait...");
+            mProgress.show();
+            mProgress.setCancelable(false);
+        }
+
+        @Override
+        protected SoapObject doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+
+            SoapObject result = null;
+            try {
+                if (cd.isConnectingToInternet()) {
+
+                    String startdate[] = getStartEnd(str_Month, year);
+
+                    result = service.GetAttendance(username,startdate[0], startdate[1]);
+
+                    if (result != null) {
+                        for (int i = 0; i < result.getPropertyCount(); i++) {
+
+
+                            SoapObject root = (SoapObject) result.getProperty(i);
+
+                            if (root.getPropertyAsString("ADatenew") != null) {
+
+                                if (!root.getPropertyAsString("ADatenew").equalsIgnoreCase("anyType{}")) {
+                                    ADatenew = root.getPropertyAsString("ADatenew");
+                                } else {
+                                    ADatenew = "";
+                                }
+                            } else {
+                                ADatenew = "";
+                            }
+
+                            if (root.getPropertyAsString("AbsentType") != null) {
+
+                                if (!root.getPropertyAsString("AbsentType").equalsIgnoreCase("anyType{}")) {
+                                    AbsentType = root.getPropertyAsString("AbsentType");
+                                } else {
+                                    AbsentType = "";
+                                }
+                            } else {
+                                AbsentType = "";
+                            }
+
+                            if (root.getPropertyAsString("Attendance") != null) {
+
+                                if (!root.getPropertyAsString("Attendance").equalsIgnoreCase("anyType{}")) {
+                                    Attendance = root.getPropertyAsString("Attendance");
+                                } else {
+                                    Attendance = "";
+                                }
+                            } else {
+                                Attendance = "";
+                            }
+
+
+                            if (root.getPropertyAsString("Message") != null) {
+
+                                if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
+                                    Message = root.getPropertyAsString("Message");
+                                } else {
+                                    Message = "";
+                                }
+                            } else {
+                                Message = "";
+                            }
+
+                            String valuesArray[] = {ADatenew,AbsentType,Attendance,Message};
+                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_SERVER_ATTENDANCE, " ADatenew = ?", valuesArray, utils.columnNamesServerAttendance, new String[]{ADatenew});
+
+
+                        }
+                    } else {
+                        final Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat(
+                                "MM/dd/yyyy HH:mm:ss");
+                        String Createddate = formatter.format(calendar
+                                .getTime());
+
+                        int n = Thread.currentThread().getStackTrace()[2]
+                                .getLineNumber();
+
+                        LOTUS.dbCon.open();
+
+                        int id = 0;
+                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                        String selection = "ID = ?";
+                        String ID = String.valueOf(id);
+                        // WHERE clause arguments
+                        String[] selectionArgs = {ID};
+
+                        String valuesArray[] = {ID, "Soup is Null While GetAttendance()", String.valueOf(n), "GetAttendance()",
+                                Createddate, Createddate, sharedPref.getLoginId(), "Get Attendance", "Fail"};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                        LOTUS.dbCon.close();
+                        cd.displayMessage("Soup is Null While GetAttendance()");
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.getMessage();
+            }
+            return result;
+
+        }
+
+        @Override
+        protected void onPostExecute(SoapObject soapObject) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(soapObject);
+
+            mProgress.dismiss();
+
+            if(soapObject != null){
+                try {
+                    serverAttendanceArraylist = new ArrayList<ServerAttendanceModel>();
+                    Cursor cursor = LOTUS.dbCon.fetchAlldata(DbHelper.TABLE_SERVER_ATTENDANCE);
+                    if (cursor != null && cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        do {
+                            serverAttendanceModel = new ServerAttendanceModel();
+                            serverAttendanceModel.setADatenew(cursor.getString(cursor.getColumnIndex("ADatenew")));
+                            serverAttendanceModel.setAbsentType(cursor.getString(cursor.getColumnIndex("AbsentType")));
+                            serverAttendanceModel.setAttendance(cursor.getString(cursor.getColumnIndex("Attendance")));
+                            serverAttendanceModel.setMessage(cursor.getString(cursor.getColumnIndex("Message")));
+
+                            serverAttendanceArraylist.add(serverAttendanceModel);
+                        } while (cursor.moveToNext());
+                        cursor.close();
+                    }
+
+                    ShowAttendance();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+        }
+    }
+
+    private void ShowAttendance() {
+        adapterAttend = new AttendanceAdapter(ReportActivity.this, serverAttendanceArraylist);
+        attendancelist.setAdapter(adapterAttend);// add custom adapter to listview
     }
 }

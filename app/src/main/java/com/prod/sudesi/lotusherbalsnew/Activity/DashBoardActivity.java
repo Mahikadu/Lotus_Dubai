@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.libs.AlarmManagerBroadcastReceiver;
+import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 
 /**
  * Created by Admin on 16-10-2017.
@@ -33,6 +34,7 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
     TextView tv_h_username;
 
     String username;
+    ConnectionDetector cd;
 
     private AlarmManagerBroadcastReceiver alarm;
 
@@ -46,6 +48,8 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
         setContentView(R.layout.activity_dashboard);
 
         mContext = getApplicationContext();
+
+        cd = new ConnectionDetector(mContext);
 
         sharedPref  = new SharedPref(mContext);
        // LOTUS.dbCon.open();
@@ -126,11 +130,13 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_ba_sale_yr:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                startActivity(new Intent(getApplicationContext(), BAYearWiseReport.class));
+                cd.displayMessage("Record Not Ready!!");
+                //startActivity(new Intent(getApplicationContext(), BAYearWiseReport.class));
                 break;
             case R.id.btn_dashboard:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                startActivity(new Intent(getApplicationContext(), BocDashBoardActivity.class));
+                cd.displayMessage("Record Not Ready!!");
+                //startActivity(new Intent(getApplicationContext(), BocDashBoardActivity.class));
                 break;
             case R.id.btn_totaloutletSales:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));

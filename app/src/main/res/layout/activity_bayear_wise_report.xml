@@ -15,16 +15,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
             android:layout_marginLeft="@dimen/_150sdp"
             android:layout_marginRight="@dimen/_150sdp"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
                 android:id="@+id/outletcardview"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_25sdp"
+                android:layout_height="@dimen/_32sdp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/_2sdp"
                 android:background="@android:color/white"
@@ -66,12 +66,12 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/_20sdp">
 
             <TextView
                 style="@style/report_textview_heading"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@layout/tableborder_stock"
                 android:gravity="center"
@@ -80,25 +80,25 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_20sdp"
             android:weightSum="2">
 
 
                 <TextView
-                    android:id="@+id/tv_bar_Previous_year_p1"
+                    android:id="@+id/tvPreviousyear"
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="#841F55"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="2016" />
 
                 <TextView
-                    android:id="@+id/tv_bar_Current_year_n1"
+                    android:id="@+id/tvCurrentyear"
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="#841F55"
                     android:gravity="center"
                     android:layout_weight="1"
@@ -107,20 +107,17 @@
 
         </TableRow>
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <TableRow
                 android:id="@+id/tr_stock_report"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_25sdp"
                 android:weightSum="6">
 
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
@@ -130,7 +127,7 @@
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
@@ -139,7 +136,7 @@
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
@@ -148,7 +145,7 @@
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
@@ -157,7 +154,7 @@
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
@@ -166,13 +163,12 @@
                 <TextView
                     style="@style/report_textview_heading"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@layout/tableborder_stock"
                     android:gravity="center"
                     android:text="Growth" />
             </TableRow>
-        </TableLayout>
 
         <ListView
             android:id="@+id/listView_ba_year_report"
