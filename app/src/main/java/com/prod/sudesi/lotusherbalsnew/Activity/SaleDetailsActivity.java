@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
@@ -23,14 +22,13 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.Models.ProductListModel;
 import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 
 import java.text.SimpleDateFormat;

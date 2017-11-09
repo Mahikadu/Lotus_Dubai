@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +19,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsnew.Models.BAYearWiseModel;
 import com.prod.sudesi.lotusherbalsnew.Models.OutletModel;
-import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
 import com.prod.sudesi.lotusherbalsnew.adapter.BAYearWiseReportAdapter;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -39,7 +35,6 @@ import org.ksoap2.serialization.SoapObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 /**
  * Created by Admin on 04-11-2017.

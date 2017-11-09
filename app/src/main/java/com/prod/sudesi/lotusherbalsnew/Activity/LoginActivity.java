@@ -1,30 +1,20 @@
 package com.prod.sudesi.lotusherbalsnew.Activity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.location.Location;
 import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -32,7 +22,6 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
 import com.prod.sudesi.lotusherbalsnew.Models.LoginDetailsModel;
@@ -40,9 +29,9 @@ import com.prod.sudesi.lotusherbalsnew.R;
 
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DatabaseCopy;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DatabaseCopy;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -59,9 +48,6 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-
-import io.nlopez.smartlocation.SmartLocation;
 
 public class LoginActivity extends Activity {
 
@@ -251,6 +237,7 @@ public class LoginActivity extends Activity {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
             Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 24);  //24
             calendar.set(Calendar.MINUTE, 0);   //0
             calendar.set(Calendar.SECOND,0 );

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 

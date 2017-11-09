@@ -3,11 +3,8 @@ package com.prod.sudesi.lotusherbalsnew.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,10 +32,9 @@ import com.prod.sudesi.lotusherbalsnew.Models.ProductListModel;
 import com.prod.sudesi.lotusherbalsnew.Models.ProductModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
