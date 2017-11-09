@@ -11,10 +11,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.Models.StockModel;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -39,6 +39,7 @@ public class BackgroundService extends Service {
 
 
     private ConnectionDetector cd;
+
     LotusWebservice service;
     SharedPref sharedPref;
     String username;

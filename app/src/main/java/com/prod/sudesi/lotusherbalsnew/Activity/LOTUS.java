@@ -2,7 +2,7 @@ package com.prod.sudesi.lotusherbalsnew.Activity;
 
 import android.app.Application;
 
-import com.prod.sudesi.lotusherbalsnew.dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DataBaseCon;
 
 
 /**

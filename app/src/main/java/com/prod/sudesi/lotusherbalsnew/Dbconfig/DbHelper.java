@@ -1,4 +1,4 @@
-package com.prod.sudesi.lotusherbalsnew.dbconfig;
+package com.prod.sudesi.lotusherbalsnew.Dbconfig;
 
 import android.content.ContentValues;
 import android.content.Context;
