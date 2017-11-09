@@ -109,11 +109,12 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
             Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 24);  //24
             calendar.set(Calendar.MINUTE, 0);   //0
             calendar.set(Calendar.SECOND,0 );
 
-            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),AlarmManager.INTERVAL_DAY ,//1800000
+            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY ,//1800000
                     pendingIntent);
 
            /* AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
