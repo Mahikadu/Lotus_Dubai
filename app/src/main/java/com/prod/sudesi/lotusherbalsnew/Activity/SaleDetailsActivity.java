@@ -152,7 +152,27 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                 TextView product = (TextView) tr.findViewById(R.id.txtproductsale);
                 TextView amount = (TextView) tr.findViewById(R.id.txtmrpsale);
-                EditText quantity = (EditText) tr.findViewById(R.id.edtquantitysale);
+                final EditText quantity = (EditText) tr.findViewById(R.id.edtquantitysale);
+
+                quantity.addTextChangedListener(new TextWatcher()
+                {
+                    public void afterTextChanged(Editable s)
+                    {
+                        String x = s.toString();
+                        if(x.startsWith("0"))
+                        {
+                            quantity.setError("should not starts with 0");
+                        }
+                    }
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+
+                    }
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
+
+                    }
+                });
 
 
                 productModel = newproductDetailsArraylist.get(i);
@@ -185,6 +205,12 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
             @Override
             public void afterTextChanged(Editable s) {
                 // TODO Auto-generated method stub
+
+                String x = s.toString();
+                if(x.startsWith("0"))
+                {
+                    edt_discount.setError("should not starts with 0");
+                }
                 edt_netamt.setText("");
             }
         });
@@ -206,7 +232,14 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                         TextView tv_mrp = (TextView) t.getChildAt(2);
                         Float int_quantity, int_mrp;
 
-                        if (!edt_qty.getText().toString().equals(""))
+                        if (!edt_qty.getText().toString().trim()
+                                .equalsIgnoreCase("0")
+                                || !edt_qty.getText().toString().trim()
+                                .startsWith("0")
+                                || !edt_qty.getText().toString().trim()
+                                .equalsIgnoreCase("")
+                                || !edt_qty.getText().toString().trim()
+                                .equalsIgnoreCase(" "))
                         {
                             int_quantity = Float.parseFloat(edt_qty
                                     .getText().toString().trim());
@@ -215,6 +248,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                             Float multiply = int_quantity * int_mrp;
                             total = total + multiply;
                             edt_gross.setText(String.valueOf(total));
+                        }else{
+                            cd.displayMessage("Please Enter proper quantity");
                         }
                     }
                 }catch(Exception e){
@@ -273,6 +308,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                             if (edt_qty.getText().toString().trim()
                                     .equalsIgnoreCase("0")
+                                    || edt_qty.getText().toString().trim()
+                                    .startsWith("0")
                                     || edt_qty.getText().toString().trim()
                                     .equalsIgnoreCase("")
                                     || edt_qty.getText().toString().trim()
