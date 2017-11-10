@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import com.prod.sudesi.lotusherbalsnew.R;
-
 /**
  * Created by Admin on 26-10-2017.
  */

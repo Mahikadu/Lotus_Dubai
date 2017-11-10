@@ -16,9 +16,9 @@ public class LotusWebservice {
 
 	Context context;
 
-	String url = "http://192.168.0.141/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017(Sadhana pc)
+	//String url = "http://192.168.0.141/LotusDubaiWcf/Service1.svc";//New UAT Link Oct-25-2017(Sadhana pc)
 
-	//String url = "http://ifli-lms-wcf.smartforcecrm.com/Service1.svc";//UAT Link nov-8-2017
+	String url = "http://ifli-lms-wcf.smartforcecrm.com/Service1.svc";//UAT Link Dubai nov-8-2017
 
 
 	public LotusWebservice(Context con) {

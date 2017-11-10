@@ -48,6 +48,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class LoginActivity extends Activity {
 
@@ -454,20 +455,20 @@ public class LoginActivity extends Activity {
                             server_date = serverdatearray[0];
 
 
-                            String[] serverdate1 = server_date
-                                    .split("-");
-
                            /* String[] serverdate1 = server_date
-                                    .split("/");*///using UAt server
+                                    .split("-");*/
+
+                            String[] serverdate1 = server_date
+                                    .split("/");//using UAt server
 
                             String currentyear = serverdate1[2];
 
 
-                            SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "dd-MM-yyyy");
-
                             /*SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "dd/MM/yyyy", Locale.ENGLISH);*///Using UAT server
+                                    "dd-MM-yyyy");*/
+
+                            SimpleDateFormat sdf = new SimpleDateFormat(
+                                    "dd/MM/yyyy", Locale.ENGLISH);//Using UAT server
 
                             // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
 
