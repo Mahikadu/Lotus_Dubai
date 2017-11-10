@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -30,6 +32,8 @@ import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Admin on 30-10-2017.
@@ -104,11 +108,12 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
         productModel = new ProductModel();
         productListModel = new ProductListModel();
         productDetailsArraylist = new ArrayList<>();
-        newproductDetailsArraylist = new ArrayList<>();
+
 
         if (getIntent() != null) {
             try {
-
+                tl_sale_calculation.removeAllViews();
+                newproductDetailsArraylist = new ArrayList<>();
                 productListModel = (ProductListModel) getIntent().getSerializableExtra("Stocklist");
                 newproductDetailsArraylist = productListModel.getProductListModels();
 //                productDetailsArraylist.add(newproductDetailsArraylist.get(0));
@@ -127,7 +132,29 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
                 TextView product = (TextView) tr.findViewById(R.id.txtproduct);
                 TextView amount = (TextView) tr.findViewById(R.id.txtmrp);
                 TextView openingbal = (TextView) tr.findViewById(R.id.txtopeningbal);
-                EditText quantity = (EditText) tr.findViewById(R.id.edtquantity);
+                final EditText quantity = (EditText) tr.findViewById(R.id.edtquantity);
+
+
+                quantity.addTextChangedListener(new TextWatcher()
+                {
+                    public void afterTextChanged(Editable s)
+                    {
+                        String x = s.toString();
+                        if(x.startsWith("0"))
+                        {
+                            quantity.setError("should not starts with 0");
+                        }
+                    }
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+
+                    }
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
+
+                    }
+                });
+
 
 
                 productModel = newproductDetailsArraylist.get(i);
@@ -170,6 +197,8 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
                 try {
                     int etcount = 0;
                     int count = 0;
+
+
                     if (tl_sale_calculation.getChildCount() >0) {
                         for (int j = 0; j < tl_sale_calculation.getChildCount(); j++) {
 
@@ -180,11 +209,13 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
                             if (edt_qty.getText().toString().trim()
                                     .equalsIgnoreCase("0")
                                     || edt_qty.getText().toString().trim()
+                                    .startsWith("0")
+                                    || edt_qty.getText().toString().trim()
                                     .equalsIgnoreCase("")
                                     || edt_qty.getText().toString().trim()
                                     .equalsIgnoreCase(" ")) {
 
-                                cd.displayMessage("Please Enter in All Fields");
+                                cd.displayMessage("Please Enter proper value");
 
                             } else {
                                 etcount++;

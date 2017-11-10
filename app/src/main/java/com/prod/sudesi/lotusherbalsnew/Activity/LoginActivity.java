@@ -110,7 +110,7 @@ public class LoginActivity extends Activity {
         databaseCopy.copy(assetManager, LoginActivity.this);
         LOTUS.dbCon = DataBaseCon.getInstance(getApplicationContext());
 
-        exportDB();
+        //exportDB();
 
 
         // Login btn setonclicklistner

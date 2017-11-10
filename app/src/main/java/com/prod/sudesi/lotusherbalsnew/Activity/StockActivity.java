@@ -90,7 +90,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
 
     boolean stock = false, sale = false;
 
-    private ArrayList<String> liststockdbid = new ArrayList<String>();
+    private ArrayList<String> liststockdbid;
     private ArrayList<ProductModel> selectedproductArraylist;
 
     String outletcode;
@@ -134,6 +134,8 @@ public class StockActivity extends Activity implements View.OnClickListener {
         Log.v("", "username==" + username);
 
         tv_h_username.setText(username);
+
+        selectedproductArraylist = new ArrayList<>();
 
         btn_proceed.setOnClickListener(this);
         btn_home.setOnClickListener(this);
@@ -512,7 +514,8 @@ public class StockActivity extends Activity implements View.OnClickListener {
             case R.id.btn_proceed:
                 v.startAnimation(AnimationUtils.loadAnimation(StockActivity.this, R.anim.button_click));
                 int chckCount = 0;
-
+                selectedproductArraylist.clear();
+                liststockdbid = new ArrayList<>();
                 if (brandstring != null && brandstring.length() > 0) {
                     //if (categorystring != null && categorystring.length() > 0) {
                        // if (subcategorystring != null && subcategorystring.length() > 0) {
@@ -541,7 +544,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
 
                                         }
                                     }
-                                    selectedproductArraylist = new ArrayList<>();
+
                                     for (int i = 0; i < liststockdbid.size(); i++) {
                                         listCategory = new ArrayList<>();
                                         String a_id = liststockdbid.get(i);
@@ -628,7 +631,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
         //product_subcategory.setText("");
         offerAuto.setText("");
         tl_productList.removeAllViews();
-        selectedproductArraylist.clear();
+
     }
 
    /* private void fetchCategoryDetails(String brandname) {

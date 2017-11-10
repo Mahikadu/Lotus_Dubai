@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -117,6 +118,15 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         btn_logout.setOnClickListener(this);
         edt_gross.setOnClickListener(this);
         edt_netamt.setOnClickListener(this);
+
+        edt_discount.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                edt_discount.setFocusable(true);
+                edt_discount.setFocusableInTouchMode(true);
+                return false;
+            }
+        });
 
 
         productModel = new ProductModel();

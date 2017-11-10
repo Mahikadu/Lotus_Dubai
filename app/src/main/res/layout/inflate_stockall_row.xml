@@ -31,6 +31,7 @@
         android:layout_weight="0.6"
         android:gravity="center"
         android:hint="0"
+        android:maxLength="10"
         android:textColorHint="@android:color/white"
         android:inputType="number"
         android:textColor="@android:color/white"
