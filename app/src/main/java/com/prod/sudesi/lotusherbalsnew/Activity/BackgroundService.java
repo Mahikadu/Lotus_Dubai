@@ -32,6 +32,7 @@ public class BackgroundService extends Service {
 
 
     private ConnectionDetector cd;
+
     LotusWebservice service;
     SharedPref sharedPref;
     String username;

@@ -24,14 +24,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DataBaseCon;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DatabaseCopy;
+import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.Models.LoginDetailsModel;
 import com.prod.sudesi.lotusherbalsnew.R;
 
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsnew.Utils.Utils;
-import com.prod.sudesi.lotusherbalsnew.Dbconfig.DataBaseCon;
-import com.prod.sudesi.lotusherbalsnew.Dbconfig.DatabaseCopy;
-import com.prod.sudesi.lotusherbalsnew.Dbconfig.DbHelper;
 import com.prod.sudesi.lotusherbalsnew.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsnew.libs.LotusWebservice;
 
@@ -110,6 +110,7 @@ public class LoginActivity extends Activity {
         LOTUS.dbCon = DataBaseCon.getInstance(getApplicationContext());
 
         exportDB();
+
 
         // Login btn setonclicklistner
         btn_login.setOnClickListener(new View.OnClickListener() {

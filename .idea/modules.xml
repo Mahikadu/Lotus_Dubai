@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Lotus_Dubai.iml" filepath="$PROJECT_DIR$/Lotus_Dubai.iml" />
+      <module fileurl="file://D:\MahiWorkspace\Lotus_Dubai\Lotus_Dubai.iml" filepath="D:\MahiWorkspace\Lotus_Dubai\Lotus_Dubai.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\MahiWorkspace\Lotus_Dubai\app\app.iml" filepath="D:\MahiWorkspace\Lotus_Dubai\app\app.iml" />
     </modules>
   </component>
 </project>
