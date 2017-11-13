@@ -233,61 +233,23 @@ public class LoginActivity extends Activity {
     private void DataUploadAlaramReceiver() {
 
         try {
+            //Create alarm manager
 
             AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(this, UploadDataBrodcastReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 24);  //24
-            calendar.set(Calendar.MINUTE, 0);   //0
-            calendar.set(Calendar.SECOND,0 );
-
-            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),AlarmManager.INTERVAL_DAY ,//1800000
-                    pendingIntent);
-
-
-          /*  AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
             //Create pending intent & register it to your alarm notifier class
-            Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
+            Intent intent = new Intent(this, UploadDataBrodcastReceiver.class);
+            intent.putExtra("uur", "1e"); // if you want
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
-            intentAlarm.putExtra("uur", "1e"); // if you wanst
-            boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, intentAlarm, PendingIntent.FLAG_NO_CREATE) != null);
-            if(!alarmRunning) {
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intentAlarm, 0);
-                //set timer you want alarm to work (here I have set it to 24.00)
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, 0);  //24
-                calendar.set(Calendar.MINUTE, 2);   //0
-                calendar.set(Calendar.SECOND,0 );
-
-                //set that timer as a RTC Wakeup to alarm manager object
-                mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-//            mAlarmManger.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 180, pendingIntent); //1800000
-
-            }*/
-
-
-              // create the object
-         /*   AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-           *//* Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());*//*
-
+            //set timer you want alarm to work (here I have set it to 24.00)
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 24);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
-            //set the alarm for particular time
-            //1000 * 60 * 180
-            //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 180, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
-           // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60000 * 2 , PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));*///Using UAT server
+            //set that timer as a RTC Wakeup to alarm manager object
+            mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         } catch (Exception e) {
             e.printStackTrace();
         }
