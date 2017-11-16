@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.prod.sudesi.lotusherbalsnew.Models.StockModel;
 import com.prod.sudesi.lotusherbalsnew.Utils.SharedPref;
@@ -77,6 +78,9 @@ public class BackgroundService extends Service {
                 try {
 
                    // Toast.makeText(context,"Service calling",Toast.LENGTH_SHORT).show();
+
+                    boolean flag = true;
+                    Log.v("","Upload Data"+ flag);
 
                     LOTUS.dbCon.open();
                     Cursor stock_array = LOTUS.dbCon.getStockdetails();

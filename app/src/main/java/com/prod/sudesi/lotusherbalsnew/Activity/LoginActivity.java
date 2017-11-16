@@ -110,7 +110,7 @@ public class LoginActivity extends Activity {
         databaseCopy.copy(assetManager, LoginActivity.this);
         LOTUS.dbCon = DataBaseCon.getInstance(getApplicationContext());
 
-        //exportDB();
+        exportDB();
 
 
         // Login btn setonclicklistner
@@ -232,7 +232,7 @@ public class LoginActivity extends Activity {
 
     private void DataUploadAlaramReceiver() {
 
-        try {
+       /* try {
             //Create alarm manager
 
             AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -244,12 +244,27 @@ public class LoginActivity extends Activity {
 
             //set timer you want alarm to work (here I have set it to 24.00)
             Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 24);
-            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 10);
             calendar.set(Calendar.SECOND, 0);
 
             //set that timer as a RTC Wakeup to alarm manager object
             mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
+            // create the object
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 12);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            //set the alarm for particular time
+            //  alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
         } catch (Exception e) {
             e.printStackTrace();
         }

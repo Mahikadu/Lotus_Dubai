@@ -137,7 +137,11 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        new TotalOutletSale().execute();
+        try {
+            new TotalOutletSale().execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -235,7 +239,6 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             super.onPreExecute();
             progress.setTitle("Status");
             progress.setMessage("Please wait...");
-            progress.show();
             progress.show();
         }
 

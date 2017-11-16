@@ -46,6 +46,7 @@ public class LotusWebservice {
 			androidHttpTransport.call("http://tempuri.org/IService1/Get_login",envelope);
 
 			result = (SoapObject) envelope.getResponse();
+
 			Log.e("GetLogin=", result.toString());
 
 		} catch (Exception e) {
@@ -106,6 +107,7 @@ public class LotusWebservice {
 					"http://tempuri.org/IService1/Logout", envelope);
 
 			result = (SoapPrimitive) envelope.getResponse();
+
 			Log.e("Logout", result.toString());
 
 		}
@@ -147,6 +149,7 @@ public class LotusWebservice {
 					"http://tempuri.org/IService1/SaveAttendance", envelope);
 
 			result = (SoapPrimitive) envelope.getResponse();
+
 			Log.e("SaveAttendance", result.toString());
 
 		} catch (Exception e) {
@@ -218,6 +221,7 @@ public class LotusWebservice {
 			androidHttpTransport.call("http://tempuri.org/IService1/MasterSync",envelope);
 
 			result = (SoapObject) envelope.getResponse();
+
 			Log.e("MasterSync=", result.toString());
 
 		} catch (Exception e) {
@@ -252,11 +256,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("GetOutlet", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("GetOutlet", result.toString());
+
 		return result;
 
 	}
@@ -289,6 +295,7 @@ public class LotusWebservice {
 					"http://tempuri.org/IService1/SaveOutletAttendance", envelope);
 
 			result = (SoapPrimitive) envelope.getResponse();
+
 			Log.e("SaveOutletAttendance", result.toString());
 
 		}
@@ -334,6 +341,7 @@ public class LotusWebservice {
 					envelope);
 
 			result = (SoapPrimitive) envelope.getResponse();
+
 			Log.e("DataUpload", result.toString());
 
 		} catch (Exception e) {
@@ -373,11 +381,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("GetDashboardData==", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("GetDashboardData==", result.toString());
+
 		return result;
 	}
 
@@ -409,11 +419,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("TotalOutletSaleAPK", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("TotalOutletSaleAPK", result.toString());
+
 		return result;
 
 	}
@@ -443,11 +455,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("BAOutletSale==", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("BAOutletSale==", result.toString());
+
 		return result;
 	}
 
@@ -479,11 +493,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("GetAttendance", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("GetAttendance", result.toString());
+
 		return result;
 
 	}
@@ -517,11 +533,13 @@ public class LotusWebservice {
 
 			result = (SoapObject) envelope.getResponse();
 
+			Log.e("DataDownload", result.toString());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.e("DataDownload", result.toString());
+
 		return result;
 
 	}
