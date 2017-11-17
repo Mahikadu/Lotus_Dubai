@@ -31,6 +31,7 @@
                 android:inputType="textCapCharacters"
                 android:background="@drawable/us"
                 android:ems="10"
+                android:text="MONA"
                 android:maxLength="12"
                 android:singleLine="true"
                 android:paddingLeft="@dimen/_10sdp" >
@@ -45,6 +46,7 @@
                 android:ems="10"
                 android:maxLength="12"
                 android:singleLine="true"
+                android:text="password"
                 android:gravity="center"
                 android:inputType="textPassword"
                 android:paddingLeft="@dimen/_10sdp" />
@@ -72,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="(Pro_v1.0)"
+            android:text="(UAT_V 1.0)"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#B6B6B4"
             android:textStyle="italic" />

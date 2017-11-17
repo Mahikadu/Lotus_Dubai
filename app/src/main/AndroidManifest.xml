@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.prod.sudesi.lotusherbalsnew">
+    package="com.prod.sudesi.lotusherbalsdubai">
 
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -62,7 +62,7 @@
             </intent-filter>
         </receiver>-->
 
-        <receiver android:name="libs.AlarmManagerBroadcastReceiver" >
+        <receiver android:name=".libs.AlarmManagerBroadcastReceiver" >
         </receiver>
 
         <activity
