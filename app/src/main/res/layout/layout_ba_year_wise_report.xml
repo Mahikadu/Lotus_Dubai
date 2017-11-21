@@ -15,49 +15,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/txtmonthp"
-                style="@style/report_textview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Month" />
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="#000000" />
-
-
-            <TextView
-                android:id="@+id/txtnetamtp"
-                style="@style/report_textview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="NetBalance" />
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="#000000" />
-
-            <TextView
-                android:id="@+id/txtgrowthp"
-                style="@style/report_textview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Growth" />
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="#000000" />
-
-            <TextView
                 android:id="@+id/txtmonthc"
                 style="@style/report_textview"
                 android:layout_width="0dp"
@@ -70,6 +27,7 @@
                 android:layout_width="2dp"
                 android:layout_height="match_parent"
                 android:background="#000000" />
+
 
             <TextView
                 android:id="@+id/txtnetamtc"
@@ -87,6 +45,48 @@
 
             <TextView
                 android:id="@+id/txtgrowthc"
+                style="@style/report_textview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Growth" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <TextView
+                android:id="@+id/txtmonthp"
+                style="@style/report_textview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Month" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <TextView
+                android:id="@+id/txtnetamtp"
+                style="@style/report_textview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="NetBalance" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <TextView
+                android:id="@+id/txtgrowthp"
                 style="@style/report_textview"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

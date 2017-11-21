@@ -370,7 +370,7 @@ public class LotusWebservice {
 			envelope.setOutputSoapObject(request); // set request object
 			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url);// http
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,60000);// http
 			// transport
 			// call
 			androidHttpTransport.call("http://tempuri.org/IService1/GetDashboardData", envelope);
@@ -444,7 +444,7 @@ public class LotusWebservice {
 			envelope.setOutputSoapObject(request); // set request object
 			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,30000);// http
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,60000);// http
 			// transport
 			// call
 			androidHttpTransport.call("http://tempuri.org/IService1/BAOutletSale", envelope);

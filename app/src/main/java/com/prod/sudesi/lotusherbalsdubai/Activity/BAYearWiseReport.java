@@ -447,6 +447,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     private void loadReports() {
         adapter = new BAYearWiseReportAdapter(BAYearWiseReport.this, bayearDetailsArraylist);
         lv_ba_report.setAdapter(adapter);// add custom adapter to listview
+        adapter.notifyDataSetChanged();
     }
 }
 

@@ -18,7 +18,7 @@ public class DatabaseCopy {
 
     Context context;
 
-    String DB_file_path = "/data/data/com.prod.sudesi.lotusherbalsnew/databases/LOTUS.sqlite";
+    String DB_file_path = "/data/data/com.prod.sudesi.lotusherbalsdubai/databases/LOTUS.sqlite";
     String DB_name = "LOTUS.sqlite";
 
 

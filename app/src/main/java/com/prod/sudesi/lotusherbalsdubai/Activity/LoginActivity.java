@@ -216,7 +216,7 @@ public class LoginActivity extends Activity {
         File data = Environment.getDataDirectory();
         FileChannel source = null;
         FileChannel destination = null;
-        String currentDBPath = "/data/" + "com.prod.sudesi.lotusherbalsnew" + "/databases/" + DbHelper.DATABASE_NAME;
+        String currentDBPath = "/data/" + "com.prod.sudesi.lotusherbalsdubai" + "/databases/" + DbHelper.DATABASE_NAME;
         String backupDBPath = DbHelper.DATABASE_NAME;
         File currentDB = new File(data, currentDBPath);
         File backupDB = new File(sd, backupDBPath);
