@@ -58,6 +58,7 @@ public class TotalOutletSalesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
+        convertView = null;
         if (convertView == null) {
             viewHolder = new ViewHolder();// create new holder
             convertView = inflater.inflate(R.layout.row_total_outletsales, null);// inflater for view

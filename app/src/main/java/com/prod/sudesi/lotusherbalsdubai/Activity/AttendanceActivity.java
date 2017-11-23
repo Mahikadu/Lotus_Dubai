@@ -213,7 +213,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-//                startActivity(new Intent(getApplicationContext(), DashboardNewActivity.class));
+                startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
             }
         });
         //---------------------
@@ -239,6 +239,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
     }
 
+    @SuppressLint("WrongConstant")
     private void setGridCellAdapterToDate(int month, int year) {
         adapter = new GridCellAdapter(context, R.id.calendar_day_gridcell,
                 month, year);

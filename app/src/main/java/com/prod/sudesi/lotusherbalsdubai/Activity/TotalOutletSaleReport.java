@@ -302,6 +302,7 @@ public class TotalOutletSaleReport extends Activity implements View.OnClickListe
             {
                 adapter = new TotalOutletSalesAdapter(TotalOutletSaleReport.this, final_array);
                 total_outlet_list.setAdapter(adapter);// add custom adapter to
+                adapter.notifyDataSetChanged();
 
 
             } else {

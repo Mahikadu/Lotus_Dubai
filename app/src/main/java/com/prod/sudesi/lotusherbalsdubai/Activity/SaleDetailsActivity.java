@@ -352,7 +352,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                 }else {
                                     float ttt = Float.parseFloat(tablecount);
 
-                                    float a1 = dis / (ttt - 1);
+                                    float a1 = dis / (ttt);
                                     String adis = String.format("%.02f", a1);
                                     a = Float.parseFloat(adis);
                                 }

@@ -520,6 +520,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
             stocklistview.setVisibility(View.VISIBLE);
             adapter = new ReportAdapter(context, stockReportDetailsArraylist);
             stocklistview.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
             LOTUS.dbCon.close();
 
             // }
@@ -683,5 +684,6 @@ public class ReportActivity extends Activity implements View.OnClickListener{
     private void ShowAttendance() {
         adapterAttend = new AttendanceAdapter(ReportActivity.this, serverAttendanceArraylist);
         attendancelist.setAdapter(adapterAttend);// add custom adapter to listview
+        adapterAttend.notifyDataSetChanged();
     }
 }
