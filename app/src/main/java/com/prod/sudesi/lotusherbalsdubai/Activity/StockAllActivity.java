@@ -271,7 +271,7 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
                     .setCancelable(false)
 
                     .setNegativeButton(
-                            "Stock Page",
+                            "Stock & Sale Page",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(
                                         DialogInterface dialog,

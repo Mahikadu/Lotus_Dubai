@@ -195,13 +195,6 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
 
     @Override
     public void onBackPressed(){
-       /* super.onBackPressed();
-       *//* Intent intent = new Intent(getApplicationContext(), DashBoardActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);*//*
-        Intent setIntent = new Intent(Intent.ACTION_MAIN);
-        setIntent.addCategory(Intent.CATEGORY_HOME);
-        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(setIntent);*/
+
     }
 }

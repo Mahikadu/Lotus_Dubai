@@ -154,22 +154,19 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                 TextView amount = (TextView) tr.findViewById(R.id.txtmrpsale);
                 final EditText quantity = (EditText) tr.findViewById(R.id.edtquantitysale);
 
-                quantity.addTextChangedListener(new TextWatcher()
-                {
-                    public void afterTextChanged(Editable s)
-                    {
+                quantity.addTextChangedListener(new TextWatcher() {
+                    public void afterTextChanged(Editable s) {
                         String x = s.toString();
-                        if(x.startsWith("0"))
-                        {
+                        if (x.startsWith("0")) {
                             quantity.setError("should not starts with 0");
                         }
                     }
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
-                    {
+
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
                     }
-                    public void onTextChanged(CharSequence s, int start, int before, int count)
-                    {
+
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                     }
                 });
@@ -207,8 +204,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                 // TODO Auto-generated method stub
 
                 String x = s.toString();
-                if(x.startsWith("0"))
-                {
+                if (x.startsWith("0")) {
                     edt_discount.setError("should not starts with 0");
                 }
                 edt_netamt.setText("");
@@ -239,8 +235,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                 || !edt_qty.getText().toString().trim()
                                 .equalsIgnoreCase("")
                                 || !edt_qty.getText().toString().trim()
-                                .equalsIgnoreCase(" "))
-                        {
+                                .equalsIgnoreCase(" ")) {
                             int_quantity = Float.parseFloat(edt_qty
                                     .getText().toString().trim());
                             int_mrp = Float.parseFloat(tv_mrp.getText()
@@ -248,11 +243,11 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                             Float multiply = int_quantity * int_mrp;
                             total = total + multiply;
                             edt_gross.setText(String.valueOf(total));
-                        }else{
+                        } else {
                             cd.displayMessage("Please Enter proper quantity");
                         }
                     }
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -347,9 +342,9 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                             float a = 0.0f;
                             try {
-                                if(dis==0.0f){
+                                if (dis == 0.0f) {
                                     a = dis;
-                                }else {
+                                } else {
                                     float ttt = Float.parseFloat(tablecount);
 
                                     float a1 = dis / (ttt);
@@ -357,7 +352,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                     a = Float.parseFloat(adis);
                                 }
 
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             float disss = 0;
@@ -411,6 +406,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                         str_stockinhand = cur.getString(cur.getColumnIndex("stock_in_hand"));
 
                                         boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", str_stockreceived);
+
 
                                         if (boo == true) {
 
@@ -526,7 +522,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                                         String cal_gross = String.valueOf(calc_gross);
 
-                                                        net1 = Float.parseFloat(str_totalnetamount)+ Float.parseFloat(cal_gross) - a;
+                                                        net1 = Float.parseFloat(str_totalnetamount) + Float.parseFloat(cal_gross) - a;
 
                                                     } else {
                                                         String cal_gross = String.valueOf(calc_gross);
@@ -583,13 +579,13 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                             String selection = "A_id = ? AND outletcode = ?";
                                             // WHERE clause arguments
-                                            String[] selectionArgs = {A_Id,outletcode};
+                                            String[] selectionArgs = {A_Id, outletcode};
 
-                                            String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
+                                            String valuesArray[] = {A_Id, Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                                                     str_openingstock, String.valueOf(i_stokreceive), String.valueOf(i_stokinhand),
-                                                    String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross),String.valueOf(net1),
-                                                    String.valueOf(disss),"0",insert_timestamp, insert_timestamp,
-                                                    month_name,year_name,insert_timestamp,outletcode};
+                                                    String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross), String.valueOf(net1),
+                                                    String.valueOf(disss), "0", insert_timestamp, insert_timestamp,
+                                                    month_name, year_name, insert_timestamp, outletcode};
                                             boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, selection, valuesArray, utils.columnNamesStock, selectionArgs);
 
                                             if (output) {
@@ -616,7 +612,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             .setMessage("Go  TO  :")
                                             .setCancelable(false)
                                             .setNegativeButton(
-                                                    "Stock Page",
+                                                    "Stock & Sale Page",
                                                     new DialogInterface.OnClickListener() {
                                                         public void onClick(
                                                                 DialogInterface dialog,
@@ -624,7 +620,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                                             dialog.cancel();
                                                             finish();
-                                                            startActivity(new Intent(SaleDetailsActivity.this,StockActivity.class));
+                                                            startActivity(new Intent(SaleDetailsActivity.this, StockActivity.class));
 
                                                         }
                                                     })
@@ -649,9 +645,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                     // show it
                                     alertDialog.show();
-                                }
-
-                                else {
+                                } else {
                                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                                             SaleDetailsActivity.this);
 
@@ -673,7 +667,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                                             dialog.cancel();
                                                             finish();
-                                                            startActivity(new Intent(SaleDetailsActivity.this,StockActivity.class));
+                                                            startActivity(new Intent(SaleDetailsActivity.this, StockActivity.class));
 
                                                         }
                                                     });

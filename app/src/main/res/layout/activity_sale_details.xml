@@ -11,6 +11,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView1"
@@ -18,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/_5sdp"
+        android:layout_centerHorizontal="true"
         android:text="Sale Details"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/white"
@@ -25,13 +29,16 @@
         android:textStyle="italic"
         android:typeface="serif" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/textView1"
+            android:layout_above="@+id/grosslayout"
             android:orientation="vertical">
 
             <LinearLayout
@@ -86,7 +93,7 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/scrollView1"
@@ -134,120 +141,127 @@
                 </LinearLayout>
 
             </ScrollView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
-                android:orientation="vertical">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp">
-
-                    <EditText
-                        android:id="@+id/edt_gross"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Gross Total"
-                        android:textColorHint="@android:color/white"
-                        android:textColor="@android:color/white"
-                        android:focusable="false"
-                        android:windowSoftInputMode="stateHidden"/>
-
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp">
-
-                    <EditText
-                        android:id="@+id/edt_discount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Discount"
-                        android:maxLength="10"
-                        android:textColorHint="@android:color/white"
-                        android:inputType="number"
-                        android:textColor="@android:color/white"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"/>
-
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp">
-
-                    <EditText
-                        android:id="@+id/edt_netamt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Net Total"
-                        android:textColorHint="@android:color/white"
-                        android:textColor="@android:color/white"
-                        android:focusable="false"
-                        android:windowSoftInputMode="stateHidden"/>
-
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tablelayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:visibility="visible"
-                android:weightSum="2">
-
-                <Button
-                    android:id="@+id/btn_save_sale"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_weight="1"
-                    android:background="@drawable/save_new" />
-
-                <Button
-                    android:id="@+id/btn_back_sale"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_weight="1"
-                    android:background="@drawable/back_new" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
 
-    </ScrollView>
+    <!--</ScrollView>-->
 
+        <LinearLayout
+            android:id="@+id/grosslayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_above="@+id/discountlayout"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edt_gross"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Gross Total"
+                    android:textColorHint="@android:color/white"
+                    android:textColor="@android:color/white"
+                    android:focusable="false"
+                    android:windowSoftInputMode="stateHidden"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/discountlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/netamtlayout"
+            android:layout_margin="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edt_discount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Discount"
+                    android:maxLength="10"
+                    android:textColorHint="@android:color/white"
+                    android:inputType="number"
+                    android:textColor="@android:color/white"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/netamtlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tablelayout"
+            android:layout_margin="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edt_netamt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Net Total"
+                    android:textColorHint="@android:color/white"
+                    android:textColor="@android:color/white"
+                    android:focusable="false"
+                    android:windowSoftInputMode="stateHidden"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tablelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:visibility="visible"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_save_sale"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/save_new" />
+
+            <Button
+                android:id="@+id/btn_back_sale"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/back_new" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 </LinearLayout>
