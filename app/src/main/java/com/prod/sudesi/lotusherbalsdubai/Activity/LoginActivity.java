@@ -235,29 +235,28 @@ public class LoginActivity extends Activity {
     @SuppressLint("WrongConstant")
     private void DataUploadAlaramReceiver() {
 
-       /* try {
-            //Create alarm manager
-
-            AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        try {
 
             //Create pending intent & register it to your alarm notifier class
             Intent intent = new Intent(this, UploadDataBrodcastReceiver.class);
-            intent.putExtra("uur", "1e"); // if you want
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //set timer you want alarm to work (here I have set it to 24.00)
             Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 10);
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 24);
+            calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
 
+            //Create alarm manager
+            AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             //set that timer as a RTC Wakeup to alarm manager object
-            mAlarmManger.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
-        try {
+        /*try {
             Intent intentAlarm = new Intent(this, UploadDataBrodcastReceiver.class);
             // create the object
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -270,7 +269,7 @@ public class LoginActivity extends Activity {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000, PendingIntent.getBroadcast(this, 0, intentAlarm, 0));
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
