@@ -177,7 +177,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     case R.id.radio_stock:
                         stock = true;
                         sale = false;
-                        stock_salelayout.setVisibility(View.VISIBLE);
+                        //stock_salelayout.setVisibility(View.VISIBLE);
                         // product_mode.setVisibility(View.VISIBLE);
                         //modecardview.setVisibility(View.VISIBLE);
                         brand.setText("");
@@ -190,7 +190,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     case R.id.radio_sale:
                         sale = true;
                         stock = false;
-                        stock_salelayout.setVisibility(View.VISIBLE);
+                        //stock_salelayout.setVisibility(View.VISIBLE);
                         //product_mode.setVisibility(View.GONE);
                         // modecardview.setVisibility(View.GONE);
                         brand.setText("");

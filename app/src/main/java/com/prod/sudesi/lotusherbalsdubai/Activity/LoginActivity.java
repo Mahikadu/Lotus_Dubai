@@ -12,10 +12,12 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.ParseException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -23,6 +25,7 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DataBaseCon;
@@ -39,12 +42,17 @@ import com.prod.sudesi.lotusherbalsdubai.libs.LotusWebservice;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,6 +72,7 @@ public class LoginActivity extends Activity {
     String month, year, deviceId, username, pass, version, baname, serverdate, attendant;
     String server_date, todaydate1;
 
+    String VERSION_NAME = "",OS_VERSION = "";
     private static final int RECORD_REQUEST_CODE = 101;
     private double lon = 0.0, lat = 0.0;
     int logCounter = 0;
@@ -72,6 +81,10 @@ public class LoginActivity extends Activity {
     String ID;
     private Utils utils;
     private LoginDetailsModel loginDetailsModel;
+
+    //Production
+    public static final String  downloadURL = "http://lotussmartforce.com/apk/Lotus_Pro.apk"; //production
+    public static final String downloadConfigFile = "http://lotussmartforce.com/apk/config.txt";//production
 
     @SuppressLint("WrongConstant")
     @Override
@@ -120,93 +133,43 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this, R.anim.button_click));
-                try {
 
-                    if (sharedPref.getvalue() == true) {
-                        Log.e("Upload Data Receivert", String.valueOf(sharedPref.getvalue()));
-                    } else {
-                        DataUploadAlaramReceiver();
-                    }
+                LoginUser();
 
-                    if (edt_username.getText().toString().equalsIgnoreCase("")) {
-                        edt_username.setError(null);
-                        edt_username.setError("Enter Username");
-                    } else if (edt_password.getText().toString().equalsIgnoreCase("")) {
-                        edt_password.setError(null);
-                        edt_password.setError("Enter Password");
-                    } else {
-                        username = edt_username.getText().toString().toUpperCase();
+               /* try {
+                    if (cd.isConnectingToInternet()) {
+
+                        username = edt_username.getText().toString()
+                                .toUpperCase();
                         pass = edt_password.getText().toString();
 
-                        //LOTUS.dbCon.open();
-                        int count = LOTUS.dbCon.checkcount(username, pass);
-                        //LOTUS.dbCon.close();
+                        PackageInfo info = null;
+                        PackageManager manager = getPackageManager();
+                        info = manager.getPackageInfo(getPackageName(), 0);
 
-                        if (count > 0) {
+                        String packageName = info.packageName;
+                        int versionCode = info.versionCode;
+                        VERSION_NAME = info.versionName;
+                        OS_VERSION = String.valueOf(android.os.Build.VERSION.SDK_INT);
 
-                            SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "yyyy-MM-dd");
-                            String currentDateandTime = sdf.format(new Date())
-                                    .toString();
-
-                            LOTUS.dbCon.open();
-                            String attendance = LOTUS.dbCon.getdatepresentorabsent(currentDateandTime, username);
-                            LOTUS.dbCon.close();
-                            // String a="P";
-
-                            if (attendance.equalsIgnoreCase("")) {
-
-                                if (cd.isConnectingToInternet()) {
-                                    Check_Login login = new Check_Login();
-                                    login.execute();
-                                } else {
-                                    cd.displayMessage("Time out or No Network or Wrong Credentials");
-
-                                }
-                            }
-                            if (attendance.equalsIgnoreCase("P")) {
-
-                                // SetClosingISOpeningOnlyOnce();
-
-                                Intent i = new Intent(getApplicationContext(),
-                                        DashBoardActivity.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(i);
-
-                            }
-                            if (attendance.equalsIgnoreCase("A")) {
-                                cd.displayMessage("U r absent today");
-
-                            }
+                        if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(VERSION_NAME)) {
+                            // TODO check apk version
+                            new SyncApkCheck().execute();
 
                         } else {
-
-                            LOTUS.dbCon.open();
-                            int count1 = LOTUS.dbCon.getCountOfRows(DbHelper.TABLE_LOGIN);
-                            LOTUS.dbCon.close();
-
-                            if (count1 == 1) {
-                                cd.displayMessage("Please Enter Correct user name and password");
-                            } else {
-                                if (cd.isConnectingToInternet()) {
-                                    Check_Login login = new Check_Login();
-                                    login.execute();
-                                } else {
-                                    cd.displayMessage("Time out or No Network or Wrong Credentials");
-                                }
-                            }
+                            Toast.makeText(getApplicationContext(), "Fields Cannot be Empty", Toast.LENGTH_SHORT).show();
 
                         }
+
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please Check Internet Connection.", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e) {
-                    // TODO: handle exception
-                    StringWriter errors = new StringWriter();
-                    e.printStackTrace(new PrintWriter(errors));
-
                     e.printStackTrace();
+                }*/
 
-                }
             }
         });
     }
@@ -539,5 +502,268 @@ public class LoginActivity extends Activity {
         }
     }
 
+    public class SyncApkCheck extends AsyncTask<Void, Void, Boolean> {
+
+        boolean result = false;
+
+        ProgressDialog mprogress;
+
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            mprogress = new ProgressDialog(LoginActivity.this);
+            mprogress.setTitle("Checking / Downloading APK");
+            mprogress.setMessage("Please Wait..!");
+            mprogress.setCancelable(false);
+            mprogress.show();
+
+
+        }
+
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            CheckServerApkVersionDownloadFile(downloadConfigFile);
+            String version = ReadVersionFromSDCardFile();
+            if (!version.equalsIgnoreCase("")) {
+                if (!VERSION_NAME.trim().equalsIgnoreCase(version.trim())) {
+                    result = Update(downloadURL);
+                } else {
+                    result = false;
+                }
+            } else {
+                result = false;
+            }
+
+            return result;
+        }
+
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            mprogress.dismiss();
+            if (result != null) {
+                if (result) {
+                    Toast.makeText(LoginActivity.this, "New Apk Version has been Installed..!", Toast.LENGTH_SHORT).show();
+                } else {
+//                    Toast.makeText(MainActivity.this, "No New Version !", Toast.LENGTH_SHORT).show();
+                    LoginUser();
+                }
+            } else {
+//                Toast.makeText(MainActivity.this, "No New Version !", Toast.LENGTH_SHORT).show();
+                LoginUser();
+            }
+
+        }
+    }
+
+    public void LoginUser(){
+        try {
+
+            if (sharedPref.getvalue() == true) {
+                Log.e("Upload Data Receivert", String.valueOf(sharedPref.getvalue()));
+            } else {
+                DataUploadAlaramReceiver();
+            }
+
+            if (edt_username.getText().toString().equalsIgnoreCase("")) {
+                edt_username.setError(null);
+                edt_username.setError("Enter Username");
+            } else if (edt_password.getText().toString().equalsIgnoreCase("")) {
+                edt_password.setError(null);
+                edt_password.setError("Enter Password");
+            } else {
+                username = edt_username.getText().toString().toUpperCase();
+                pass = edt_password.getText().toString();
+
+                //LOTUS.dbCon.open();
+                int count = LOTUS.dbCon.checkcount(username, pass);
+                //LOTUS.dbCon.close();
+
+                if (count > 0) {
+
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "yyyy-MM-dd");
+                    String currentDateandTime = sdf.format(new Date())
+                            .toString();
+
+                    LOTUS.dbCon.open();
+                    String attendance = LOTUS.dbCon.getdatepresentorabsent(currentDateandTime, username);
+                    LOTUS.dbCon.close();
+                    // String a="P";
+
+                    if (attendance.equalsIgnoreCase("")) {
+
+                        if (cd.isConnectingToInternet()) {
+                            Check_Login login = new Check_Login();
+                            login.execute();
+                        } else {
+                            cd.displayMessage("Time out or No Network or Wrong Credentials");
+
+                        }
+                    }
+                    if (attendance.equalsIgnoreCase("P")) {
+
+                        // SetClosingISOpeningOnlyOnce();
+
+                        Intent i = new Intent(getApplicationContext(),
+                                DashBoardActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+
+                    }
+                    if (attendance.equalsIgnoreCase("A")) {
+                        cd.displayMessage("U r absent today");
+
+                    }
+
+                } else {
+
+                    LOTUS.dbCon.open();
+                    int count1 = LOTUS.dbCon.getCountOfRows(DbHelper.TABLE_LOGIN);
+                    LOTUS.dbCon.close();
+
+                    if (count1 == 1) {
+                        cd.displayMessage("Please Enter Correct user name and password");
+                    } else {
+                        if (cd.isConnectingToInternet()) {
+                            Check_Login login = new Check_Login();
+                            login.execute();
+                        } else {
+                            cd.displayMessage("Time out or No Network or Wrong Credentials");
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+
+            e.printStackTrace();
+
+        }
+    }
+
+    public void CheckServerApkVersionDownloadFile(String configFileUrl) {
+        try {
+            URL url = new URL(configFileUrl);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.setDoOutput(false);
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory() + "/download/";
+            File file = new File(PATH);
+            file.mkdirs();
+            File outputFile = new File(file, "config.txt");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();//
+
+        } catch (IOException e) {
+            // Toast.makeText(LoginActivity.this,"Server APK Version not getting",
+            // Toast.LENGTH_LONG).show();
+
+            e.printStackTrace();
+        }
+    }
+
+    public String ReadVersionFromSDCardFile() {
+
+        String serverApkVersion = "";
+
+
+        try {
+
+            String PATH = Environment.getExternalStorageDirectory()
+                    + "/download/config.txt";
+            File myFile = new File(PATH);
+            FileInputStream fIn = new FileInputStream(myFile);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(
+                    fIn));
+            String aDataRow = "";
+            String aBuffer = "";
+            while ((aDataRow = myReader.readLine()) != null) {
+                aBuffer = aDataRow;
+            }
+
+            return serverApkVersion = aBuffer;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return serverApkVersion   /*.split("\\$")[0]*/;
+
+    }
+
+    public Boolean Update(String apkurl) {
+        try {
+            URL url = new URL(apkurl);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.setDoOutput(false);
+            c.setReadTimeout(6000);
+            c.setConnectTimeout(6000);
+            c.connect();
+
+            String PATH = Environment.getExternalStorageDirectory()
+                    + "/download/";
+
+            File file = new File(PATH);
+            file.mkdirs();
+            File outputFile = new File(file, "Lotus_Dubai.apk");
+            FileOutputStream fos = new FileOutputStream(outputFile);
+
+            InputStream is = c.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len1);
+            }
+            fos.close();
+            is.close();
+
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(Environment
+                            .getExternalStorageDirectory()
+                            + "/download/"
+                            + "Lotus_Dubai.apk")),
+                    "application/vnd.android.package-archive");
+            startActivity(intent);
+
+            // mProgress.dismiss();
+            if (outputFile.exists()) {
+                return true;
+            }
+
+        } catch (IOException e) {
+//            Toast.makeText(getApplicationContext(), "Update error!",
+//                    Toast.LENGTH_LONG).show();
+
+            e.printStackTrace();
+            return false;
+        }
+        return null;
+    }
 
 }

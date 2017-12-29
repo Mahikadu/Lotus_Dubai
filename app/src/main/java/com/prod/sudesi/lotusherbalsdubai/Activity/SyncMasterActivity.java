@@ -1,5 +1,6 @@
 package com.prod.sudesi.lotusherbalsdubai.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -250,6 +251,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         }
     }
 
+    @SuppressLint("WrongConstant")
     public static List<Date> getDaysBetweenDates(Date startdate, Date enddate) {
         List<Date> dates = new ArrayList<Date>();
         Calendar calendar = new GregorianCalendar();
@@ -1119,14 +1121,21 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             Year = items1[0];
                             month = items1[1];*/
 
-                            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
+                            //12/13/2017 12:00:00 AM
+                            SimpleDateFormat oldformat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aaa");
 
-                            Date theDate = format.parse(StockDate);
+                            Date theDate = null;
+                            try {
+                                theDate = oldformat.parse(StockDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
 
                             Calendar myCal = new GregorianCalendar();
                             myCal.setTime(theDate);
 
                             int Month =  myCal.get(Calendar.MONTH + 1);
+                            @SuppressLint("WrongConstant")
                             int year =  myCal.get(Calendar.YEAR);
 
                             month = String.valueOf(Month);
@@ -1178,16 +1187,19 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         }
 
         @Override
-        protected void onPostExecute(SoapObject soapObject) {
+        protected void onPostExecute(SoapObject result) {
             // TODO Auto-generated method stub
-            super.onPostExecute(soapObject);
+            super.onPostExecute(result);
 
             mProgress.dismiss();
 
-            if(soapObject != null){
-                    String response = String.valueOf(soapObject.toString());
+            if(result != null){
+                    String response = String.valueOf(result.toString());
 
-                if (response.equalsIgnoreCase("success")) {
+                SoapObject res = (SoapObject) result.getProperty(0);
+                String msg = res.getPropertyAsString("Message");
+
+                if (msg.equalsIgnoreCase("success")) {
 
                     new SweetAlertDialog(SyncMasterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("Data Download")

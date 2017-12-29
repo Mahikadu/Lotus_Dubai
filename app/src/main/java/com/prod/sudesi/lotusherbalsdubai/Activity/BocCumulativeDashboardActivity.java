@@ -257,6 +257,7 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
     public class DashbardData extends AsyncTask<Void, Void, SoapObject> {
 
         String returnMessage = "";
+        String startdate[] = getStartEnd(str_Month, year);
 
         @Override
         protected void onPreExecute() {
@@ -277,8 +278,6 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
 
                 if (cd.isConnectingToInternet()) {
                     LOTUS.dbCon.open();
-
-                    String startdate[] = getStartEnd(str_Month, year);
 
                         //2017-11-01   2017-11-30  9999
                         results = service.GetDashboardData(startdate[0], startdate[1], outletcode, username);
@@ -345,12 +344,7 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
             if (soapObject != null) {
 
                 try {
-
-                    Calendar cal = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat(
-                            "yyyy-MM-dd");
-                    String insert_timestamp = sdf.format(cal
-                            .getTime());
+                    String insert_timestamp = startdate[0];
 
                     String[] items1 = insert_timestamp.split("-");
                     String Month = items1[1];
