@@ -39,7 +39,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by Admin on 30-10-2017.
@@ -98,7 +97,7 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
         //year1 = y[1];
 
         txtboc.setText(str_Month);
-        txtyear.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+        txtyear.setText(year);
         username = sharedPref.getLoginId();
         tv_h_username = (TextView) findViewById(R.id.tv_h_username);
         tv_h_username.setText(username);
@@ -150,21 +149,21 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
             DashbardData dashbardData = new DashbardData();
             dashbardData.execute();
         }else {
-
-            new SweetAlertDialog(BocCumulativeDashboardActivity.this, SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("ERROR !!")
-                    .setContentText("Please Select outlet")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
+            //cd.DisplayDialogMessage("Please Select outlet");
+            AlertDialog.Builder builder = new AlertDialog.Builder(BocCumulativeDashboardActivity.this);
+            builder.setMessage("Please Select outlet")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
                             Intent intent = new Intent(BocCumulativeDashboardActivity.this, DashBoardActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-
-                            sDialog.dismiss();
+                            dialog.dismiss();
                         }
-                    })
-                    .show();
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
 
         }
 
@@ -282,46 +281,49 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
                         //2017-11-01   2017-11-30  9999
                         results = service.GetDashboardData(startdate[0], startdate[1], outletcode, username);
 
-                        for (int i = 0; i < results.getPropertyCount(); i++) {
+                        if(results!=null && results.getPropertyCount()>0) {
 
-                            SoapObject root = (SoapObject) results.getProperty(i);
+                            for (int i = 0; i < results.getPropertyCount(); i++) {
 
-                            if (root.getPropertyAsString("Datenew") != null) {
+                                SoapObject root = (SoapObject) results.getProperty(i);
 
-                                if (!root.getPropertyAsString("Datenew").equalsIgnoreCase("anyType{}")) {
-                                    strDate = root.getPropertyAsString("Datenew");
+                                if (root.getPropertyAsString("Datenew") != null) {
+
+                                    if (!root.getPropertyAsString("Datenew").equalsIgnoreCase("anyType{}")) {
+                                        strDate = root.getPropertyAsString("Datenew");
+                                    } else {
+                                        strDate = "";
+                                    }
                                 } else {
                                     strDate = "";
                                 }
-                            } else {
-                                strDate = "";
-                            }
 
-                            if (root.getPropertyAsString("SoldQty") != null) {
+                                if (root.getPropertyAsString("SoldQty") != null) {
 
-                                if (!root.getPropertyAsString("SoldQty").equalsIgnoreCase("anyType{}")) {
-                                    strSoldQty = root.getPropertyAsString("SoldQty");
+                                    if (!root.getPropertyAsString("SoldQty").equalsIgnoreCase("anyType{}")) {
+                                        strSoldQty = root.getPropertyAsString("SoldQty");
+                                    } else {
+                                        strSoldQty = "";
+                                    }
                                 } else {
                                     strSoldQty = "";
                                 }
-                            } else {
-                                strSoldQty = "";
-                            }
 
-                            if (root.getPropertyAsString("Soldvalue") != null) {
+                                if (root.getPropertyAsString("Soldvalue") != null) {
 
-                                if (!root.getPropertyAsString("Soldvalue").equalsIgnoreCase("anyType{}")) {
-                                    strSoldvalue = root.getPropertyAsString("Soldvalue");
+                                    if (!root.getPropertyAsString("Soldvalue").equalsIgnoreCase("anyType{}")) {
+                                        strSoldvalue = root.getPropertyAsString("Soldvalue");
+                                    } else {
+                                        strSoldvalue = "";
+                                    }
                                 } else {
                                     strSoldvalue = "";
                                 }
-                            } else {
-                                strSoldvalue = "";
+
+                                String valuesArray[] = {strDate, strSoldQty, strSoldvalue};
+                                boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_DASHBOARD_DETAILS, " Date = ?", valuesArray, utils.columnNamesDashboardDetails, new String[]{strDate});
+
                             }
-
-                            String valuesArray[] = {strDate, strSoldQty, strSoldvalue};
-                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_DASHBOARD_DETAILS, " Date = ?", valuesArray, utils.columnNamesDashboardDetails, new String[]{strDate});
-
                         }
 
                     }
@@ -347,9 +349,10 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
                     String insert_timestamp = startdate[0];
 
                     String[] items1 = insert_timestamp.split("-");
+                    String year = items1[0];
                     String Month = items1[1];
 
-                    String whereclause = " where Date like '%-" + Month + "-%'";
+                    String whereclause = " where Date like '%" + year + "-" + Month + "-%'";
                     LOTUS.dbCon.open();
                     Cursor c = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_DASHBOARD_DETAILS, whereclause);
                     tl_cumulative.removeAllViews();
@@ -371,8 +374,8 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
 //
 
                             txtdate.setText(date);
-                            txtsaleValue.setText(qty);
-                            txtsaleUnit.setText(value);
+                            txtsaleValue.setText(value);
+                            txtsaleUnit.setText(qty);
 
                             tl_cumulative.addView(tr);
 
@@ -408,7 +411,7 @@ public class BocCumulativeDashboardActivity extends Activity implements View.OnC
                 boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                 LOTUS.dbCon.close();
-                cd.displayMessage("Soup is Null While GetDashboardData()");
+                cd.displayMessage("Connectivity Error, Please check Internet connection!!");
             }
 
         }

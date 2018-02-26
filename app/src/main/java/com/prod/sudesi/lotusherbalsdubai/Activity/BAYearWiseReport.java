@@ -1,8 +1,10 @@
 package com.prod.sudesi.lotusherbalsdubai.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -36,8 +38,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
 /**
  * Created by Admin on 04-11-2017.
  */
@@ -53,7 +53,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     LotusWebservice service;
 
     String str_Month, year, username;
-    TextView txtboc, txtyear, tv_h_username,tvcurrentyear,tvNextyear;
+    TextView txtboc, txtyear, tv_h_username,tvcurrentyear,tvpreviousyear;
 
     private ArrayList<OutletModel> outletDetailsArraylist;
     OutletModel outletModel;
@@ -69,7 +69,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
     String GrowthCSkin,GrowthPSkin,Message,NetAmountCSkin,NetAmountPSkin,years_MonthsC,years_MonthsP;
     private BAYearWiseReportAdapter adapter;
 
-    String NextYear,CurrentYear;
+    String PreviousYear,CurrentYear;
 
 
     @Override
@@ -98,9 +98,9 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
 
             if(!current_year_n2.equalsIgnoreCase("")){
 
-                int int_previous_year_n22 =  int_current_year_n2 + 1 ;
+                int int_previous_year_n22 =  int_current_year_n2 - 1 ;
 
-                 NextYear = String.valueOf(int_previous_year_n22);
+                PreviousYear = String.valueOf(int_previous_year_n22);
 
                  CurrentYear = String.valueOf(int_current_year_n2);
 
@@ -109,11 +109,11 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        tvNextyear = (TextView) findViewById(R.id.tvCurrentyear);
-        tvcurrentyear = (TextView) findViewById(R.id.tvPreviousyear);
+        tvcurrentyear = (TextView) findViewById(R.id.tvCurrentyear);
+        tvpreviousyear = (TextView) findViewById(R.id.tvPreviousyear);
 
-        tvNextyear.setText(NextYear);
         tvcurrentyear.setText(CurrentYear);
+        tvpreviousyear.setText(PreviousYear);
 
         lv_ba_report = (ListView) findViewById(R.id.listView_ba_year_report);
 
@@ -237,20 +237,22 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
                 } while (cursor.moveToNext());
                 cursor.close();
             }else{
-                new SweetAlertDialog(BAYearWiseReport.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("ERROR !!")
-                        .setContentText("Please Select outlet")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
+                //cd.DisplayDialogMessage("Please Select outlet");
+                AlertDialog.Builder builder = new AlertDialog.Builder(BAYearWiseReport.this);
+                builder.setMessage("Please Select outlet")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //do things
                                 Intent intent = new Intent(BAYearWiseReport.this, DashBoardActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
-
-                                sDialog.dismiss();
+                                dialog.dismiss();
                             }
-                        })
-                        .show();
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -391,7 +393,7 @@ public class BAYearWiseReport extends Activity implements View.OnClickListener {
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
-                        cd.displayMessage("Soup is Null While BAOutletSale()");
+                        cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                     }
 
                 }

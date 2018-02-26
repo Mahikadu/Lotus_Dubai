@@ -89,6 +89,20 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
+    public Cursor fetchFromSaleDetails(String tbl, String offer, String brand) {
+        String query = null;
+        try {
+            query = "select * from " + tbl + " t inner join (select A_id, max(insert_date) as insert_date from "
+                    + tbl + " group by A_id) tm on t.A_id = tm.A_id AND t.insert_date = tm.insert_date  AND SingleOffer = '"
+                    + offer + "' AND Brand = '" + brand + "'";
+            Log.i("TAG", "query :" + query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dbHelper.rawQuery(query);
+    }
+
     public Cursor fetchFromSelectDistinctWhere(String colName, String tbl, String where) {
         String query = null;
         try {
@@ -102,16 +116,64 @@ public class DataBaseCon {
 
     public Cursor fetchFromSelectDistinctWheremultiplecolumn(String colName1, String colName2, String colName3,
                                                              String colName4, String colName5, String colName6,
-                                                             String tbl, String where) {
+                                                             String colName7, String tbl, String where) {
         String query = null;
         try {
-            query = "select distinct " + colName1 + ", " + colName2 + ", " + colName3 + ", " + colName4 + ", " + colName5 + ", " + colName6 + " from " + tbl + where;
+            query = "select distinct " + colName1 + ", " + colName2 + ", " + colName3 + ", " + colName4 + ", " + colName5 + ", " + colName6 + ", " + colName7 + " from " + tbl + where;
             Log.i("TAG", "query :" + query);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return dbHelper.rawQuery(query);
     }
+
+    public Cursor fetchAllproductslistforstock(String Brand,
+                                               String offer) {
+        // TODO Auto-generated method stub
+
+        String selectquery = "select distinct(ProductName) from table_master_sync where Brand = " + "'" + Brand + "'" + " AND SingleOffer = " + "'" + offer + "' ORDER BY order_flag ";
+
+        Cursor cursort = dbHelper.rawQuery(selectquery);
+
+
+        return cursort;
+
+    }
+
+    public String check_password_from_db(String username, String str_old_password) {
+        // TODO Auto-generated method stub
+
+        Cursor c;
+        String count = "0";
+
+        String sql = "select * from table_login where username = '" + username + "' and  password= '" + str_old_password + "'";
+        c = dbHelper.rawQuery(sql);
+        if (c != null)
+            if (c.getCount() > 0 && c.moveToFirst()) {
+
+
+                count = "1";
+
+            }
+
+        return count;
+    }
+
+
+    public Cursor fetchallSpecifyMSelect(String Productname, String Brand, String offer) {
+
+        String query = null;
+        try {
+            query = "select * from table_master_sync where ProductName = " + "'" + Productname + "'" + " AND Brand = " + "'" + Brand + "'" + " AND SingleOffer = " + "'" + offer + "'";
+            Log.i("TAG", "query :" + query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dbHelper.rawQuery(query);
+
+    }
+
 
     public Cursor fetchFromSelectDistinct(String colName, String tbl) {
         String query = null;
@@ -124,17 +186,19 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
-    public Cursor fetchonestock(CharSequence db_id, String outletcode)
-    {
-        String sql="SELECT DISTINCT opening_stock, sold_stock, total_gross_amount, total_net_amount, discount FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
+    public Cursor fetchonestock(CharSequence db_id, String outletcode) {
+        String sql = "SELECT DISTINCT opening_stock, sold_stock, total_gross_amount, total_net_amount, discount FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
         Cursor c = dbHelper.rawQuery(sql);
         return c;
 
     }
 
-    public Cursor fetchonestockmultplecolumn(CharSequence db_id, String outletcode)
-    {
-        String sql="SELECT DISTINCT total_gross_amount,total_net_amount,discount,close_bal,sold_stock,opening_stock,stock_received,stock_in_hand FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
+    public Cursor fetchonestockmultplecolumn(CharSequence db_id, String outletcode) {
+
+        String sql = "Select total_gross_amount,total_net_amount,discount,close_bal,sold_stock,opening_stock,stock_received,stock_in_hand FROM table_stock t inner join (select max(insert_date) as insert_date from table_stock group by A_id) tm on t.insert_date = tm.insert_date  AND A_id = '"
+                + db_id + "' AND outletcode = '" + outletcode + "'";
+
+        //String sql="SELECT DISTINCT total_gross_amount,total_net_amount,discount,close_bal,sold_stock,opening_stock,stock_received,stock_in_hand FROM table_stock WHERE A_id = '" + db_id + "' and outletcode ='" + outletcode + "'";
         Cursor c = dbHelper.rawQuery(sql);
         return c;
 
@@ -166,7 +230,7 @@ public class DataBaseCon {
     public Cursor fetchAlldata(String tbl) {
         String query = null;
         try {
-            query = "select * from " + tbl ;
+            query = "select * from " + tbl;
 
             Log.i("TAG", "query :" + query);
         } catch (Exception e) {
@@ -216,26 +280,44 @@ public class DataBaseCon {
 
     }
 
+    public String fetchStockDbIDNew(String ShortName, String mrp, String brand) {
+
+        String sql = "select A_Id from table_master_sync where ShortName like '%" + ShortName + "%' and PTT = '" + mrp + "' and Brand ='" + brand + "'";
+
+        Log.e("sql", sql);
+
+        String result = "";
+
+        Cursor c = dbHelper.rawQuery(sql);
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            result = c.getString(0);
+
+
+        }
+
+        return result;
+
+
+    }
+
     public String getActiveoutletCode() {
         // TODO Auto-generated method stub
-        String outletcode="";
+        String outletcode = "";
         String selectquery = "select outletcode from outlet_attendance where outletstatus = 'Active'";
         Cursor cursor = dbHelper.rawQuery(selectquery);
-        if (cursor != null)
-        {
+        if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    outletcode=cursor.getString(cursor.getColumnIndex("outletcode"));
+                    outletcode = cursor.getString(cursor.getColumnIndex("outletcode"));
                 } while (cursor.moveToNext());
 
             }
-        } else
-        {
-            outletcode="";
+        } else {
+            outletcode = "";
         }
         return outletcode;
     }
-
 
 
     public Cursor fetchAll2(String Category, String where1, String tbl) {
@@ -332,7 +414,6 @@ public class DataBaseCon {
     public boolean update(String tbl, String where, String values[], String names[], String args[]) {
         return dbHelper.update(where, values, names, tbl, args);
     }
-
 
 
     public boolean updateBulk(String tbl, String where, String values[], String names[], String args[]) {

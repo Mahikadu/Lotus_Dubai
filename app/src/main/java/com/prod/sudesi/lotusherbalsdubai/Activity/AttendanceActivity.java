@@ -73,6 +73,7 @@ import com.prod.sudesi.lotusherbalsdubai.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsdubai.Utils.Utils;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DataBaseCon;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DbHelper;
+import com.prod.sudesi.lotusherbalsdubai.adapter.ListAdapter;
 import com.prod.sudesi.lotusherbalsdubai.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsdubai.libs.LotusWebservice;
 
@@ -132,6 +133,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
     private LocationGooglePlayServicesProvider provider;
     private static final String BROADCAST_ACTION = "android.location.PROVIDERS_CHANGED";
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -293,6 +295,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                 "dd-MMM-yyyy");
 
         // Days in Current Month
+        @SuppressLint("WrongConstant")
         public GridCellAdapter(Context context, int textViewResourceId,
                                int month, int year) {
             super();
@@ -341,6 +344,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
          * @param mm
          * @param yy
          */
+        @SuppressLint("WrongConstant")
         private void printMonth(int mm, int yy) {
             Log.d(tag, "==> printMonth: mm: " + mm + " " + "yy: " + yy);
             int trailingSpaces = 0;
@@ -389,7 +393,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                         + " NextYear: " + nextYear);
             }
 
-            int currentWeekDay = cal.get(Calendar.DAY_OF_WEEK) - 1;
+            @SuppressLint("WrongConstant") int currentWeekDay = cal.get(Calendar.DAY_OF_WEEK) - 1;
             trailingSpaces = currentWeekDay;
 
             Log.d(tag, "Week Day:" + currentWeekDay + " is "
@@ -636,6 +640,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
             return row;
         }
 
+        @SuppressLint("WrongConstant")
         @Override
         public void onClick(final View view) {
             String date_month_year = (String) view.getTag();
@@ -823,9 +828,6 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
 
                     } else {
-
-
-
 
                         final Dialog dialog = new Dialog(AttendanceActivity.this);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1331,7 +1333,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                                 String lat = attendance_array.getString(5);
                                 Log.e("", "lat=" + lat);
 
-                                String lon = attendance_array.getString(5);
+                                String lon = attendance_array.getString(6);
                                 Log.e("", "lon=" + lon);
 
                                 soap_result_attendance = service.SaveAttendance(
@@ -1687,7 +1689,6 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                         updateGPSStatus("GPS is Enabled in your device");
                         //startLocationUpdates();
                         startLocation();
-
 
                         break;
                     case RESULT_CANCELED:

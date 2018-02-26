@@ -1,7 +1,9 @@
 package com.prod.sudesi.lotusherbalsdubai.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -37,8 +39,7 @@ import com.prod.sudesi.lotusherbalsdubai.libs.ConnectionDetector;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
+import java.util.HashMap;
 
 /**
  * Created by Admin on 18-10-2017.
@@ -83,6 +84,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
     String brandstring, brandname, categorystring, categoryname, subcategorystring, subcategoryname, offerstring, offername;
 
     private ArrayList<ProductModel> productDetailsArraylist;
+    ArrayList<HashMap<String, String[]>> productDetailsArray = new ArrayList<HashMap<String, String[]>>();
     ProductModel productModel;
     String[] strMrpArray = null;
 
@@ -154,20 +156,21 @@ public class StockActivity extends Activity implements View.OnClickListener {
         if (outletcode != null && !outletcode.equalsIgnoreCase("")) {
 
         } else {
-            new SweetAlertDialog(StockActivity.this, SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("ERROR !!")
-                    .setContentText("Please Select outlet")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
+            //cd.DisplayDialogMessage("Please Select outlet");
+            AlertDialog.Builder builder = new AlertDialog.Builder(StockActivity.this);
+            builder.setMessage("Please Select outlet")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
                             Intent intent = new Intent(StockActivity.this, DashBoardActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-
-                            sDialog.dismiss();
+                            dialog.dismiss();
                         }
-                    })
-                    .show();
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
         radio_stock_sale.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -881,8 +884,10 @@ public class StockActivity extends Activity implements View.OnClickListener {
         try {
             productDetailsArraylist = new ArrayList<>();
 
-            String where = " where SingleOffer = " + "'" + Offername + "' AND Brand = " + "'" + Brandname + "'";
-            Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_STOCK, where);
+
+           /* String where = " where SingleOffer = " + "'" + Offername + "' AND Brand = " + "'" + Brandname + "'";
+            Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_STOCK, where);*/
+            Cursor cursor = LOTUS.dbCon.fetchFromSaleDetails(DbHelper.TABLE_STOCK,Offername,Brandname);
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 do {
@@ -976,8 +981,9 @@ public class StockActivity extends Activity implements View.OnClickListener {
     private void getproductsDetails(String Offername, String Brandname) {
         try {
             productDetailsArraylist = new ArrayList<>();
+            productDetailsArray.clear();
 
-            String A_Id = "A_Id";
+            /*String A_Id = "A_Id";
             String Barcodes = "Barcodes";
             String ProductName = "ProductName";
             String PTT = "PTT";
@@ -998,17 +1004,66 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     productDetailsArraylist.add(productModel);
                 } while (cursor.moveToNext());
                 cursor.close();
-            }
-            if (productDetailsArraylist.size() > 0) {
-                //strMrpArray = new String[productDetailsArraylist.size()];
-                for (int i = 0; i < productDetailsArraylist.size(); i++) {
-                    View tr = (TableRow) View.inflate(StockActivity.this, R.layout.inflate_stocksale_row, null);
+            }*/
 
-                    cb = (CheckBox) tr.findViewById(R.id.chck_product);
+            Cursor cursor = LOTUS.dbCon.fetchAllproductslistforstock(Brandname, Offername);
+            if (cursor != null && cursor.getCount() > 0) {
 
-                    spin = (Spinner) tr.findViewById(R.id.spin_mrp);
+                cursor.moveToFirst();
 
-                    productModel = productDetailsArraylist.get(i);
+                do {
+                    HashMap<String, String[]> map = new HashMap<String, String[]>();
+                    Cursor c = LOTUS.dbCon.fetchallSpecifyMSelect(cursor.getString(cursor.getColumnIndex("ProductName")), Brandname, Offername);
+
+                    String comma_ids[] = new String[c.getCount()],
+                            comma_Aid[] = new String[c.getCount()],
+                            comma_mrps[] = new String[c.getCount()],
+                            comma_size[] = new String[c.getCount()],
+                            comma_barcode[] = new String[c.getCount()],
+                            comma_product[] = new String[c.getCount()];
+
+                    if (c != null && c.getCount() > 0) {
+                        c.moveToFirst();
+
+                        for (int i = 0; i < c.getCount(); i++) {
+                            comma_ids[i] = c.getString(c.getColumnIndex("id"));
+                            comma_Aid[i] = c.getString(c.getColumnIndex("A_Id"));
+                            comma_mrps[i] = c.getString(c.getColumnIndex("PTT"));
+                            comma_size[i] = c.getString(c.getColumnIndex("size"));
+                            comma_barcode[i] = c.getString(c.getColumnIndex("Barcodes"));
+                            comma_product[i] = c.getString(c.getColumnIndex("ProductName"));
+
+                            c.moveToNext();
+
+                        }
+
+                    }
+                    map.put("IDS", comma_ids);
+                    map.put("SIZE", comma_size);
+                    map.put("MRPS", comma_mrps);
+                    map.put("DBIDS", comma_Aid);
+                    map.put("EANCODE", comma_barcode);
+                    map.put("PRODUCT", comma_product);
+
+                    productDetailsArray.add(map);
+
+
+                } while (cursor.moveToNext());
+
+                if (productDetailsArray.size() > 0) {
+                    //strMrpArray = new String[productDetailsArraylist.size()];
+                    for (int i = 0; i < productDetailsArray.size(); i++) {
+                        View tr = (TableRow) View.inflate(StockActivity.this, R.layout.inflate_stocksale_row, null);
+
+                        cb = (CheckBox) tr.findViewById(R.id.chck_product);
+
+                        spin = (Spinner) tr.findViewById(R.id.spin_mrp);
+
+                        cb.setText(productDetailsArray.get(i).get("PRODUCT")[0]);
+
+                        String mrps[] = productDetailsArray.get(i).get("MRPS");
+
+                  /*  productModel = productDetailsArray.get(i);
 
                     cb.setText(productModel.getProductName());
 
@@ -1017,23 +1072,24 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     String mrp = productModel.getPTT();
 
                     String mrps[] = new String[]{mrp};
+*/
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(StockActivity.this, android.R.layout.simple_spinner_item, mrps);
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(StockActivity.this, android.R.layout.simple_spinner_item, mrps);
+                        spin.setAdapter(adapter);
 
-                    spin.setAdapter(adapter);
+                        tl_productList.addView(tr);
 
-                    tl_productList.addView(tr);
-
+                    }
                 }
+                View tr1 = (TableRow) View.inflate(StockActivity.this, R.layout.inflate_stocksale_row, null);
+                CheckBox cb = (CheckBox) tr1.findViewById(R.id.chck_product);
+
+                Spinner spin = (Spinner) tr1.findViewById(R.id.spin_mrp);
+
+                tr1.setVisibility(View.INVISIBLE);
+
+                tl_productList.addView(tr1);
             }
-            View tr1 = (TableRow) View.inflate(StockActivity.this, R.layout.inflate_stocksale_row, null);
-            CheckBox cb = (CheckBox) tr1.findViewById(R.id.chck_product);
-
-            Spinner spin = (Spinner) tr1.findViewById(R.id.spin_mrp);
-
-            tr1.setVisibility(View.INVISIBLE);
-
-            tl_productList.addView(tr1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1049,7 +1105,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 do {
-                    String brandname = cursor.getString(cursor.getColumnIndex("Brand"));
+                    String brandname = cursor.getString(cursor.getColumnIndex("Brand")).trim();
                     listBrand.add(brandname);
                 } while (cursor.moveToNext());
                 cursor.close();

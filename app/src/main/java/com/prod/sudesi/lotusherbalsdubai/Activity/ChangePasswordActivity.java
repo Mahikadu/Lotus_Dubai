@@ -161,7 +161,7 @@ public class ChangePasswordActivity extends Activity {
                 }else{
                     String checkpassword="";
                     LOTUS.dbCon.open();
-                    //checkpassword = LOTUS.dbCon.check_password_from_db(username,str_old_password);
+                    checkpassword = LOTUS.dbCon.check_password_from_db(username,str_old_password);
                     LOTUS.dbCon.close();
 
                     if(checkpassword.equalsIgnoreCase("0")){
@@ -173,7 +173,7 @@ public class ChangePasswordActivity extends Activity {
                         if(str_new_password.equals(str_confirm_password)){
 
 
-                          //  new ChnagePassword_Async().execute(str_new_password);
+                            new ChnagePassword_Async().execute(str_new_password);
 
                         }else{
 

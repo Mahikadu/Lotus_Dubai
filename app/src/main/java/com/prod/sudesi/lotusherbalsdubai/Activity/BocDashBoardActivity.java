@@ -51,9 +51,9 @@ public class BocDashBoardActivity extends Activity {
     String selected_year;
 
     //----------------
-    String current_year_n2,CurrentYear,NextYear;
+    String current_year_n2,CurrentYear,NextYear,PreviousYear;
 
-    int int_current_year_n1,int_current_year_n2,int_previous_year_p1,int_previous_year_p2;
+    int int_current_year_n1,int_current_year_n2,int_previous_year,int_previous_year_p2;
 
     String current_server_date;
 
@@ -134,6 +134,10 @@ public class BocDashBoardActivity extends Activity {
 
                 CurrentYear = String.valueOf(int_current_year_n1);
 
+                int_previous_year = int_current_year_n1 - 1;
+
+                PreviousYear = String.valueOf(int_previous_year);
+
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -212,7 +216,7 @@ public class BocDashBoardActivity extends Activity {
 
         List<String> list_year = new ArrayList<String>();
 
-        //list_year.add("Select");
+        list_year.add(PreviousYear);
         list_year.add(CurrentYear);
         list_year.add(NextYear);
 

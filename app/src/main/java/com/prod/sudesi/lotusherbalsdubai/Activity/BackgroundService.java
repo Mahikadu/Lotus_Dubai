@@ -106,7 +106,7 @@ public class BackgroundService extends Service {
                             stockModel.setTotal_gross_amount(stock_array.getString(stock_array.getColumnIndex("total_gross_amount")));
                             stockModel.setDiscount(stock_array.getString(stock_array.getColumnIndex("discount")));
                             stockModel.setTotal_net_amount(stock_array.getString(stock_array.getColumnIndex("total_net_amount")));
-                            stockModel.setCurrentdate(insert_timestamp);
+                            stockModel.setCurrentdate(stock_array.getString(stock_array.getColumnIndex("insert_date")));
                             stockModel.setStroutletcode(stock_array.getString(stock_array.getColumnIndex("outletcode")));
                             stockDetailsArraylist.add(stockModel);
 

@@ -1,11 +1,13 @@
 package com.prod.sudesi.lotusherbalsdubai.Activity;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,7 +18,11 @@ import android.widget.TextView;
 
 import com.prod.sudesi.lotusherbalsdubai.R;
 import com.prod.sudesi.lotusherbalsdubai.Utils.SharedPref;
+import com.prod.sudesi.lotusherbalsdubai.adapter.NotificationAdapter;
+import com.prod.sudesi.lotusherbalsdubai.libs.ConnectionDetector;
 import com.prod.sudesi.lotusherbalsdubai.libs.LotusWebservice;
+
+import org.ksoap2.serialization.SoapObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +31,15 @@ import java.util.HashMap;
  * Created by Admin on 17-10-2017.
  */
 
-public class NotificationActivity extends Activity {
+public class NotificationActivity extends ListActivity {
 
     Context context;
 
     private SharedPref sharedPref;
+
+    private NotificationAdapter adapter;
+
+    ConnectionDetector cd;
 
     static public ArrayList<HashMap<String, String>> todaymessagelist = new ArrayList<HashMap<String, String>>();
 
@@ -57,6 +67,8 @@ public class NotificationActivity extends Activity {
         context = getApplicationContext();
 
         sharedPref = new SharedPref(context);
+
+        cd = new ConnectionDetector(context);
 
         listView = (ListView) findViewById(android.R.id.list);
 
@@ -147,7 +159,7 @@ public class NotificationActivity extends Activity {
         try {
             // //soap call
             Log.e("","not2");
-           // SoapObject resultsRequestSOAP = service.GetNotification(EmpID);
+            SoapObject resultsRequestSOAP = service.GetNotification(username);
 
             if (resultsRequestSOAP != null) {
                 Log.e("","not3");
@@ -183,7 +195,7 @@ public class NotificationActivity extends Activity {
                 }
             }else{
 
-                Toast.makeText(NotificationFragment.this, "Connectivity Error!!", Toast.LENGTH_SHORT).show();
+                cd.displayMessage("Connectivity Error!!");
 
             }
 
@@ -195,7 +207,7 @@ public class NotificationActivity extends Activity {
     }*/
 
    /* private void loadmessage() {
-        adapter = new NotificationAdapter(NotificationFragment.this, todaymessagelist);
+        adapter = new NotificationAdapter(NotificationActivity.this, todaymessagelist);
         setListAdapter(adapter);// add custom adapter to
         // listview
     }*/

@@ -463,7 +463,7 @@ public class OutletAttendanceActivity extends Activity implements View.OnClickLi
 
                 LOTUS.dbCon.close();
 
-                cd.displayMessage("Soup is Null While SaveOutletAttendance()");
+                cd.displayMessage("Connectivity Error, Please check Internet connection!!");
             }
         }
 

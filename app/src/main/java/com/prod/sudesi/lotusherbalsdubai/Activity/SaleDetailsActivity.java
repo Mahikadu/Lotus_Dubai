@@ -405,7 +405,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                         str_stockreceived = cur.getString(cur.getColumnIndex("stock_received"));
                                         str_stockinhand = cur.getString(cur.getColumnIndex("stock_in_hand"));
 
-                                        boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", str_stockreceived);
+                                        boolean boo = validateEdit(edt_qty, "Quantity is greater than available stock", closebal);
 
 
                                         if (boo == true) {
@@ -564,6 +564,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             String insert_timestamp = sdf
                                                     .format(cal2.getTime());
 
+                                            String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", cal2.getTime()).toString();
+
                                             String[] insert_timestamps = insert_timestamp
                                                     .split(" ");
 
@@ -577,7 +579,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             }
 
 
-                                            String selection = "A_id = ? AND outletcode = ?";
+                                            String selection = "A_id = ? AND outletcode = ? AND insert_date like '" + selectedDateStr  + " %'";
                                             // WHERE clause arguments
                                             String[] selectionArgs = {A_Id, outletcode};
 
@@ -682,6 +684,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                             }
 
 
+                        }else{
+                            cd.displayMessage("Please Enter GrossTotal and NetTotal");
                         }
 
                     } else {
@@ -705,6 +709,12 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+
     }
 
 

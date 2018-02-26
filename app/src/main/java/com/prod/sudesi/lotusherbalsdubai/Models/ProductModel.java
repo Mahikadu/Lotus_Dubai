@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class ProductModel implements Serializable {
 
     String ProductName;
+    String ShortName;
     String Barcodes;
     String A_Id;
     String PTT;
@@ -50,6 +51,13 @@ public class ProductModel implements Serializable {
         this.size = size;
     }
 
+    public String getShortName() {
+        return ShortName;
+    }
+
+    public void setShortName(String shortName) {
+        ShortName = shortName;
+    }
 
     public String getProductName() {
         return ProductName;

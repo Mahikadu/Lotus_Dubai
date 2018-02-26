@@ -2,8 +2,10 @@ package com.prod.sudesi.lotusherbalsdubai.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -47,7 +49,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by Admin on 16-10-2017.
@@ -81,9 +82,9 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
     ArrayList<String> dates_array;
     String str_Month, year;
 
-    String ClosingBal,Discount,FreshStock,GrossAmount,Message1,NetAmount,OutletCode1,ProductId,SoldStock,StockDate;
+    String ClosingBal, Discount, FreshStock, GrossAmount, Message1, NetAmount, OutletCode1, ProductId, SoldStock, StockDate;
 
-    String barcodes,brand,category,subCategory,singleOffer,productName,PTTamt,Size,Year,month;
+    String barcodes, brand, category, subCategory, singleOffer, productName, PTTamt, Size, Year, month;
 
     String A_id, ba_code, stock_received, opening_stock, sold_stock, close_bal, total_gross_amount, discount, total_net_amount, stroutletcode;
 
@@ -123,7 +124,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
             LOTUS.dbCon.open();
             outletcode = LOTUS.dbCon.getActiveoutletCode();
             LOTUS.dbCon.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -406,7 +407,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Barcodes") != null) {
 
                                 if (!root.getPropertyAsString("Barcodes").equalsIgnoreCase("anyType{}")) {
-                                    Barcodes = root.getPropertyAsString("Barcodes");
+                                    Barcodes = root.getPropertyAsString("Barcodes").trim();
                                 } else {
                                     Barcodes = "";
                                 }
@@ -417,7 +418,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Brand") != null) {
 
                                 if (!root.getPropertyAsString("Brand").equalsIgnoreCase("anyType{}")) {
-                                    Brand = root.getPropertyAsString("Brand");
+                                    Brand = root.getPropertyAsString("Brand").trim();
                                 } else {
                                     Brand = "";
                                 }
@@ -438,7 +439,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Id") != null) {
 
                                 if (!root.getPropertyAsString("Id").equalsIgnoreCase("anyType{}")) {
-                                    A_Id = root.getPropertyAsString("Id");
+                                    A_Id = root.getPropertyAsString("Id").trim();
                                 } else {
                                     A_Id = "";
                                 }
@@ -448,7 +449,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Message") != null) {
 
                                 if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
-                                    Message = root.getPropertyAsString("Message");
+                                    Message = root.getPropertyAsString("Message").trim();
                                 } else {
                                     Message = "";
                                 }
@@ -458,7 +459,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("PTT") != null) {
 
                                 if (!root.getPropertyAsString("PTT").equalsIgnoreCase("anyType{}")) {
-                                    PTT = root.getPropertyAsString("PTT");
+                                    PTT = root.getPropertyAsString("PTT").trim();
                                 } else {
                                     PTT = "";
                                 }
@@ -468,7 +469,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("ProductName") != null) {
 
                                 if (!root.getPropertyAsString("ProductName").equalsIgnoreCase("anyType{}")) {
-                                    ProductName = root.getPropertyAsString("ProductName");
+                                    ProductName = root.getPropertyAsString("ProductName").trim();
                                 } else {
                                     ProductName = "";
                                 }
@@ -478,7 +479,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("ShortName") != null) {
 
                                 if (!root.getPropertyAsString("ShortName").equalsIgnoreCase("anyType{}")) {
-                                    ShortName = root.getPropertyAsString("ShortName");
+                                    ShortName = root.getPropertyAsString("ShortName").trim();
                                 } else {
                                     ShortName = "";
                                 }
@@ -488,7 +489,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("SingleOffer") != null) {
 
                                 if (!root.getPropertyAsString("SingleOffer").equalsIgnoreCase("anyType{}")) {
-                                    SingleOffer = root.getPropertyAsString("SingleOffer");
+                                    SingleOffer = root.getPropertyAsString("SingleOffer").trim();
                                 } else {
                                     SingleOffer = "";
                                 }
@@ -498,7 +499,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("SubCategory") != null) {
 
                                 if (!root.getPropertyAsString("SubCategory").equalsIgnoreCase("anyType{}")) {
-                                    SubCategory = root.getPropertyAsString("SubCategory");
+                                    SubCategory = root.getPropertyAsString("SubCategory").trim();
                                 } else {
                                     SubCategory = "";
                                 }
@@ -508,7 +509,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("order_flag") != null) {
 
                                 if (!root.getPropertyAsString("order_flag").equalsIgnoreCase("anyType{}")) {
-                                    order_flag = root.getPropertyAsString("order_flag");
+                                    order_flag = root.getPropertyAsString("order_flag").trim();
                                 } else {
                                     order_flag = "";
                                 }
@@ -519,7 +520,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("size") != null) {
 
                                 if (!root.getPropertyAsString("size").equalsIgnoreCase("anyType{}")) {
-                                    size = root.getPropertyAsString("size");
+                                    size = root.getPropertyAsString("size").trim();
                                 } else {
                                     size = "";
                                 }
@@ -603,92 +604,55 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
             SoapObject result = null;
             try {
                 result = service.GetOutlet(username);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
 
-        @Override
-        protected void onPostExecute(SoapObject soapObject) {
-            super.onPostExecute(soapObject);
-            try {
+                if (result != null) {
+                    for (int i = 0; i < result.getPropertyCount(); i++) {
 
-                if (soapObject != null) {
-                    String response = String.valueOf(soapObject);
-                    System.out.println("Response =>: " + response);
-                    try {
-                        int id = 0;
-                        for (int j = 0; j < soapObject.getPropertyCount(); j++) {
-                            SoapObject root = (SoapObject) soapObject.getProperty(j);
+                        SoapObject root = (SoapObject) result.getProperty(i);
 
-                            if (root.getPropertyAsString("Message") != null) {
+                        if (root.getPropertyAsString("Message") != null) {
 
-                                if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
-                                    O_Message = root.getPropertyAsString("Message");
-                                } else {
-                                    O_Message = "";
-                                }
+                            if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
+                                O_Message = root.getPropertyAsString("Message").trim();
                             } else {
                                 O_Message = "";
                             }
+                        } else {
+                            O_Message = "";
+                        }
 
-                            if (root.getPropertyAsString("OutletCode") != null) {
+                        if (root.getPropertyAsString("OutletCode") != null) {
 
-                                if (!root.getPropertyAsString("OutletCode").equalsIgnoreCase("anyType{}")) {
-                                    OutletCode = root.getPropertyAsString("OutletCode");
-                                } else {
-                                    OutletCode = "";
-                                }
+                            if (!root.getPropertyAsString("OutletCode").equalsIgnoreCase("anyType{}")) {
+                                OutletCode = root.getPropertyAsString("OutletCode").trim();
                             } else {
                                 OutletCode = "";
                             }
+                        } else {
+                            OutletCode = "";
+                        }
 
-                            if (root.getPropertyAsString("OutletName") != null) {
+                        if (root.getPropertyAsString("OutletName") != null) {
 
-                                if (!root.getPropertyAsString("OutletName").equalsIgnoreCase("anyType{}")) {
-                                    OutletName = root.getPropertyAsString("OutletName").trim();
-                                } else {
-                                    OutletName = "";
-                                }
+                            if (!root.getPropertyAsString("OutletName").equalsIgnoreCase("anyType{}")) {
+                                OutletName = root.getPropertyAsString("OutletName").trim();
                             } else {
                                 OutletName = "";
                             }
-
-                            String selection = "id = ?";
-                            id = id + 1;
-                            // WHERE clause arguments
-                            String[] selectionArgs = {id + ""};
-
-                            String valuesArray[] = {id + "", O_Message, OutletCode, OutletName};
-                            boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_OUTLET, selection, valuesArray, utils.columnNamesOutlet, selectionArgs);
-
-                            if (output) {
-                                if (mProgress != null && mProgress.isShowing()) {
-                                    mProgress.dismiss();
-                                }
-                                new SweetAlertDialog(SyncMasterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                        .setTitleText("Master Sync")
-                                        .setContentText("Master Data Sync Completed Successfully!!")
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sDialog) {
-                                                Intent intent = new Intent(SyncMasterActivity.this, DashBoardActivity.class);
-                                                startActivity(intent);
-
-                                                sDialog.dismiss();
-                                            }
-                                        })
-                                        .show();
-                            }
+                        } else {
+                            OutletName = "";
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        String selection = "id = ?";
+                        id = id + 1;
+                        // WHERE clause arguments
+                        String[] selectionArgs = {id + ""};
+
+                        String valuesArray[] = {id + "", O_Message, OutletCode, OutletName};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_OUTLET, selection, valuesArray, utils.columnNamesOutlet, selectionArgs);
+
+
                     }
-
-                    // cd.displayMessage("Master Data Sync Completed Successfully!!");
-
-
                 } else {
 
                     final Calendar calendar = Calendar
@@ -721,6 +685,41 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(SoapObject soapObject) {
+            super.onPostExecute(soapObject);
+
+            mProgress.dismiss();
+
+            if (soapObject != null) {
+                String response = String.valueOf(soapObject.toString());
+
+                SoapObject res = (SoapObject) soapObject.getProperty(0);
+                String msg = res.getPropertyAsString("Message");
+
+                if (msg.equalsIgnoreCase("Success")) {
+
+                    //cd.DisplayDialogMessage("Master Data Sync Completed Successfully!!");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SyncMasterActivity.this);
+                    builder.setMessage("Master Data Sync Completed Successfully!!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                    Intent intent = new Intent(SyncMasterActivity.this, DashBoardActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
+
         }
     }
 
@@ -765,7 +764,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             stockModel.setTotal_gross_amount(stock_array.getString(stock_array.getColumnIndex("total_gross_amount")));
                             stockModel.setDiscount(stock_array.getString(stock_array.getColumnIndex("discount")));
                             stockModel.setTotal_net_amount(stock_array.getString(stock_array.getColumnIndex("total_net_amount")));
-                            stockModel.setCurrentdate(insert_timestamp);
+                            stockModel.setCurrentdate(stock_array.getString(stock_array.getColumnIndex("insert_date")));
                             stockModel.setStroutletcode(stock_array.getString(stock_array.getColumnIndex("outletcode")));
                             stockDetailsArraylist.add(stockModel);
 
@@ -778,13 +777,13 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             stockModel = stockDetailsArraylist.get(i);
 
                             result = service.DataUpload(stockModel.getA_id(), stockModel.getBa_code(), stockModel.getStock_received(),
-                                    stockModel.getOpening_stock(),stockModel.getSold_stock(),stockModel.getClose_bal(),
-                                    stockModel.getTotal_gross_amount(),stockModel.getDiscount(),stockModel.getTotal_net_amount(),
-                                    stockModel.getCurrentdate(),stockModel.getStroutletcode());
+                                    stockModel.getOpening_stock(), stockModel.getSold_stock(), stockModel.getClose_bal(),
+                                    stockModel.getTotal_gross_amount(), stockModel.getDiscount(), stockModel.getTotal_net_amount(),
+                                    stockModel.getCurrentdate(), stockModel.getStroutletcode());
 
                             String response = String.valueOf(result.toString());
 
-                            if(response.equalsIgnoreCase("success")){
+                            if (response.equalsIgnoreCase("success")) {
 
                                 LOTUS.dbCon.update(DbHelper.TABLE_STOCK, "outletcode = ?", new String[]{"1"},
                                         new String[]{"savedServer"}, new String[]{outletcode});
@@ -811,21 +810,24 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                 if (response.equalsIgnoreCase("success")) {
 
-                    new SweetAlertDialog(SyncMasterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Data Upload")
-                            .setContentText("Data Upload Completed!!")
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
+                   // cd.DisplayDialogMessage("Data Upload Completed!!");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SyncMasterActivity.this);
+                    builder.setMessage("Data Upload Completed!!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
                                     Intent intent = new Intent(SyncMasterActivity.this, DashBoardActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
-
-                                    sDialog.dismiss();
+                                    dialog.dismiss();
                                 }
-                            })
-                            .show();
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
                 }
-            }else{
+            } else {
                 final Calendar calendar = Calendar
                         .getInstance();
                 SimpleDateFormat formatter = new SimpleDateFormat(
@@ -850,7 +852,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                 LOTUS.dbCon.close();
 
-                cd.displayMessage("Soup is Null While DataUpload()");
+                cd.displayMessage("Connectivity Error, Please check Internet connection!!");
             }
         }
     }
@@ -896,12 +898,14 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             stockModel.setTotal_gross_amount(stock_array.getString(stock_array.getColumnIndex("total_gross_amount")));
                             stockModel.setDiscount(stock_array.getString(stock_array.getColumnIndex("discount")));
                             stockModel.setTotal_net_amount(stock_array.getString(stock_array.getColumnIndex("total_net_amount")));
-                            stockModel.setCurrentdate(insert_timestamp);
+                            stockModel.setCurrentdate(stock_array.getString(stock_array.getColumnIndex("insert_date")));
                             stockModel.setStroutletcode(stock_array.getString(stock_array.getColumnIndex("outletcode")));
                             stockDetailsArraylist.add(stockModel);
 
                         } while (stock_array.moveToNext());
                         stock_array.close();
+                    }else{
+                        cd.displayMessage("No Record Found");
                     }
                     if (stockDetailsArraylist.size() > 0) {
                         //strMrpArray = new String[productDetailsArraylist.size()];
@@ -909,13 +913,13 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             stockModel = stockDetailsArraylist.get(i);
 
                             result = service.DataUpload(stockModel.getA_id(), stockModel.getBa_code(), stockModel.getStock_received(),
-                                    stockModel.getOpening_stock(),stockModel.getSold_stock(),stockModel.getClose_bal(),
-                                    stockModel.getTotal_gross_amount(),stockModel.getDiscount(),stockModel.getTotal_net_amount(),
-                                    stockModel.getCurrentdate(),stockModel.getStroutletcode());
+                                    stockModel.getOpening_stock(), stockModel.getSold_stock(), stockModel.getClose_bal(),
+                                    stockModel.getTotal_gross_amount(), stockModel.getDiscount(), stockModel.getTotal_net_amount(),
+                                    stockModel.getCurrentdate(), stockModel.getStroutletcode());
 
                             String response = String.valueOf(result.toString());
 
-                            if(response.equalsIgnoreCase("success")){
+                            if (response.equalsIgnoreCase("success")) {
 
                                 LOTUS.dbCon.update(DbHelper.TABLE_STOCK, "outletcode = ?", new String[]{"1"},
                                         new String[]{"savedServer"}, new String[]{outletcode});
@@ -924,7 +928,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             }
 
                         }
-                    }else{
+                    } else {
                         cd.displayMessage("Record not found!!");
                     }
                 } catch (Exception e) {
@@ -969,11 +973,11 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                     LOTUS.dbCon.close();
 
-                    cd.displayMessage("Soup is Null While DataUpload()");
+                    cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 DataDownload dataDownload = new DataDownload();
                 dataDownload.execute();
             }
@@ -1002,7 +1006,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                     String startdate[] = getStartEnd(str_Month, year);
 
-                    result = service.DataDownload(username,startdate[0], startdate[1],outletcode);
+                    result = service.DataDownload(username, startdate[0], startdate[1], outletcode);
 
                     if (result != null) {
                         for (int i = 0; i < result.getPropertyCount(); i++) {
@@ -1012,7 +1016,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("ClosingBal") != null) {
 
                                 if (!root.getPropertyAsString("ClosingBal").equalsIgnoreCase("anyType{}")) {
-                                    ClosingBal = root.getPropertyAsString("ClosingBal");
+                                    ClosingBal = root.getPropertyAsString("ClosingBal").trim();
                                 } else {
                                     ClosingBal = "";
                                 }
@@ -1023,7 +1027,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Discount") != null) {
 
                                 if (!root.getPropertyAsString("Discount").equalsIgnoreCase("anyType{}")) {
-                                    Discount = root.getPropertyAsString("Discount");
+                                    Discount = root.getPropertyAsString("Discount").trim();
                                 } else {
                                     Discount = "";
                                 }
@@ -1034,7 +1038,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("FreshStock") != null) {
 
                                 if (!root.getPropertyAsString("FreshStock").equalsIgnoreCase("anyType{}")) {
-                                    FreshStock = root.getPropertyAsString("FreshStock");
+                                    FreshStock = root.getPropertyAsString("FreshStock").trim();
                                 } else {
                                     FreshStock = "";
                                 }
@@ -1046,7 +1050,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("GrossAmount") != null) {
 
                                 if (!root.getPropertyAsString("GrossAmount").equalsIgnoreCase("anyType{}")) {
-                                    GrossAmount = root.getPropertyAsString("GrossAmount");
+                                    GrossAmount = root.getPropertyAsString("GrossAmount").trim();
                                 } else {
                                     GrossAmount = "";
                                 }
@@ -1057,7 +1061,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("Message") != null) {
 
                                 if (!root.getPropertyAsString("Message").equalsIgnoreCase("anyType{}")) {
-                                    Message1 = root.getPropertyAsString("Message");
+                                    Message1 = root.getPropertyAsString("Message").trim();
                                 } else {
                                     Message1 = "";
                                 }
@@ -1068,7 +1072,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("NetAmount") != null) {
 
                                 if (!root.getPropertyAsString("NetAmount").equalsIgnoreCase("anyType{}")) {
-                                    NetAmount = root.getPropertyAsString("NetAmount");
+                                    NetAmount = root.getPropertyAsString("NetAmount").trim();
                                 } else {
                                     NetAmount = "";
                                 }
@@ -1078,7 +1082,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("OutletCode") != null) {
 
                                 if (!root.getPropertyAsString("OutletCode").equalsIgnoreCase("anyType{}")) {
-                                    OutletCode1 = root.getPropertyAsString("OutletCode");
+                                    OutletCode1 = root.getPropertyAsString("OutletCode").trim();
                                 } else {
                                     OutletCode1 = "";
                                 }
@@ -1088,7 +1092,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("ProductId") != null) {
 
                                 if (!root.getPropertyAsString("ProductId").equalsIgnoreCase("anyType{}")) {
-                                    ProductId = root.getPropertyAsString("ProductId");
+                                    ProductId = root.getPropertyAsString("ProductId").trim();
                                 } else {
                                     ProductId = "";
                                 }
@@ -1098,7 +1102,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("SoldStock") != null) {
 
                                 if (!root.getPropertyAsString("SoldStock").equalsIgnoreCase("anyType{}")) {
-                                    SoldStock = root.getPropertyAsString("SoldStock");
+                                    SoldStock = root.getPropertyAsString("SoldStock").trim();
                                 } else {
                                     SoldStock = "";
                                 }
@@ -1109,7 +1113,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             if (root.getPropertyAsString("StockDate") != null) {
 
                                 if (!root.getPropertyAsString("StockDate").equalsIgnoreCase("anyType{}")) {
-                                    StockDate = root.getPropertyAsString("StockDate");
+                                    StockDate = root.getPropertyAsString("StockDate").trim();
                                 } else {
                                     StockDate = "";
                                 }
@@ -1127,6 +1131,8 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             Date theDate = null;
                             try {
                                 theDate = oldformat.parse(StockDate);
+                                oldformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                StockDate = oldformat.format(theDate);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -1134,19 +1140,20 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                             Calendar myCal = new GregorianCalendar();
                             myCal.setTime(theDate);
 
-                            int Month =  myCal.get(Calendar.MONTH + 1);
-                            @SuppressLint("WrongConstant")
-                            int year =  myCal.get(Calendar.YEAR);
+                            SimpleDateFormat month_date = new SimpleDateFormat(
+                                    "MMMM");
+                             month = month_date.format(theDate);
 
-                            month = String.valueOf(Month);
+                            @SuppressLint("WrongConstant")
+                            int year = myCal.get(Calendar.YEAR);
                             Year = String.valueOf(year);
 
                             getProductDetailsagainstID(ProductId);
 
-                            String valuesArray[] = {ProductId,barcodes,brand,category,subCategory,singleOffer,productName,
-                                    PTTamt,Size,username,"0",FreshStock,FreshStock,ClosingBal,SoldStock,GrossAmount,
-                                    NetAmount,Discount,"1",StockDate,StockDate,"",Year,StockDate,OutletCode1};
-                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, " A_id = ? AND outletcode = ? ", valuesArray, utils.columnNamesStock, new String[]{ProductId,OutletCode1});
+                            String valuesArray[] = {ProductId, barcodes, brand, category, subCategory, singleOffer, productName,
+                                    PTTamt, Size, username, "0", FreshStock, FreshStock, ClosingBal, SoldStock, GrossAmount,
+                                    NetAmount, Discount, "1", StockDate, StockDate, month, Year, StockDate, OutletCode1};
+                            boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, " A_id = ? AND outletcode = ? ", valuesArray, utils.columnNamesStock, new String[]{ProductId, OutletCode1});
 
 
                         }
@@ -1174,7 +1181,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
-                        cd.displayMessage("Soup is Null While DataDownload()");
+                        cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                     }
 
                 }
@@ -1193,35 +1200,37 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
             mProgress.dismiss();
 
-            if(result != null){
-                    String response = String.valueOf(result.toString());
+            if (result != null) {
+                String response = String.valueOf(result.toString());
 
                 SoapObject res = (SoapObject) result.getProperty(0);
                 String msg = res.getPropertyAsString("Message");
 
                 if (msg.equalsIgnoreCase("success")) {
 
-                    new SweetAlertDialog(SyncMasterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Data Download")
-                            .setContentText("Data Download Succesfully!!")
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
+                    //cd.DisplayDialogMessage("Data Download Succesfully!!");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SyncMasterActivity.this);
+                    builder.setMessage("Data Download Succesfully!!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
                                     Intent intent = new Intent(SyncMasterActivity.this, DashBoardActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
-
-                                    sDialog.dismiss();
+                                    dialog.dismiss();
                                 }
-                            })
-                            .show();
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }
             }
 
         }
 
-        private void getProductDetailsagainstID(String productid){
+        private void getProductDetailsagainstID(String productid) {
 
-            try{
+            try {
 
                 String where = " where A_Id = " + "'" + productid + "'";
                 Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_MASTERSYNC, where);
@@ -1240,7 +1249,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                     } while (cursor.moveToNext());
                     cursor.close();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

@@ -19,6 +19,9 @@ public class SharedPref {
     private static final String KEY_ServerDate = "key_serverdate";
     private static final String KEY_TodayDate = "key_todaydate";
     private static final String KEY_NODATA = "key_nodata";
+    private static final String KEY_IMGCOUNT = "key_imgcount";
+    private static final String KEY_IMGPATH = "key_imgpath";
+    private static final String KEY_IMGCOUNT1 = "key_imgcount1";
 
     public SharedPref(Context _ctx) {
         context = _ctx;
@@ -32,7 +35,6 @@ public class SharedPref {
         editor.putString(KEY_USERNAME, baname);
         editor.commit();
     }
-
 
 
     public void setDateDetails(String currentyear, String serverdate, String todaydate){
@@ -83,6 +85,31 @@ public class SharedPref {
         Boolean value = sharedPref.getBoolean(KEY_NODATA,false);
         return value;
     }
+
+    public void setIntgervalue(int count){
+        editor.putInt(KEY_IMGCOUNT, count);
+    }
+
+    public int getIntgervalue(){
+        Integer value = sharedPref.getInt(KEY_IMGCOUNT,0);
+        return value;
+    }
+
+    public void setStringvalue(String count, String uri){
+        editor.putString(KEY_IMGCOUNT1, count);
+        editor.putString(KEY_IMGPATH, uri);
+    }
+
+    public String getImgcount(){
+        String count = sharedPref.getString(KEY_IMGCOUNT1,"");
+        return count;
+    }
+
+    public String getImgpath(){
+        String path = sharedPref.getString(KEY_IMGPATH,"");
+        return path;
+    }
+
     public void clearPref() {
         try {
             editor.remove(KEY_LoginId);

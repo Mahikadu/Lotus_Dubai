@@ -207,6 +207,61 @@ public class LoginActivity extends Activity {
             //set timer you want alarm to work (here I have set it to 24.00)
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
+
+          /*  SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+            String Currenttime = df.format(calendar.getTime());
+
+            if ((Integer.valueOf(Currenttime) > Integer.valueOf("24:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("03:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 3);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if ((Integer.valueOf(Currenttime) > Integer.valueOf("03:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("06:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 6);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if ((Integer.valueOf(Currenttime) > Integer.valueOf("06:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("09:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 9);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if((Integer.valueOf(Currenttime) > Integer.valueOf("09:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("12:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 12);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if((Integer.valueOf(Currenttime) > Integer.valueOf("12:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("15:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 15);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if((Integer.valueOf(Currenttime) > Integer.valueOf("15:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("18:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 18);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if((Integer.valueOf(Currenttime) > Integer.valueOf("18:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("21:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 21);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }else if((Integer.valueOf(Currenttime) > Integer.valueOf("21:00:00"))
+                    && (Integer.valueOf(Currenttime) < Integer.valueOf("24:00:00")))
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, 24);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+            }*/
+
+
             calendar.set(Calendar.HOUR_OF_DAY, 24);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -214,6 +269,8 @@ public class LoginActivity extends Activity {
             //Create alarm manager
             AlarmManager mAlarmManger = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             //set that timer as a RTC Wakeup to alarm manager object
+            //mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 10, pendingIntent);
+
             mAlarmManger.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -466,7 +523,7 @@ public class LoginActivity extends Activity {
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
-                        cd.displayMessage("Soup is Null While GetLogin()");
+                        cd.displayMessage("Connectivity Error, Please check Internet connection!!");
 
                     }
                 } else {
@@ -492,7 +549,7 @@ public class LoginActivity extends Activity {
                     boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                     LOTUS.dbCon.close();
-                    cd.displayMessage("Soup is Null While GetServerDate()");
+                    cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                 }
 
 

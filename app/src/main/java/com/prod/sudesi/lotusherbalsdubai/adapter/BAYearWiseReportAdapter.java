@@ -58,12 +58,12 @@ public class BAYearWiseReportAdapter extends BaseAdapter {
 
 
 
-            TextView txtmonthp = (TextView)convertView.findViewById(R.id.txtmonthp);
-            TextView txtnetamtp =(TextView)convertView.findViewById(R.id.txtnetamtp);
-            TextView txtgrowthp =(TextView)convertView.findViewById(R.id.txtgrowthp);
             TextView txtmonthc = (TextView)convertView.findViewById(R.id.txtmonthc);
-            TextView txtnetamtc = (TextView)convertView.findViewById(R.id.txtnetamtc);
-            TextView txtgrowthc = (TextView)convertView.findViewById(R.id.txtgrowthc);
+            TextView txtnetamtc =(TextView)convertView.findViewById(R.id.txtnetamtc);
+            TextView txtgrowthc =(TextView)convertView.findViewById(R.id.txtgrowthc);
+            TextView txtmonthp = (TextView)convertView.findViewById(R.id.txtmonthp);
+            TextView txtnetamtp = (TextView)convertView.findViewById(R.id.txtnetamtp);
+            TextView txtgrowthp = (TextView)convertView.findViewById(R.id.txtgrowthp);
 
 
             BAYearWiseModel baYearWiseModel = bayearReportDetailsArraylist.get(position);

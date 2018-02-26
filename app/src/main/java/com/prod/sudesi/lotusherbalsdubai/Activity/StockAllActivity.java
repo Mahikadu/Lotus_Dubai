@@ -254,6 +254,12 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+
+    }
+
     public void showAlertDialog(int count) {
         if (count == tl_sale_calculation.getChildCount()) {
 
@@ -394,6 +400,8 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
             String insert_timestamp = sdf.format(c
                     .getTime());
 
+            String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", c.getTime()).toString();
+
             productModel = newproductDetailsArraylist.get(j);
 
             String Barcodes = productModel.getBarcodes();
@@ -505,13 +513,13 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
             Log.e("i_close", String.valueOf(closing_stock));
 
 
-            String selection = "A_id = ? AND outletcode = ?";
+            String selection = "A_id = ? AND outletcode = ? AND insert_date like '" + selectedDateStr  + " %'";
             // WHERE clause arguments
             String[] selectionArgs = {A_Id,outletcode};
 
             String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                     str_openingstock, String.valueOf(new_fresh_stock), String.valueOf(stock_in_hand),
-                     String.valueOf(closing_stock), soldstock, "0", "0", "0","0",insert_timestamp, insert_timestamp,
+                     String.valueOf(closing_stock), soldstock, "0", "0", "0.0","0",insert_timestamp, insert_timestamp,
                     month_name,year_name,insert_timestamp,outletcode};
             boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, selection, valuesArray, utils.columnNamesStock, selectionArgs);
 

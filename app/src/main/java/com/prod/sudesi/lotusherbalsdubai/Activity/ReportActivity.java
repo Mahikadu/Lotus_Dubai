@@ -2,12 +2,16 @@ package com.prod.sudesi.lotusherbalsdubai.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,6 +30,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.Models.OutletModel;
 import com.prod.sudesi.lotusherbalsdubai.Models.ServerAttendanceModel;
@@ -51,7 +56,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
+import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 
 /**
  * Created by Admin on 30-10-2017.
@@ -103,6 +109,11 @@ public class ReportActivity extends Activity implements View.OnClickListener{
     private ArrayList<ServerAttendanceModel> serverAttendanceArraylist;
     ServerAttendanceModel serverAttendanceModel;
 
+    private HorizontalCalendar horizontalCalendar;
+    String selectedDateStr = "",text = "",outletcode = "";;
+    AppBarLayout appBar;
+
+    @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -122,6 +133,59 @@ public class ReportActivity extends Activity implements View.OnClickListener{
         utils = new Utils(context);
 
         mProgress = new ProgressDialog(context);
+
+        appBar = (AppBarLayout)findViewById(R.id.appBar);
+
+
+        /* end after 2 months from now */
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.MONTH, 2);
+
+        /* start 2 months ago from now */
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.MONTH, -2);
+
+        // Default Date set to Today.
+        final Calendar defaultSelectedDate = Calendar.getInstance();
+
+        horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+                .range(startDate, endDate)
+                .datesNumberOnScreen(5)
+                .configure()
+                .formatTopText("MMM")
+                .formatMiddleText("dd")
+                //.formatBottomText("EEE")
+                .showTopText(true)
+                //.showBottomText(true)
+                .textColor(Color.LTGRAY, Color.WHITE)
+                .colorTextMiddle(Color.LTGRAY, Color.parseColor("#ffd54f"))
+                .end()
+                .defaultSelectedDate(defaultSelectedDate)
+                .build();
+
+        Log.i("Default Date", android.text.format.DateFormat.format("EEE, MMM d, yyyy", defaultSelectedDate).toString());
+
+        selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString();
+
+        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+            @Override
+            public void onDateSelected(Calendar date, int position) {
+                selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
+
+                if (text != null && text.length() > 0) {
+                    if(selectedDateStr !=null && selectedDateStr.length()>0) {
+                        ShowReportofStock showReportofStock = new ShowReportofStock();
+                        showReportofStock.execute(outletCode,selectedDateStr);
+                    }
+                }else{
+                    cd.displayMessage("Please Select outlet");
+                }
+
+                //Toast.makeText(ReportActivity.this, selectedDateStr + " selected!", Toast.LENGTH_SHORT).show();
+                Log.i("onDateSelected", selectedDateStr + " - Position = " + position);
+            }
+
+        });
 
         rbstock = (RadioButton) findViewById(R.id.rb_stock);
         rbattendance = (RadioButton) findViewById(R.id.rb_attendance);
@@ -174,6 +238,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                     sp_outletName.setVisibility(View.VISIBLE);
                     outletcard.setVisibility(View.VISIBLE);
                     table_row_stock.setVisibility(View.VISIBLE);
+                    appBar.setVisibility(View.VISIBLE);
 
                     table_row_attend.setVisibility(View.GONE);
                     attendancelist.setVisibility(View.GONE);
@@ -195,6 +260,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                     sp_outletName.setText("");
                     sp_outletName.setVisibility(View.GONE);
                     outletcard.setVisibility(View.GONE);
+                    appBar.setVisibility(View.GONE);
 
                     table_row_stock.setVisibility(View.GONE);
                     table_row_attend.setVisibility(View.VISIBLE);
@@ -305,7 +371,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
         sp_outletName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String text = "",outletcode = "";
+
                 if (strOutletArray != null && strOutletArray.length > 0) {
 
                     outletstring = parent.getItemAtPosition(position).toString();
@@ -319,8 +385,10 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                     }
 
                     if (text != null && text.length() > 0) {
-                        ShowReportofStock showReportofStock = new ShowReportofStock();
-                        showReportofStock.execute(outletCode);
+                        if(selectedDateStr !=null && selectedDateStr.length()>0) {
+                            ShowReportofStock showReportofStock = new ShowReportofStock();
+                            showReportofStock.execute(outletCode,selectedDateStr);
+                        }
                     }else{
                         cd.displayMessage("Please Select outlet");
                     }
@@ -372,20 +440,22 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                 } while (cursor.moveToNext());
                 cursor.close();
             }else{
-                new SweetAlertDialog(ReportActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("ERROR !!")
-                        .setContentText("Please Select outlet")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
+                //cd.DisplayDialogMessage("Please Select outlet");
+                AlertDialog.Builder builder = new AlertDialog.Builder(ReportActivity.this);
+                builder.setMessage("Please Select outlet")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //do things
                                 Intent intent = new Intent(ReportActivity.this, DashBoardActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
-
-                                sDialog.dismiss();
+                                dialog.dismiss();
                             }
-                        })
-                        .show();
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -467,8 +537,9 @@ public class ReportActivity extends Activity implements View.OnClickListener{
 
                 LOTUS.dbCon.open();
                 String outlet = params[0];
+                String stockdate = params[1];
 
-                String where = " where outletcode = '" + outlet + "'";
+                String where = " where outletcode = '" + outlet + "' AND insert_date like '" + stockdate  + " %'";
 
                 Cursor cursor = LOTUS.dbCon.fetchFromSelect(DbHelper.TABLE_STOCK, where);
 
@@ -632,7 +703,7 @@ public class ReportActivity extends Activity implements View.OnClickListener{
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
-                        cd.displayMessage("Soup is Null While GetAttendance()");
+                        cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                     }
 
                 }
