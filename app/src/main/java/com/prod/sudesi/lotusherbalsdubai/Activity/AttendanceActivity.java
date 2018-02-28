@@ -67,7 +67,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
 import com.prod.sudesi.lotusherbalsdubai.R;
 import com.prod.sudesi.lotusherbalsdubai.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsdubai.Utils.Utils;
@@ -89,6 +88,9 @@ import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProv
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class AttendanceActivity extends Activity implements OnClickListener, OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
 
+    String attendance_flag;
+    String leavetype_flag;
+    private String attendanceDate1;
     private TextView currentMonth;
     private Button selectedDayMonthYearButton;
     private ImageView prevMonth;
@@ -643,113 +645,151 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
         @SuppressLint("WrongConstant")
         @Override
         public void onClick(final View view) {
-            String date_month_year = (String) view.getTag();
 
-            Calendar c = Calendar.getInstance();
-            year1 = c.get(Calendar.YEAR);
-            month1 = c.get(Calendar.MONTH);
-            day1 = c.get(Calendar.DAY_OF_MONTH);
-            String currentDate = String.valueOf(day1) + "-" + "0"
-                    + String.valueOf(month1 + 1) + "-" + String.valueOf(year1);
-            Log.e("Selected date", date_month_year);
-            Log.e("currentDate", currentDate);
+            if(cd.isConnectingToInternet()) {
+                String serverddate = sharedPref.getServerDate();
+                String[] parts = serverddate.split(" ");
+                String serverdd = parts[0];
+
+                String date_month_year = (String) view.getTag();
+
+                Calendar c = Calendar.getInstance();
+                year1 = c.get(Calendar.YEAR);
+                month1 = c.get(Calendar.MONTH);
+                day1 = c.get(Calendar.DAY_OF_MONTH);
+                String currentDate = String.valueOf(day1) + "-" + "0"
+                        + String.valueOf(month1 + 1) + "-" + String.valueOf(year1);
+                Log.e("Selected date", date_month_year);
+                Log.e("currentDate", currentDate);
 
 
-            if (date_month_year != null) {
-                if (date_month_year.contains("-")) {
-                    String d[] = date_month_year.split("-");
+                if (date_month_year != null) {
+                    if (date_month_year.contains("-")) {
+                        String d[] = date_month_year.split("-");
 
-                    Log.v("checklength==", "" + d[0].length());
-                    if (d[0].length() < 2) {
-                        Log.v("", "checklength1==");
-                        attendanceDate = "0" + d[0] + "-" + getmonthNo(d[1])
-                                + "-" + d[2];
-                        attendmonth = getmonthNo(d[1]);
+                        Log.v("checklength==", "" + d[0].length());
+                        if (d[0].length() < 2) {
+                            Log.v("", "checklength1==");
+                            attendanceDate = "0" + d[0] + "-" + getmonthNo(d[1])
+                                    + "-" + d[2];
+                            attendmonth = getmonthNo(d[1]);
 
-                    } else {
-                        attendanceDate = d[0] + "-" + getmonthNo(d[1]) + "-"
-                                + d[2];
-                        attendmonth = getmonthNo(d[1]);
+                        } else {
+                            attendanceDate = d[0] + "-" + getmonthNo(d[1]) + "-"
+                                    + d[2];
+                            attendmonth = getmonthNo(d[1]);
+
+                        }
 
                     }
-
                 }
-            }
-            Log.e("attendanceDate", attendanceDate);
+                Log.e("attendanceDate", attendanceDate);
 
 
-            String d[] = date_month_year.split("-");
-            String daa="";
-            if(d[0].length()>0){
+                String d[] = date_month_year.split("-");
+                String daa = "";
+                if (d[0].length() > 0) {
 
-                daa = "0"+d[0];
-            }
-            String aattddate = d[2] + "-" + getmonthNo(d[1]) + "-"
-                    + daa;
-            Log.e("aattddate==", aattddate);
-            // if(checkholiday(attendanceDate)){
-            LOTUS.dbCon.open();
-            //	if ((db.isholiday(attendanceDate)).toString().length() > 0) {
-            if ((LOTUS.dbCon.isholiday(aattddate)).toString().length() > 0) {
+                    daa = "0" + d[0];
+                }
+                String aattddate = d[2] + "-" + getmonthNo(d[1]) + "-"
+                        + daa;
+                Log.e("aattddate==", aattddate);
+                // if(checkholiday(attendanceDate)){
+                LOTUS.dbCon.open();
+                //	if ((db.isholiday(attendanceDate)).toString().length() > 0) {
+                if ((LOTUS.dbCon.isholiday(aattddate)).toString().length() > 0) {
 
-                cd.displayMessage("Its holliday for "+ LOTUS.dbCon.isholiday(aattddate));
-                LOTUS.dbCon.close();
-            } else if (afterdateValidate(attendanceDate)) {
-                LOTUS.dbCon.close();
+                    cd.displayMessage("Its holliday for " + LOTUS.dbCon.isholiday(aattddate));
+                    LOTUS.dbCon.close();
+                } else if (afterdateValidate(attendanceDate)) {
+                    LOTUS.dbCon.close();
 
-                cd.displayMessage("Select Current Date only");
+                    cd.displayMessage("Select Current Date only");
 
-            } else if (beforedatevalidate(attendanceDate, currentDate)) {
-                LOTUS.dbCon.close();
+                } else if (beforedatevalidate(attendanceDate, currentDate)) {
+                    LOTUS.dbCon.close();
 
-                cd.displayMessage("Select Current Date only");
+                    cd.displayMessage("Select Current Date only");
 
-            } else {
-                LOTUS.dbCon.close();
+                } else if (afterdateChangeValidate(serverdd)) {
+                    Toast.makeText(context, "Please Check your Handset Date",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    LOTUS.dbCon.close();
 
-                Button present;
-                Button absent;
-                Button out;
-                Button cancel;
-                try {
+                    Button present;
+                    Button absent;
+                    Button out;
+                    Button cancel;
+                    try {
 
-                    Date date = new Date();
-                    SimpleDateFormat form = new SimpleDateFormat(
-                            "yyyy-MM-dd HH:mm:ss");
+                        Date date = new Date();
+                        SimpleDateFormat form = new SimpleDateFormat(
+                                "yyyy-MM-dd HH:mm:ss");
 
-                    final String attendanceDate1 = form.format(date);
-                    Log.v("", "attendanceDate1=" + attendanceDate1);
+                        attendanceDate1 = form.format(date);
+                        Log.v("", "attendanceDate1=" + attendanceDate1);
 
-                    String sld[] = attendanceDate1.split(" ");
-                    final String sld1 = sld[0];
+                        String sld[] = attendanceDate1.split(" ");
+                        final String sld1 = sld[0];
 
-                    String ddd[] = sld1.split("-");
-                    final String year = ddd[0];
+                        String ddd[] = sld1.split("-");
+                        final String year = ddd[0];
 
-                    Cursor c1 = null;
-                    LOTUS.dbCon.open();
-                    c1 = LOTUS.dbCon.getpreviousData(sld1, username);
+                        Cursor c1 = null;
+                        LOTUS.dbCon.open();
+                        c1 = LOTUS.dbCon.getpreviousData(sld1, username);
 
-                    Log.v("", "c.getcount=" + c1.getCount());
+                        Log.v("", "c.getcount=" + c1.getCount());
 
-                    if (c1 != null && c1.getCount() > 0) {
-//						db.close();
+                        if (c1 != null && c1.getCount() > 0) {
 
-//						Toast.makeText(AttendanceFragment.this,
-//								"Attendance already Present",
-//								Toast.LENGTH_SHORT).show();
-                        c1.moveToFirst();
-                        String logout_status = c1.getString(c1.getColumnIndex("logout_status"));
-                        if(logout_status != null)
-                        {
+                            c1.moveToFirst();
+                            String logout_status = c1.getString(c1.getColumnIndex("logout_status"));
+                            if (logout_status != null) {
 
-                            Log.e("logout_status", logout_status);
-                            if(logout_status.equalsIgnoreCase("OUT"))
-                            {
-                                cd.displayMessage("Attendance is marked");
-                            }
-                            else
-                            {
+                                Log.e("logout_status", logout_status);
+                                if (logout_status.equalsIgnoreCase("OUT")) {
+                                    cd.displayMessage("Attendance is marked");
+                                } else {
+                                    final Dialog dialog = new Dialog(AttendanceActivity.this);
+                                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                    dialog.setContentView(R.layout.layout_out_attendance);
+
+                                    out = (Button) dialog.findViewById(R.id.btn_out);
+                                    cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                                    out.setOnClickListener(new OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
+                                            LOTUS.dbCon.updateAttendance(sld1, username, sld1);
+                                            savelogout = new SaveLogoutTime();
+                                            savelogout.execute();
+
+                                        }
+                                    });
+
+                                    cancel.setOnClickListener(new OnClickListener() {
+
+
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            // TODO Auto-generated method stub
+
+                                            dialog.cancel();
+
+                                        }
+                                    });
+
+                                    dialog.show();
+
+                                }
+                            } else {
                                 final Dialog dialog = new Dialog(AttendanceActivity.this);
                                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 dialog.setContentView(R.layout.layout_out_attendance);
@@ -763,9 +803,9 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                                     public void onClick(View v) {
                                         // TODO Auto-generated method stub
                                         LOTUS.dbCon.updateAttendance(sld1, username, sld1);
+                                        dialog.cancel();
                                         savelogout = new SaveLogoutTime();
                                         savelogout.execute();
-
                                     }
                                 });
 
@@ -785,67 +825,27 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                                 dialog.show();
 
                             }
-                        }
-                        else
-                        {
+
+
+                        } else {
+
                             final Dialog dialog = new Dialog(AttendanceActivity.this);
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.layout_out_attendance);
+                            dialog.setContentView(R.layout.popup_attendance);
 
-                            out = (Button) dialog.findViewById(R.id.btn_out);
-                            cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+                            present = (Button) dialog.findViewById(R.id.btn_present);
+                            absent = (Button) dialog.findViewById(R.id.btn_absent);
+                            final String[] columns = new String[]{"emp_id", "Adate",
+                                    "attendance", "absent_type", "lat", "lon", "savedServer", "month",
+                                    "holiday_desc", "year"};
 
-                            out.setOnClickListener(new OnClickListener() {
+                            present.setOnClickListener(new OnClickListener() {
 
                                 @Override
                                 public void onClick(View v) {
                                     // TODO Auto-generated method stub
-                                    LOTUS.dbCon.updateAttendance(sld1, username, sld1);
-                                    dialog.cancel();
-                                    savelogout = new SaveLogoutTime();
-                                    savelogout.execute();
-                                }
-                            });
 
-                            cancel.setOnClickListener(new OnClickListener() {
-
-
-                                @Override
-                                public void onClick(View v) {
-
-                                    // TODO Auto-generated method stub
-
-                                    dialog.cancel();
-
-                                }
-                            });
-
-                            dialog.show();
-
-                        }
-
-
-
-
-                    } else {
-
-                        final Dialog dialog = new Dialog(AttendanceActivity.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.popup_attendance);
-
-                        present = (Button) dialog.findViewById(R.id.btn_present);
-                        absent = (Button) dialog.findViewById(R.id.btn_absent);
-                        final String[] columns = new String[] { "emp_id", "Adate",
-                                "attendance","absent_type", "lat", "lon", "savedServer", "month",
-                                "holiday_desc", "year" };
-
-                        present.setOnClickListener(new OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                // TODO Auto-generated method stub
-
-                                if(cd.isConnectingToInternet())
+                               /* if(cd.isConnectingToInternet())
                                 {
 
                                     LOTUS.dbCon.close();
@@ -870,203 +870,136 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
                                     view.setBackgroundResource(R.drawable.green);
                                     dialog.dismiss();
-                                    LocationLibrary.forceLocationUpdate(context);
 
+                                    new SaveAttendance().execute(attendance_flag, leavetype_flag);
 
-                                    new SaveAttendance().execute("b");
+                                }*/
+                                    attendance_flag = "P";
+                                    leavetype_flag = "";
+                                    if (cd.isConnectingToInternet()) {
+                                        view.setBackgroundResource(R.drawable.green);
+                                        dialog.dismiss();
+
+                                        try {
+                                            new SaveAttendance().execute(attendance_flag, leavetype_flag);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    } else {
+                                        cd.displayMessage("Please check internet Connectivity & Try Again");
+                                    }
 
                                 }
-                                else
-                                {
-                                    cd.displayMessage("Please check internet Connectivity & Try Again");
-                                }
+                            });
 
-                            }
-                        });
+                            absent.setOnClickListener(new OnClickListener() {
 
-                        absent.setOnClickListener(new OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
+                                @Override
+                                public void onClick(View v) {
 
 
-                                if(cd.isConnectingToInternet())
-                                {
+                                    if (cd.isConnectingToInternet()) {
+                                        // TODO Auto-generated method stub
 
+                                        final Dialog d = new Dialog(AttendanceActivity.this);
+                                        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        d.setContentView(R.layout.absent_popup);
 
-                                    // TODO Auto-generated method stub
+                                        RadioGroup rg_attendance_type = (RadioGroup) d
+                                                .findViewById(R.id.rg_absent_type);
 
-                                    final Dialog d = new Dialog(AttendanceActivity.this);
-                                    d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                    d.setContentView(R.layout.absent_popup);
+                                        final RadioButton rb_seek_leave = (RadioButton) d
+                                                .findViewById(R.id.rb_seek_leave);
 
-                                    RadioGroup rg_attendance_type = (RadioGroup) d
-                                            .findViewById(R.id.rg_absent_type);
+                                        final RadioButton rb_weekly_off = (RadioButton) d
+                                                .findViewById(R.id.rb_weekly_off);
 
-                                    final RadioButton rb_seek_leave = (RadioButton) d
-                                            .findViewById(R.id.rb_seek_leave);
+                                        final RadioButton rb_holiday = (RadioButton) d
+                                                .findViewById(R.id.rb_holiday);
 
-                                    final RadioButton rb_weekly_off = (RadioButton) d
-                                            .findViewById(R.id.rb_weekly_off);
+                                        rg_attendance_type
+                                                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-                                    final RadioButton rb_holiday = (RadioButton) d
-                                            .findViewById(R.id.rb_holiday);
+                                                    @Override
+                                                    public void onCheckedChanged(
+                                                            RadioGroup group, int checkedId) {
+                                                        // TODO Auto-generated method stub
+                                                        attendance_flag = "A";
+                                                        if (rb_seek_leave.isChecked()) {
 
-                                    rg_attendance_type
-                                            .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                                                            leavetype_flag = "Leave";
 
-                                                @Override
-                                                public void onCheckedChanged(
-                                                        RadioGroup group, int checkedId) {
-                                                    // TODO Auto-generated method stub
-                                                    String absent_falg="a";
-                                                    if (rb_seek_leave.isChecked()) {
+                                                            view.setBackgroundResource(R.drawable.red);
+                                                            d.dismiss();
+                                                            dialog.dismiss();
 
+                                                            try {
+                                                                new SaveAttendance().execute(attendance_flag, leavetype_flag);
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
 
+                                                        }
 
-                                                        String attendmonth1 = getmonthNo1(attendmonth);
-                                                        LOTUS.dbCon.open();
+                                                        if (rb_weekly_off.isChecked()) {
+                                                            leavetype_flag = "Weekly Off";
 
-                                                        values = new String[] {
-                                                                username,
-                                                                attendanceDate1,
-                                                                "A",
-                                                                " Leave",
-                                                                String.valueOf(lat),
-                                                                String.valueOf(lon),
-                                                                "0", attendmonth1,
-                                                                "", year };
+                                                            view.setBackgroundResource(R.drawable.red);
+                                                            d.dismiss();
+                                                            dialog.dismiss();
 
-                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
+                                                            try {
+                                                                new SaveAttendance().execute(attendance_flag, leavetype_flag);
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
 
-                                                        LOTUS.dbCon.close();
+                                                        if (rb_holiday.isChecked()) {
+                                                            leavetype_flag = "Holiday";
 
-                                                        view.setBackgroundResource(R.drawable.red);
+                                                            view.setBackgroundResource(R.drawable.red);
+                                                            d.dismiss();
+                                                            dialog.dismiss();
 
-                                                        d.dismiss();
-                                                        dialog.dismiss();
+                                                            try {
+                                                                new SaveAttendance().execute(attendance_flag, leavetype_flag);
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
 
-                                                        new SaveAttendance().execute(absent_falg);
-                                                        //Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                                                        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                        //startActivity(i);
-
-
+                                                        }
 
 
                                                     }
+                                                });
+                                        d.show();
 
-                                                    if (rb_weekly_off.isChecked()) {
+                                    } else {
+                                        cd.displayMessage("Please check internet Connectivity & Try Again");
+                                    }
 
-
-
-                                                        String attendmonth1 = getmonthNo1(attendmonth);
-                                                        LOTUS.dbCon.open();
-
-                                                        values = new String[] {
-                                                                username,
-                                                                attendanceDate1,
-                                                                "A",
-                                                                " Weekly Off",
-                                                                String.valueOf(lat),
-                                                                String.valueOf(lon),
-                                                                "0", attendmonth1,
-                                                                "", year };
-
-                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
-
-                                                        LOTUS.dbCon.close();
-
-                                                        view.setBackgroundResource(R.drawable.red);
-
-                                                        d.dismiss();
-                                                        dialog.dismiss();
-
-                                                        new SaveAttendance().execute(absent_falg);
-                                                        //Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                                                        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                        //startActivity(i);
-
-
-
-
-                                                    }
-
-                                                    if (rb_holiday.isChecked()) {
-
-
-
-                                                        String attendmonth1 = getmonthNo1(attendmonth);
-                                                        LOTUS.dbCon.open();
-
-                                                        values = new String[] {
-                                                                username,
-                                                                attendanceDate1,
-                                                                "A",
-                                                                " Holiday",
-                                                                String.valueOf(lat),
-                                                                String.valueOf(lon),
-                                                                "0", attendmonth1,
-                                                                "", year };
-
-                                                        LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
-
-                                                        LOTUS.dbCon.close();
-
-                                                        view.setBackgroundResource(R.drawable.red);
-
-                                                        d.dismiss();
-                                                        dialog.dismiss();
-
-                                                        new SaveAttendance().execute(absent_falg);
-                                                        //Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                                                        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                        //startActivity(i);
-
-
-
-
-                                                    }
-
-
-                                                }
-                                            });
-                                    d.show();
-
-                                }else
-                                {
-                                    cd.displayMessage("Please check internet Connectivity & Try Again");
                                 }
 
-                            }
 
+                                /////
+                            });
 
-                            /////
-                        });
+                            dialog.show();
 
-                        dialog.show();
-
+                        }
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
-                }
-                catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+
                 }
 
-            }
+            } else {
+                    Toast.makeText(AttendanceActivity.this, "Please ON your Mobile Internet", Toast.LENGTH_LONG).show();
+                }
 
-            // String date_month_year = (String) view.getTag();
-            // view.setBackgroundResource(R.drawable.calendar_bg_orange);
-            // selectedDayMonthYearButton.setText("Selected: " +
-            // date_month_year);
-            // Log.e("Selected date", date_month_year);
-            // try {
-            // Date parsedDate = dateFormatter.parse(date_month_year);
-            // Log.d(tag, "Parsed Date: " + parsedDate.toString());
-            //
-            // } catch (ParseException e) {
-            // e.printStackTrace();
-            // }
         }
 
         public int getCurrentDayOfMonth() {
@@ -1228,6 +1161,31 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
     }
 
+    public static boolean afterdateChangeValidate(String serverdate) {
+        boolean result = false;
+
+        try {
+            final Calendar calendar1 = Calendar
+                    .getInstance();
+            SimpleDateFormat formatter1 = new SimpleDateFormat(
+                    "M/d/yyyy");
+            String currentdate = formatter1.format(calendar1
+                    .getTime());
+
+            if (!serverdate.equalsIgnoreCase(currentdate)) {
+
+                result = true;
+            }
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
     public String getmonthNo1(String monthName) {
         String month = "";
 
@@ -1276,7 +1234,9 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
         String Flag;
 
-        String absent_flag;
+        String attendance_flag = "";
+        String leavetype_flag = "";
+
         @Override
         protected void onPreExecute() {
             // TODO Auto-generated method stub
@@ -1291,7 +1251,12 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
         protected SoapObject doInBackground(String... params) {
             // TODO Auto-generated method stub
 
-            absent_flag = params[0];
+            attendance_flag = params[0];
+            leavetype_flag = params[1];
+
+            final String[] columns = new String[]{"emp_id", "Adate",
+                    "attendance", "absent_type", "lat", "lon", "savedServer", "month",
+                    "holiday_desc", "year"};
 
             if (!cd.isConnectingToInternet()) {
                 // Internet Connection is not present
@@ -1301,126 +1266,126 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                 Flag = "3";
                 // stop executing code by return
 
-            } else
-            {
-
-
+            } else{
                 Flag = "1";
 
                 try{
-                    LOTUS.dbCon.open();
-                    attendance_array = LOTUS.dbCon.getAttendanceData();
-
-
-                    if (attendance_array.getCount() > 0) {
-
-                        if (attendance_array != null && attendance_array.moveToFirst()) {
-                            attendance_array.moveToFirst();
-
-                            do {
-
-                                String empid = attendance_array.getString(1);
-                                Log.e("", "empid=" + empid);
-                                String date = attendance_array.getString(2);
-                                Log.e("", "date=" + date);
-
-                                String attendance = attendance_array.getString(3);
-                                Log.e("", "attendance=" + attendance);
-
-                                String absent_type = attendance_array.getString(4);
-                                Log.e("", "absent_type=" + absent_type);
-
-                                String lat = attendance_array.getString(5);
-                                Log.e("", "lat=" + lat);
-
-                                String lon = attendance_array.getString(6);
-                                Log.e("", "lon=" + lon);
-
-                                soap_result_attendance = service.SaveAttendance(
-                                        attendance_array.getString(1), date,
-                                        attendance_array.getString(3),
-                                        attendance_array.getString(4),
-                                        attendance_array.getString(5),
-                                        attendance_array.getString(6));
-
-                                if(soap_result_attendance !=null){
-                                    String t = soap_result_attendance.toString();
-                                    Log.v("", "soap_result_attendance=" + t);
-                                    if (t.equalsIgnoreCase("TRUE")) {
-
-                                        LOTUS.dbCon.update_Attendance_data(attendance_array.getString(0));
-                                        LOTUS.dbCon.close();
-
-                                    }else if(t.equalsIgnoreCase("SE")){
-
-                                        final Calendar calendar1 = Calendar
-                                                .getInstance();
-                                        SimpleDateFormat formatter1 = new SimpleDateFormat(
-                                                "MM/dd/yyyy HH:mm:ss");
-                                        String Createddate = formatter1.format(calendar1
-                                                .getTime());
-
-                                        int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
-                                        LOTUS.dbCon.open();
-
-                                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
-                                        String selection = "ID = ?";
-                                        ID = String.valueOf(id);
-                                        // WHERE clause arguments
-                                        String[] selectionArgs = {ID};
-
-                                        String valuesArray[] = {ID, "SaveAttendace_SE", String.valueOf(n), "SaveAttendance()",
-                                                Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
-                                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
-
-                                        LOTUS.dbCon.close();
-
-                                    }
-                                }else{
-
-                                    //String errors = "Soap in giving null while 'Attendance' and 'checkSyncFlag = 2' in  data Sync";
-                                    //we.writeToSD(errors.toString());
-                                    final Calendar calendar1 = Calendar
-                                            .getInstance();
-                                    SimpleDateFormat formatter1 = new SimpleDateFormat(
-                                            "MM/dd/yyyy HH:mm:ss");
-                                    String Createddate = formatter1.format(calendar1
-                                            .getTime());
-
-                                    int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
-                                    LOTUS.dbCon.open();
-
-                                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
-                                    String selection = "ID = ?";
-                                    ID = String.valueOf(id);
-                                    // WHERE clause arguments
-                                    String[] selectionArgs = {ID};
-
-                                    String valuesArray[] = {ID, "Internet Connection Lost, Soap in giving null while 'SaveAttendace'", String.valueOf(n), "SaveAttendance()",
-                                            Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
-                                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
-
-                                    LOTUS.dbCon.close();
-
-                                }
-
-                            } while (attendance_array.moveToNext());
-
-
-
-
-                        }
-                    }else if (attendance_array==null) {
-
+                    if (attendance_flag.equalsIgnoreCase("P") &&
+                            attendance_flag.length() > 0 && attendance_flag != null) {
+                        soap_result_attendance = service.SaveAttendance(username, attendanceDate1,
+                                attendance_flag, "", String.valueOf(lat), String.valueOf(lon));
                     } else {
-                        Log.e("No Attendancedata",
-                                String.valueOf(attendance_array.getCount()));
+                        soap_result_attendance = service.SaveAttendance(username, attendanceDate1,
+                                attendance_flag, leavetype_flag, String.valueOf(lat), String.valueOf(lon));
                     }
 
+                    if (soap_result_attendance != null) {
+                        String t = soap_result_attendance.toString();
+                        Log.v("", "soap_result_attendance=" + t);
+                        if (t.equalsIgnoreCase("Success")) {
+                            ErroFlag = "1";
+                                       /* db.update_Attendance_data(attendance_array.getString(0));
+                                        db.close();*/
+
+                            String sld[] = attendanceDate1.split(" ");
+                            final String sld1 = sld[0];
+
+                            String ddd[] = sld1.split("-");
+                            final String year = ddd[0];
+
+                            String attendmonth1 = getmonthNo1(attendmonth);
+
+                            if (attendance_flag.equalsIgnoreCase("P") &&
+                                    attendance_flag.length() > 0 && attendance_flag != null) {
+
+                                LOTUS.dbCon.open();
+
+                                values = new String[] { username,
+                                        attendanceDate1,
+                                        attendance_flag,
+                                        "",
+                                        String.valueOf(lat),
+                                        String.valueOf(lon),
+                                        "0",
+                                        attendmonth1,
+                                        "",
+                                        year };
+
+                                LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
+
+                                LOTUS.dbCon.close();
+
+                            } else {
+                                LOTUS.dbCon.open();
+
+                                values = new String[]{
+                                        username,
+                                        attendanceDate1,
+                                        attendance_flag,
+                                        leavetype_flag,
+                                        String.valueOf(lat),
+                                        String.valueOf(lon),
+                                        "1", attendmonth1,
+                                        "", year};
+
+                                LOTUS.dbCon.insert(DbHelper.TABLE_ATTENDANCE, values, columns);
+
+                                LOTUS.dbCon.close();
+                            }
 
 
+                        } else if (t.equalsIgnoreCase("FAIL")) {
+                            ErroFlag = "0";
+                            final Calendar calendar1 = Calendar
+                                    .getInstance();
+                            SimpleDateFormat formatter1 = new SimpleDateFormat(
+                                    "MM/dd/yyyy HH:mm:ss");
+                            String Createddate = formatter1.format(calendar1
+                                    .getTime());
 
+                            int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
+                            LOTUS.dbCon.open();
 
+                            id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                            String selection = "ID = ?";
+                            ID = String.valueOf(id);
+                            // WHERE clause arguments
+                            String[] selectionArgs = {ID};
+
+                            String valuesArray[] = {ID, "SaveAttendace_SE", String.valueOf(n), "SaveAttendance()",
+                                    Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
+                            boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                            LOTUS.dbCon.close();
+
+                        }
+                    } else {
+                        ErroFlag = "0";
+                        //String errors = "Soap in giving null while 'Attendance' and 'checkSyncFlag = 2' in  data Sync";
+                        //we.writeToSD(errors.toString());
+                        final Calendar calendar1 = Calendar
+                                .getInstance();
+                        SimpleDateFormat formatter1 = new SimpleDateFormat(
+                                "MM/dd/yyyy HH:mm:ss");
+                        String Createddate = formatter1.format(calendar1
+                                .getTime());
+
+                        int n = Thread.currentThread().getStackTrace()[2].getLineNumber();
+                        LOTUS.dbCon.open();
+
+                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                        String selection = "ID = ?";
+                        ID = String.valueOf(id);
+                        // WHERE clause arguments
+                        String[] selectionArgs = {ID};
+
+                        String valuesArray[] = {ID, "Internet Connection Lost, Soap in giving null while 'SaveAttendace'", String.valueOf(n), "SaveAttendance()",
+                                Createddate, Createddate, sharedPref.getLoginId(), "Transaction Upload", "Fail"};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                        LOTUS.dbCon.close();
+
+                    }
 
                 }catch(Exception e){
                     ErroFlag = "0";
@@ -1450,7 +1415,6 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
                     LOTUS.dbCon.close();
 
-
                 }
                 //}
             }
@@ -1471,13 +1435,13 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
             if(ErroFlag.equalsIgnoreCase("0")){
 
-                cd.displayMessage("Some error occure"+Erro_function);
+                cd.displayMessage("Please Enter Today Date");
             }
             if(ErroFlag.equalsIgnoreCase("1")){
 
                 cd.displayMessage("Attendance Successfully Sync");
 
-                if(absent_flag.equalsIgnoreCase("a")){
+                if(attendance_flag.equalsIgnoreCase("A")){
 
 
                     Intent i = new Intent(getApplicationContext(), LoginActivity.class);
@@ -1486,6 +1450,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
                 }else{
                     Intent i = new Intent(getApplicationContext(), DashBoardActivity.class);
+                    i.putExtra("FROM", "LOGIN");
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
                 }
@@ -1512,7 +1477,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
             SimpleDateFormat form = new SimpleDateFormat(
                     "yyyy-MM-dd HH:mm:ss");
 
-            final String attendanceDate1 = form.format(date);
+            attendanceDate1 = form.format(date);
             soap_result = service.Logout(username, attendanceDate1);
 
             return soap_result;
@@ -1632,7 +1597,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
-                        updateGPSStatus("GPS is Enabled in your device");
+                        //updateGPSStatus("GPS is Enabled in your device");
                         // startLocation();
 
 
@@ -1686,14 +1651,14 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                 switch (resultCode) {
                     case RESULT_OK:
                         Log.e("Settings", "Result OK");
-                        updateGPSStatus("GPS is Enabled in your device");
+                        //updateGPSStatus("GPS is Enabled in your device");
                         //startLocationUpdates();
                         startLocation();
 
                         break;
                     case RESULT_CANCELED:
                         Log.e("Settings", "Result Cancel");
-                        updateGPSStatus("GPS is Disabled in your device");
+                       // updateGPSStatus("GPS is Disabled in your device");
                         break;
                 }
                 break;
@@ -1733,13 +1698,13 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
                 //Check if GPS is turned ON or OFF
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Log.e("About GPS", "GPS is Enabled in your device");
-                    updateGPSStatus("GPS is Enabled in your device");
+                    //updateGPSStatus("GPS is Enabled in your device");
                     //  startLocation();
 
                 } else {
                     //If GPS turned OFF show Location Dialog
                     new Handler().postDelayed(sendUpdatesToUI, 10);
-                    updateGPSStatus("GPS is Disabled in your device");
+                   // updateGPSStatus("GPS is Disabled in your device");
                     Log.e("About GPS", "GPS is Disabled in your device");
                 }
 
@@ -1764,7 +1729,7 @@ public class AttendanceActivity extends Activity implements OnClickListener, OnL
 
                 } else {
                     updateGPSStatus("Location Permission denied.");
-                    Toast.makeText(AttendanceActivity.this, "Location Permission denied.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(AttendanceActivity.this, "Location Permission denied.", Toast.LENGTH_SHORT).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

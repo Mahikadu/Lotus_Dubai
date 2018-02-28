@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.Models.StockModel;
 import com.prod.sudesi.lotusherbalsdubai.R;
@@ -205,7 +206,12 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
             case R.id.btn_data_upload:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
                 if (cd.isConnectingToInternet()) {
-                    new syncAllData().execute();
+                    if(cd.isCurrentDateMatchDeviceDate()) {
+                        new syncAllData().execute();
+                    }else{
+                        Toast.makeText(SyncMasterActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+
+                    }
                 } else {
                     cd.displayMessage("Check Your Internet Connection!!!");
                 }
@@ -214,8 +220,14 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
             case R.id.btn_master_sync:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
                 //fetchLastSyncDate();
-                MasterSync syncMaster = new MasterSync();
-                syncMaster.execute();
+                if(cd.isCurrentDateMatchDeviceDate()) {
+                    MasterSync syncMaster = new MasterSync();
+                    syncMaster.execute();
+                }else{
+                    Toast.makeText(SyncMasterActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+
+                }
+
                 break;
             case R.id.btn_changePass:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
@@ -223,8 +235,14 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                 break;
             case R.id.btn_data_download:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
-                DataUpload dataUpload = new DataUpload();
-                dataUpload.execute();
+                if(cd.isCurrentDateMatchDeviceDate()) {
+                    DataUpload dataUpload = new DataUpload();
+                    dataUpload.execute();
+                }else{
+                    Toast.makeText(SyncMasterActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+
+                }
+
                 break;
             case R.id.btn_usermanual:
                 v.startAnimation(AnimationUtils.loadAnimation(SyncMasterActivity.this, R.anim.button_click));
@@ -739,9 +757,10 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         protected SoapPrimitive doInBackground(Void... params) {
             SoapPrimitive result = null;
             if (cd.isConnectingToInternet()) {
+
                 try {
                     LOTUS.dbCon.open();
-                    Cursor stock_array = LOTUS.dbCon.getStockdetails();
+                    Cursor stock_array = LOTUS.dbCon.getStockdetails(outletcode);
                     //LOTUS.dbCon.close();
 
                     Calendar c = Calendar.getInstance();
@@ -873,9 +892,10 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
         protected SoapPrimitive doInBackground(Void... params) {
             SoapPrimitive result = null;
             if (cd.isConnectingToInternet()) {
+
                 try {
                     LOTUS.dbCon.open();
-                    Cursor stock_array = LOTUS.dbCon.getStockdetails();
+                    Cursor stock_array = LOTUS.dbCon.getStockdetails(outletcode);
                     //LOTUS.dbCon.close();
 
                     Calendar c = Calendar.getInstance();

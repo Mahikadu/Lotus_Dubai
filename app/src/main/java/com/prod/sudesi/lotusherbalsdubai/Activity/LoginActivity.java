@@ -27,7 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DataBaseCon;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DatabaseCopy;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DbHelper;
@@ -62,7 +61,6 @@ import java.util.Locale;
 public class LoginActivity extends Activity {
 
     Button btn_login;
-    LocationInfo locationInfo;
     EditText edt_username;
     EditText edt_password;
     private SharedPref sharedPref;
@@ -134,7 +132,9 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 v.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this, R.anim.button_click));
 
-                LoginUser();
+                //LoginUser();
+
+                new GetServerDate().execute();
 
                /* try {
                     if (cd.isConnectingToInternet()) {
@@ -415,8 +415,6 @@ public class LoginActivity extends Activity {
             }
             SoapObject object2 = service.GetLogin(username, pass, deviceId, version);
 
-            server_date_result = service.GetServerDate();
-
             return object2;
 
         }
@@ -428,11 +426,6 @@ public class LoginActivity extends Activity {
                 if (progress != null && progress.isShowing()) {
                     progress.dismiss();
                 }
-
-                if (server_date_result != null) {
-
-                    serverdate = server_date_result.toString();
-
                     if (soapObject != null) {
                         String response = String.valueOf(soapObject);
                         System.out.println("Response =>: " + response);
@@ -445,43 +438,9 @@ public class LoginActivity extends Activity {
                         if (result.equalsIgnoreCase("True")) {
                             cd.displayMessage("You have login successfully..!");
                             baname = res.getPropertyAsString("baname");
-                            sharedPref.clearPref();
+                            //sharedPref.clearPref();
                             sharedPref.setLoginInfo(username, pass, baname);
 
-                            String[] serverdatearray = serverdate
-                                    .split(" ");
-
-                            server_date = serverdatearray[0];
-
-
-                           /* String[] serverdate1 = server_date
-                                    .split("-");*/
-
-                            String[] serverdate1 = server_date
-                                    .split("/");//using UAt server
-
-                            String currentyear = serverdate1[2];
-
-
-                            /*SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "dd-MM-yyyy");*/
-
-                            SimpleDateFormat sdf = new SimpleDateFormat(
-                                    "dd/MM/yyyy", Locale.ENGLISH);//Using UAT server
-
-                            // dob = jsonPoi.getString("dob").trim().replaceAll("\\-", "/");
-
-                            Date curntdte = null;
-                            try {
-                                curntdte = sdf.parse(server_date);
-                            } catch (ParseException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-
-                            sdf.applyPattern("yyyy-MM-dd");
-                            todaydate1 = sdf.format(curntdte);
-                            sharedPref.setDateDetails(currentyear, serverdate, todaydate1);
                             insertDataInDb();
 
                         } else {
@@ -526,32 +485,6 @@ public class LoginActivity extends Activity {
                         cd.displayMessage("Connectivity Error, Please check Internet connection!!");
 
                     }
-                } else {
-                    final Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat formatter = new SimpleDateFormat(
-                            "MM/dd/yyyy HH:mm:ss");
-                    String Createddate = formatter.format(calendar
-                            .getTime());
-
-                    int n = Thread.currentThread().getStackTrace()[2]
-                            .getLineNumber();
-
-                    LOTUS.dbCon.open();
-
-                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
-                    String selection = "ID = ?";
-                    ID = String.valueOf(id);
-                    // WHERE clause arguments
-                    String[] selectionArgs = {ID};
-
-                    String valuesArray[] = {ID, "Soup is Null While GetServerDate()", String.valueOf(n), "GetServerDate()",
-                            Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
-                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
-
-                    LOTUS.dbCon.close();
-                    cd.displayMessage("Connectivity Error, Please check Internet connection!!");
-                }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -610,18 +543,20 @@ public class LoginActivity extends Activity {
                     Toast.makeText(LoginActivity.this, "New Apk Version has been Installed..!", Toast.LENGTH_SHORT).show();
                 } else {
 //                    Toast.makeText(MainActivity.this, "No New Version !", Toast.LENGTH_SHORT).show();
-                    LoginUser();
+                    //LoginUser();
+                    new GetServerDate().execute();
                 }
             } else {
 //                Toast.makeText(MainActivity.this, "No New Version !", Toast.LENGTH_SHORT).show();
-                LoginUser();
+                //LoginUser();
+                new GetServerDate().execute();
             }
 
         }
     }
 
     public void LoginUser(){
-        try {
+       // try {
 
             if (sharedPref.getvalue() == true) {
                 Log.e("Upload Data Receivert", String.valueOf(sharedPref.getvalue()));
@@ -639,7 +574,15 @@ public class LoginActivity extends Activity {
                 username = edt_username.getText().toString().toUpperCase();
                 pass = edt_password.getText().toString();
 
-                //LOTUS.dbCon.open();
+                try{
+
+                    new Check_Login().execute();
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+               /* //LOTUS.dbCon.open();
                 int count = LOTUS.dbCon.checkcount(username, pass);
                 //LOTUS.dbCon.close();
 
@@ -697,17 +640,17 @@ public class LoginActivity extends Activity {
                         }
                     }
 
-                }
+                }*/
             }
 
-        } catch (Exception e) {
+       /* } catch (Exception e) {
             // TODO: handle exception
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
 
             e.printStackTrace();
 
-        }
+        }*/
     }
 
     public void CheckServerApkVersionDownloadFile(String configFileUrl) {
@@ -821,6 +764,123 @@ public class LoginActivity extends Activity {
             return false;
         }
         return null;
+    }
+
+    public class GetServerDate extends AsyncTask<Void, Void, SoapPrimitive> {
+
+        private SoapPrimitive server_date_result = null;
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+
+            progress.setMessage("Please Wait");
+            progress.setCancelable(false);
+            progress.show();
+        }
+
+        @Override
+        protected SoapPrimitive doInBackground(Void... params) {
+            if (cd.isConnectingToInternet()) {
+                try {
+
+                    server_date_result = service.GetServerDate();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return server_date_result;
+        }
+
+        @Override
+        protected void onPostExecute(SoapPrimitive result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            if (progress != null && progress.isShowing() && !LoginActivity.this.isFinishing()) {
+                progress.dismiss();
+            }
+
+            try {
+                if (result != null) {
+
+                    serverdate = server_date_result.toString();
+
+                    String[] serverdatearray = serverdate
+                            .split(" ");
+
+                    server_date = serverdatearray[0];
+                    String[] serverdate1 = server_date
+                            .split("/");//using UAt server
+
+                    String currentyear = serverdate1[2];
+
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "MM/dd/yyyy", Locale.ENGLISH);//Using UAT server
+
+                    Date curntdte = null;
+                    try {
+                        curntdte = sdf.parse(server_date);
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    sdf.applyPattern("yyyy-MM-dd");
+                    todaydate1 = sdf.format(curntdte);
+                    sharedPref.clearPref();
+                    sharedPref.setDateDetails(currentyear, serverdate, todaydate1);
+
+                    final Calendar calendar1 = Calendar
+                            .getInstance();
+                    SimpleDateFormat formatter1 = new SimpleDateFormat(
+                            "M/d/yyyy");
+                    String systemdate = formatter1.format(calendar1
+                            .getTime());
+
+//                            String date = "8/29/2011 11:16:12 AM";
+                    String[] parts = serverdate.split(" ");
+                    String serverdd = parts[0];
+
+
+                    if (systemdate != null && serverdd != null
+                            && systemdate.equalsIgnoreCase(serverdd)) {
+                        LoginUser();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Please Check your Handset Date", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    final Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat formatter = new SimpleDateFormat(
+                            "MM/dd/yyyy HH:mm:ss");
+                    String Createddate = formatter.format(calendar
+                            .getTime());
+
+                    int n = Thread.currentThread().getStackTrace()[2]
+                            .getLineNumber();
+
+                    LOTUS.dbCon.open();
+
+                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                    String selection = "ID = ?";
+                    ID = String.valueOf(id);
+                    // WHERE clause arguments
+                    String[] selectionArgs = {ID};
+
+                    String valuesArray[] = {ID, "Soup is Null While GetServerDate()", String.valueOf(n), "GetServerDate()",
+                            Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
+                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                    LOTUS.dbCon.close();
+                    cd.displayMessage("Connectivity Error, Please check Internet connection!!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

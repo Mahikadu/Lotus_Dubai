@@ -85,6 +85,9 @@ public class BocDashBoardActivity extends Activity {
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_logout = (Button) findViewById(R.id.btn_logout);
 
+        spin_month  = (AutoCompleteTextView) findViewById(R.id.spin_boc);
+        spin_year = (AutoCompleteTextView)findViewById(R.id.spin_year);
+
 
         username = sharedPref.getLoginId();
         Log.v("", "username==" + username);
@@ -143,8 +146,7 @@ public class BocDashBoardActivity extends Activity {
             e.printStackTrace();
         }
 
-        spin_month  = (AutoCompleteTextView) findViewById(R.id.spin_boc);
-        spin_year = (AutoCompleteTextView)findViewById(R.id.spin_year);
+
 
         List<String> list_moth = new ArrayList<String>();
         list_moth.add("January");

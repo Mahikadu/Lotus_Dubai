@@ -40,6 +40,7 @@ public class BackgroundService extends Service {
     private Utils utils;
     private ArrayList<StockModel> stockDetailsArraylist;
     StockModel stockModel;
+    String outletcode;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -76,6 +77,14 @@ public class BackgroundService extends Service {
                 //cd.displayMessage("Service calling");
 
                 try {
+                    LOTUS.dbCon.open();
+                    outletcode = LOTUS.dbCon.getActiveoutletCode();
+                    LOTUS.dbCon.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
 
                    // Toast.makeText(context,"Service calling",Toast.LENGTH_SHORT).show();
 
@@ -83,7 +92,7 @@ public class BackgroundService extends Service {
                     Log.v("","Upload Data"+ flag);
 
                     LOTUS.dbCon.open();
-                    Cursor stock_array = LOTUS.dbCon.getStockdetails();
+                    Cursor stock_array = LOTUS.dbCon.getStockdetails(outletcode);
                     //LOTUS.dbCon.close();
 
                     Calendar c = Calendar.getInstance();

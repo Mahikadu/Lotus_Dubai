@@ -10,10 +10,14 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.R;
 import com.prod.sudesi.lotusherbalsdubai.Utils.SharedPref;
 import com.prod.sudesi.lotusherbalsdubai.libs.ConnectionDetector;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Admin on 16-10-2017.
@@ -151,11 +155,19 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_outlet_atten:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                startActivity(new Intent(getApplicationContext(), OutletAttendanceActivity.class));
+                if (cd.isCurrentDateMatchDeviceDate()) {
+                    startActivity(new Intent(getApplicationContext(), OutletAttendanceActivity.class));
+                } else {
+                    Toast.makeText(DashBoardActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btn_stock:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                startActivity(new Intent(getApplicationContext(), StockActivity.class));
+                if (cd.isCurrentDateMatchDeviceDate()) {
+                    startActivity(new Intent(getApplicationContext(), StockActivity.class));
+                } else {
+                    Toast.makeText(DashBoardActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btn_report:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
@@ -167,7 +179,11 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
                 break;
             case R.id.btn_master_sync:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
-                startActivity(new Intent(getApplicationContext(), SyncMasterActivity.class));
+                if (cd.isCurrentDateMatchDeviceDate()) {
+                    startActivity(new Intent(getApplicationContext(), SyncMasterActivity.class));
+                } else {
+                    Toast.makeText(DashBoardActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btn_ba_sale_yr:
                 v.startAnimation(AnimationUtils.loadAnimation(DashBoardActivity.this, R.anim.button_click));
@@ -197,4 +213,5 @@ public class DashBoardActivity extends Activity implements View.OnClickListener 
     public void onBackPressed(){
 
     }
+
 }

@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.Models.ProductListModel;
 import com.prod.sudesi.lotusherbalsdubai.Models.ProductModel;
@@ -291,6 +292,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
             case R.id.btn_save_sale:
                 v.startAnimation(AnimationUtils.loadAnimation(SaleDetailsActivity.this, R.anim.button_click));
+                if(cd.isCurrentDateMatchDeviceDate()){
                 try {
                     int etcount = 0;
                     int count = 0;
@@ -695,6 +697,10 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                }else{
+                    Toast.makeText(SaleDetailsActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
+
                 }
 
                 break;

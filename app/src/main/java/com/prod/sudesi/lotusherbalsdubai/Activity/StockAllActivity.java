@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.Models.ProductListModel;
 import com.prod.sudesi.lotusherbalsdubai.Models.ProductModel;
@@ -192,52 +193,57 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
 
             case R.id.btn_save:
 
-                try {
-                    int etcount = 0;
-                    int count = 0;
+                if(cd.isCurrentDateMatchDeviceDate()) {
+                    try {
+                        int etcount = 0;
+                        int count = 0;
 
 
-                    if (tl_sale_calculation.getChildCount() >0) {
-                        for (int j = 0; j < tl_sale_calculation.getChildCount(); j++) {
+                        if (tl_sale_calculation.getChildCount() > 0) {
+                            for (int j = 0; j < tl_sale_calculation.getChildCount(); j++) {
 
-                            TableRow t = (TableRow) tl_sale_calculation
-                                    .getChildAt(j);
-                            EditText edt_qty = (EditText) t.getChildAt(1);
+                                TableRow t = (TableRow) tl_sale_calculation
+                                        .getChildAt(j);
+                                EditText edt_qty = (EditText) t.getChildAt(1);
 
-                            if (edt_qty.getText().toString().trim()
-                                    .equalsIgnoreCase("0")
-                                    || edt_qty.getText().toString().trim()
-                                    .startsWith("0")
-                                    || edt_qty.getText().toString().trim()
-                                    .equalsIgnoreCase("")
-                                    || edt_qty.getText().toString().trim()
-                                    .equalsIgnoreCase(" ")) {
+                                if (edt_qty.getText().toString().trim()
+                                        .equalsIgnoreCase("0")
+                                        || edt_qty.getText().toString().trim()
+                                        .startsWith("0")
+                                        || edt_qty.getText().toString().trim()
+                                        .equalsIgnoreCase("")
+                                        || edt_qty.getText().toString().trim()
+                                        .equalsIgnoreCase(" ")) {
 
-                                cd.displayMessage("Please Enter proper value");
+                                    cd.displayMessage("Please Enter proper value");
 
-                            } else {
-                                etcount++;
+                                } else {
+                                    etcount++;
+
+                                }
+                                Log.e("etcount", String.valueOf(etcount));
+                            }
+
+                        }
+
+                        int numberofproduct = (tl_sale_calculation.getChildCount());
+
+                        if (numberofproduct == etcount) {
+                            if (tl_sale_calculation.getChildCount() > 0) {
+
+                                count = saveData();
 
                             }
-                            Log.e("etcount", String.valueOf(etcount));
-                        }
-
-                    }
-
-                    int numberofproduct = (tl_sale_calculation.getChildCount());
-
-                    if (numberofproduct == etcount) {
-                        if (tl_sale_calculation.getChildCount() >0) {
-
-                            count = saveData();
+                            showAlertDialog(count);
 
                         }
-                        showAlertDialog(count);
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }else{
+                    Toast.makeText(StockAllActivity.this, "Your Handset Date Not Match Current Date", Toast.LENGTH_LONG).show();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
 
                 break;

@@ -10,13 +10,20 @@ import android.widget.Toast;
 
 import com.prod.sudesi.lotusherbalsdubai.Activity.BAYearWiseReport;
 import com.prod.sudesi.lotusherbalsdubai.Activity.DashBoardActivity;
+import com.prod.sudesi.lotusherbalsdubai.Utils.SharedPref;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ConnectionDetector {
  
     private Context _context;
+    private SharedPref sharedPref;
  
     public ConnectionDetector(Context context){
+
         this._context = context;
+        sharedPref  = new SharedPref(_context);
     }
  
     /**
@@ -59,5 +66,28 @@ public class ConnectionDetector {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public boolean isCurrentDateMatchDeviceDate(){
+
+        final Calendar calendar1 = Calendar
+                .getInstance();
+        SimpleDateFormat formatter1 = new SimpleDateFormat(
+                "M/d/yyyy");
+        String systemdate = formatter1.format(calendar1
+                .getTime());
+
+        String serverdate = sharedPref.getServerDate();
+        //  String date = "8/29/2011 11:16:12 AM";
+        String[] parts = serverdate.split(" ");
+        String serverdd = parts[0];
+
+        if (systemdate != null && serverdd != null
+                && systemdate.equalsIgnoreCase(serverdd)) {
+
+            return true;
+        }
+
+        return false;
     }
 }

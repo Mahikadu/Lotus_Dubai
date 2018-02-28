@@ -353,13 +353,13 @@ public class DataBaseCon {
 
     }
 
-    public Cursor getStockdetails() {
+    public Cursor getStockdetails(String outletcode) {
         // TODO Auto-generated method stub
         Cursor stockddetails = null;
         try {
 
             Log.e("", "getStockdetails==");
-            String sql = "select * from table_stock where savedServer = '0'";
+            String sql = "select * from table_stock where savedServer = '0' And outletcode = '" + outletcode + "'";
 
             stockddetails = dbHelper.rawQuery(sql);
 
