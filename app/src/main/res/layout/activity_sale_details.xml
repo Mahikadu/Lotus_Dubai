@@ -151,7 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
-            android:layout_above="@+id/discountlayout"
+            android:layout_above="@+id/netamtlayout"
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
@@ -174,7 +174,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/discountlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -201,7 +201,7 @@
 
             </android.support.design.widget.TextInputLayout>
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/netamtlayout"

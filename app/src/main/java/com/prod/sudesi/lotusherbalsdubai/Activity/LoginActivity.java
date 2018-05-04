@@ -1,11 +1,14 @@
 package com.prod.sudesi.lotusherbalsdubai.Activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -17,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +31,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DataBaseCon;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DatabaseCopy;
 import com.prod.sudesi.lotusherbalsdubai.Dbconfig.DbHelper;
@@ -56,6 +67,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class LoginActivity extends Activity {
@@ -80,6 +92,8 @@ public class LoginActivity extends Activity {
     private Utils utils;
     private LoginDetailsModel loginDetailsModel;
 
+    private static final int PERMISSION_REQUEST_CODE = 1;
+
     //Production
     public static final String  downloadURL = "http://lotussmartforce.com/apk/Lotus_Pro.apk"; //production
     public static final String downloadConfigFile = "http://lotussmartforce.com/apk/config.txt";//production
@@ -94,6 +108,9 @@ public class LoginActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_login_);
+
+
+        requestStoragePermission();
 
         btn_login = (Button) findViewById(R.id.btn_login);
         edt_username = (EditText) findViewById(R.id.edt_username);
@@ -769,6 +786,7 @@ public class LoginActivity extends Activity {
     public class GetServerDate extends AsyncTask<Void, Void, SoapPrimitive> {
 
         private SoapPrimitive server_date_result = null;
+        boolean InternetFlag = false;
 
         @Override
         protected void onPreExecute() {
@@ -791,6 +809,8 @@ public class LoginActivity extends Activity {
                     e.printStackTrace();
                 }
 
+            }else{
+                InternetFlag = true;
             }
             return server_date_result;
         }
@@ -804,82 +824,183 @@ public class LoginActivity extends Activity {
             }
 
             try {
-                if (result != null) {
+                if(!InternetFlag) {
+                    if (result != null) {
 
-                    serverdate = server_date_result.toString();
+                        serverdate = server_date_result.toString();
 
-                    String[] serverdatearray = serverdate
-                            .split(" ");
+                        String[] serverdatearray = serverdate
+                                .split(" ");
 
-                    server_date = serverdatearray[0];
-                    String[] serverdate1 = server_date
-                            .split("/");//using UAt server
+                        server_date = serverdatearray[0];
+                        String[] serverdate1 = server_date
+                                .split("/");//using UAt server
 
-                    String currentyear = serverdate1[2];
+                        String currentyear = serverdate1[2];
 
-                    SimpleDateFormat sdf = new SimpleDateFormat(
-                            "MM/dd/yyyy", Locale.ENGLISH);//Using UAT server
+                        SimpleDateFormat sdf = new SimpleDateFormat(
+                                "MM/dd/yyyy", Locale.ENGLISH);//Using UAT server
 
-                    Date curntdte = null;
-                    try {
-                        curntdte = sdf.parse(server_date);
-                    } catch (ParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                        Date curntdte = null;
+                        try {
+                            curntdte = sdf.parse(server_date);
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
 
-                    sdf.applyPattern("yyyy-MM-dd");
-                    todaydate1 = sdf.format(curntdte);
-                    sharedPref.clearPref();
-                    sharedPref.setDateDetails(currentyear, serverdate, todaydate1);
+                        sdf.applyPattern("yyyy-MM-dd");
+                        todaydate1 = sdf.format(curntdte);
+                        sharedPref.clearPref();
+                        sharedPref.setDateDetails(currentyear, serverdate, todaydate1);
 
-                    final Calendar calendar1 = Calendar
-                            .getInstance();
-                    SimpleDateFormat formatter1 = new SimpleDateFormat(
-                            "M/d/yyyy");
-                    String systemdate = formatter1.format(calendar1
-                            .getTime());
+                        final Calendar calendar1 = Calendar
+                                .getInstance();
+                        SimpleDateFormat formatter1 = new SimpleDateFormat(
+                                "M/d/yyyy");
+                        String systemdate = formatter1.format(calendar1
+                                .getTime());
 
 //                            String date = "8/29/2011 11:16:12 AM";
-                    String[] parts = serverdate.split(" ");
-                    String serverdd = parts[0];
+                        String[] parts = serverdate.split(" ");
+                        String serverdd = parts[0];
 
 
-                    if (systemdate != null && serverdd != null
-                            && systemdate.equalsIgnoreCase(serverdd)) {
-                        LoginUser();
+                        if (systemdate != null && serverdd != null
+                                && systemdate.equalsIgnoreCase(serverdd)) {
+                            LoginUser();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Please Check your Handset Date", Toast.LENGTH_LONG).show();
+                        }
+
                     } else {
-                        Toast.makeText(LoginActivity.this, "Please Check your Handset Date", Toast.LENGTH_LONG).show();
+                        final Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat(
+                                "MM/dd/yyyy HH:mm:ss");
+                        String Createddate = formatter.format(calendar
+                                .getTime());
+
+                        int n = Thread.currentThread().getStackTrace()[2]
+                                .getLineNumber();
+
+                        LOTUS.dbCon.open();
+
+                        id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
+                        String selection = "ID = ?";
+                        ID = String.valueOf(id);
+                        // WHERE clause arguments
+                        String[] selectionArgs = {ID};
+
+                        String valuesArray[] = {ID, "Soup is Null While GetServerDate()", String.valueOf(n), "GetServerDate()",
+                                Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
+                        boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
+
+                        LOTUS.dbCon.close();
+                        cd.displayMessage("Soup Getting null Response, try again!!");
                     }
-
-                } else {
-                    final Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat formatter = new SimpleDateFormat(
-                            "MM/dd/yyyy HH:mm:ss");
-                    String Createddate = formatter.format(calendar
-                            .getTime());
-
-                    int n = Thread.currentThread().getStackTrace()[2]
-                            .getLineNumber();
-
-                    LOTUS.dbCon.open();
-
-                    id = LOTUS.dbCon.getCountOfRows(DbHelper.SYNC_LOG) + 1;
-                    String selection = "ID = ?";
-                    ID = String.valueOf(id);
-                    // WHERE clause arguments
-                    String[] selectionArgs = {ID};
-
-                    String valuesArray[] = {ID, "Soup is Null While GetServerDate()", String.valueOf(n), "GetServerDate()",
-                            Createddate, Createddate, sharedPref.getLoginId(), "Login Check", "Fail"};
-                    boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
-
-                    LOTUS.dbCon.close();
+                }else{
                     cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    private void requestStoragePermission() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.INTERNET)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        //Toast.makeText(getApplicationContext(), "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Toast.makeText(this, "Permission Granted, Now you can check network status.", Toast.LENGTH_LONG).show();
+
+
+                } else {
+
+                    //  Toast.makeText(this, "Permission Denied, You cannot check networkstatus.", Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Permission is required, please Allow All Permission!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                    requestStoragePermission();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
+                }
+                break;
+
         }
     }
 

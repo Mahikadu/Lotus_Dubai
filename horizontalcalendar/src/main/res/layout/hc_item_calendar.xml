@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:foreground="?selectableItemBackground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hc_layoutContent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/hc_text_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="Jan" />
+
+        <TextView
+            android:id="@+id/hc_text_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textStyle="bold"
+            tools:text="2" />
+
+        <!--<TextView
+            android:id="@+id/hc_text_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            tools:text="Mon" />-->
+
+        <View
+            android:id="@+id/hc_selector"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="2dp"
+            android:background="#f00f0f"
+            android:visibility="visible" />
+
+    </LinearLayout>
+</FrameLayout>

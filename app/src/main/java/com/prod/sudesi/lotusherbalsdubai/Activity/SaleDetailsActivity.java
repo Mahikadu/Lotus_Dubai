@@ -91,7 +91,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         tablel_sale_calculation = (TableLayout) findViewById(R.id.tablel_sale_calculation);
 
         edt_gross = (EditText) findViewById(R.id.edt_gross);
-        edt_discount = (EditText) findViewById(R.id.edt_discount);
+        //edt_discount = (EditText) findViewById(R.id.edt_discount);
         edt_netamt = (EditText) findViewById(R.id.edt_netamt);
 
         btn_save = (Button) findViewById(R.id.btn_save_sale);
@@ -120,14 +120,14 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
         edt_gross.setOnClickListener(this);
         edt_netamt.setOnClickListener(this);
 
-        edt_discount.setOnTouchListener(new View.OnTouchListener() {
+       /* edt_discount.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 edt_discount.setFocusable(true);
                 edt_discount.setFocusableInTouchMode(true);
                 return false;
             }
-        });
+        });*/
 
 
         productModel = new ProductModel();
@@ -184,7 +184,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
             }
         }
-        edt_discount.addTextChangedListener(new TextWatcher() {
+       /* edt_discount.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
@@ -210,7 +210,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                 }
                 edt_netamt.setText("");
             }
-        });
+        });*/
     }
 
     @Override
@@ -255,22 +255,8 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
             case R.id.edt_netamt:
 
-                if (edt_gross.getText().toString().equals("")) {
-
-                } else if (edt_discount.getText().toString().equals("")) {
+                if (!edt_gross.getText().toString().equals("")) {
                     edt_netamt.setText(edt_gross.getText().toString());
-                } else if (!edt_gross.getText().toString().equals("")
-                        && !edt_discount.getText().toString()
-                        .equals("")) {
-                    Float gross = Float.parseFloat(edt_gross.getText()
-                            .toString());
-                    Float discount = Float.parseFloat(edt_discount
-                            .getText().toString());
-
-                    String str_net = String.valueOf(gross - discount);
-
-                    edt_netamt.setText(str_net);
-
                 }
                 break;
             case R.id.btn_home:
@@ -330,20 +316,10 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                         if (!edt_gross.getText().toString().equals("")
                                 && !edt_netamt.getText().toString().equals("")) {
 
-                            float dis;
-                            if (!edt_discount.getText().toString()
-                                    .equalsIgnoreCase("")) {
-                                dis = Float.parseFloat(edt_discount.getText()
-                                        .toString());
-                            } else {
-                                dis = 0.0f;
-                            }
-
                             String tablecount = String.valueOf(tablel_sale_calculation
                                     .getChildCount());
 
-                            float a = 0.0f;
-                            try {
+                            /*try {
                                 if (dis == 0.0f) {
                                     a = dis;
                                 } else {
@@ -356,8 +332,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                             } catch (Exception e) {
                                 e.printStackTrace();
-                            }
-                            float disss = 0;
+                            }*/
                             float net1;
 
                             if (tablel_sale_calculation.getChildCount() > 0) {
@@ -386,9 +361,9 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             * Integer.parseInt(edt_qty
                                             .getText().toString());
 
-                                    float boc_date_net = calc_gross - a;
+                                    //float boc_date_net = calc_gross - a;
                                     float gross = 0;
-                                    int net = 0, closing = 0, sold_stock = 0, discount = 0;
+                                    int net = 0, closing = 0, sold_stock = 0;
                                     int stkinhand = 0;
                                     int i_sold = 0;
 
@@ -401,7 +376,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                         str_openingstock = cur.getString(cur.getColumnIndex("opening_stock"));
                                         str_totalgrossamount = cur.getString(cur.getColumnIndex("total_gross_amount"));
                                         str_totalnetamount = cur.getString(cur.getColumnIndex("total_net_amount"));
-                                        Str_discount = cur.getString(cur.getColumnIndex("discount"));
+                                        //Str_discount = cur.getString(cur.getColumnIndex("discount"));
                                         closebal = cur.getString(cur.getColumnIndex("close_bal"));
                                         soldstock = cur.getString(cur.getColumnIndex("sold_stock"));
                                         str_stockreceived = cur.getString(cur.getColumnIndex("stock_received"));
@@ -478,7 +453,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                                 gross = calc_gross;
 
                                             }
-                                            if (Str_discount != null) {
+                                            /*if (Str_discount != null) {
                                                 if (!Str_discount.equalsIgnoreCase("")) {
 
                                                     if (!Str_discount.contains(" ")) {
@@ -515,7 +490,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                                     disss = a;
                                                 }
-                                            }
+                                            }*/
 
                                             if (str_totalnetamount != null) {
                                                 if (!str_totalnetamount.equalsIgnoreCase("")) {
@@ -524,25 +499,25 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                                                         String cal_gross = String.valueOf(calc_gross);
 
-                                                        net1 = Float.parseFloat(str_totalnetamount) + Float.parseFloat(cal_gross) - a;
+                                                        net1 = Float.parseFloat(str_totalnetamount) + Float.parseFloat(cal_gross);
 
                                                     } else {
                                                         String cal_gross = String.valueOf(calc_gross);
 
-                                                        net1 = (Float.parseFloat(cal_gross) - a);
+                                                        net1 = (Float.parseFloat(cal_gross));
 
                                                     }
 
                                                 } else {
                                                     String cal_gross = String.valueOf(calc_gross);
 
-                                                    net1 = (Float.parseFloat(cal_gross) - a);
+                                                    net1 = (Float.parseFloat(cal_gross));
                                                 }
 
                                             } else {
                                                 String cal_gross = String.valueOf(calc_gross);
 
-                                                net1 = (Float.parseFloat(cal_gross) - a);
+                                                net1 = (Float.parseFloat(cal_gross));
                                             }
 
                                             Calendar cal = Calendar
@@ -588,7 +563,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             String valuesArray[] = {A_Id, Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                                                     str_openingstock, String.valueOf(i_stokreceive), String.valueOf(i_stokinhand),
                                                     String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross), String.valueOf(net1),
-                                                    String.valueOf(disss), "0", insert_timestamp, insert_timestamp,
+                                                    "0", insert_timestamp, insert_timestamp,
                                                     month_name, year_name, insert_timestamp, outletcode};
                                             boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, selection, valuesArray, utils.columnNamesStock, selectionArgs);
 

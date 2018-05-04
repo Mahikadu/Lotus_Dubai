@@ -525,7 +525,7 @@ public class StockAllActivity extends Activity implements View.OnClickListener {
 
             String valuesArray[] = {A_Id,Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
                     str_openingstock, String.valueOf(new_fresh_stock), String.valueOf(stock_in_hand),
-                     String.valueOf(closing_stock), soldstock, "0", "0", "0.0","0",insert_timestamp, insert_timestamp,
+                     String.valueOf(closing_stock), soldstock, "0", "0","0",insert_timestamp, insert_timestamp,
                     month_name,year_name,insert_timestamp,outletcode};
             boolean output = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, selection, valuesArray, utils.columnNamesStock, selectionArgs);
 

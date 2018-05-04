@@ -83,7 +83,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
     ArrayList<String> dates_array;
     String str_Month, year;
 
-    String ClosingBal, Discount, FreshStock, GrossAmount, Message1, NetAmount, OutletCode1, ProductId, SoldStock, StockDate;
+    String ClosingBal,  FreshStock, GrossAmount, Message1, NetAmount, OutletCode1, ProductId, SoldStock, StockDate;
 
     String barcodes, brand, category, subCategory, singleOffer, productName, PTTamt, Size, Year, month;
 
@@ -1044,7 +1044,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                                 ClosingBal = "";
                             }
 
-                            if (root.getPropertyAsString("Discount") != null) {
+                           /* if (root.getPropertyAsString("Discount") != null) {
 
                                 if (!root.getPropertyAsString("Discount").equalsIgnoreCase("anyType{}")) {
                                     Discount = root.getPropertyAsString("Discount").trim();
@@ -1053,7 +1053,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                                 }
                             } else {
                                 Discount = "";
-                            }
+                            }*/
 
                             if (root.getPropertyAsString("FreshStock") != null) {
 
@@ -1172,7 +1172,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                             String valuesArray[] = {ProductId, barcodes, brand, category, subCategory, singleOffer, productName,
                                     PTTamt, Size, username, "0", FreshStock, FreshStock, ClosingBal, SoldStock, GrossAmount,
-                                    NetAmount, Discount, "1", StockDate, StockDate, month, Year, StockDate, OutletCode1};
+                                    NetAmount, "1", StockDate, StockDate, month, Year, StockDate, OutletCode1};
                             boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, " A_id = ? AND outletcode = ? ", valuesArray, utils.columnNamesStock, new String[]{ProductId, OutletCode1});
 
 

@@ -65,7 +65,7 @@ public class LotusWebservice {
 			envelope.setOutputSoapObject(request); // set request object
 			envelope.dotNet = true;
 
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,6000);// http
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(url,60000);// http
 			// transport
 			// call
 			androidHttpTransport.call(
@@ -541,8 +541,6 @@ public class LotusWebservice {
 		return result;
 
 	}
-
-
 
 
 }

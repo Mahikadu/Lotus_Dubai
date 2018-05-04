@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Lotus_Dubai</string>
     <string name="stocksale">STOCK &amp; SALE</string>
+
+    <string name="notDeted">Unable to Get Location</string>
+    <string name="settings">Settings</string>
+    <string name="textwarn">Permission Mandatory for this App</string>
 </resources>
