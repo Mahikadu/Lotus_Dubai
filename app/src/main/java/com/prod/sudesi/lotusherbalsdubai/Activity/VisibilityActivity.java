@@ -61,19 +61,12 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.nlopez.smartlocation.OnActivityUpdatedListener;
-import io.nlopez.smartlocation.OnGeofencingTransitionListener;
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.SmartLocation;
-import io.nlopez.smartlocation.geofencing.model.GeofenceModel;
-import io.nlopez.smartlocation.geofencing.utils.TransitionGeofence;
-import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider;
 
 /**
  * Created by Mahesh on 1/12/2018.
  */
 
-public class VisibilityActivity extends ListActivity implements View.OnClickListener, OnLocationUpdatedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener {
+public class VisibilityActivity extends ListActivity implements View.OnClickListener {
 
     Context context;
     private Uri outputFileUri;
@@ -128,12 +121,12 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
     TextView tv_h_username;
     Button btn_home,btn_logout;
 
-    private static final int LOCATION_PERMISSION_ID = 1001;
+   /* private static final int LOCATION_PERMISSION_ID = 1001;
     private static GoogleApiClient mGoogleApiClient;
     private static final int ACCESS_FINE_LOCATION_INTENT_ID = 3;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
     private LocationGooglePlayServicesProvider provider;
-    private static final String BROADCAST_ACTION = "android.location.PROVIDERS_CHANGED";
+    private static final String BROADCAST_ACTION = "android.location.PROVIDERS_CHANGED";*/
 
 
     @Override
@@ -182,14 +175,14 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
         btn_home.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
 
-        initGoogleAPIClient();//Init Google API Client
+       /* initGoogleAPIClient();//Init Google API Client
         checkPermissions();//Check Permission
         if (ContextCompat.checkSelfPermission(VisibilityActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(VisibilityActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
             return;
         }
 
-        startLocation();
+        startLocation();*/
 
     }
 
@@ -306,7 +299,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
     }
 
 
-    // Getting lat and lon value using location liabarary and showing gps dialog
+   /* // Getting lat and lon value using location liabarary and showing gps dialog
 
     private void showLocation(final Location location) {
         if (location != null) {
@@ -318,7 +311,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
         }
     }
 
-    /* Initiate Google API Client  */
+    *//* Initiate Google API Client  *//*
     private void initGoogleAPIClient() {
         //Without Google API Client Auto Location Dialog will not work
         mGoogleApiClient = new GoogleApiClient.Builder(VisibilityActivity.this)
@@ -328,7 +321,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
 
     }
 
-    /* Check Location Permission for Marshmallow Devices */
+    *//* Check Location Permission for Marshmallow Devices *//*
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(VisibilityActivity.this,
@@ -342,7 +335,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
 
     }
 
-    /*  Show Popup to access User Permission  */
+    *//*  Show Popup to access User Permission  *//*
     private void requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(VisibilityActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             ActivityCompat.requestPermissions(VisibilityActivity.this,
@@ -356,7 +349,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
         }
     }
 
-    /* Show Location Access Dialog */
+    *//* Show Location Access Dialog *//*
     private void showSettingDialogbox() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//Setting priotity of Location request to high
@@ -476,7 +469,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
                 break;
         }
 
-       /* super.onActivityResult(requestCode, resultCode, data);
+       *//* super.onActivityResult(requestCode, resultCode, data);
 
         try {
             if (resultCode == RESULT_OK) {
@@ -513,7 +506,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
                     "Something Wrong with The Camera. Try Again!!! ",
                     Toast.LENGTH_LONG).show();
 
-        }*/
+        }*//*
     }
 
     @Override
@@ -537,7 +530,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
         }
     };
 
-    /* Broadcast receiver to check status of GPS */
+    *//* Broadcast receiver to check status of GPS *//*
     private BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver() {
 
         @Override
@@ -563,7 +556,7 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
         }
     };
 
-    /* On Request permission method to check the permisison is granted or not for Marshmallow+ Devices  */
+    *//* On Request permission method to check the permisison is granted or not for Marshmallow+ Devices  *//*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -649,6 +642,6 @@ public class VisibilityActivity extends ListActivity implements View.OnClickList
     public void onLocationUpdated(Location location) {
         showLocation(location);
     }
-
+*/
 
 }
