@@ -43,7 +43,7 @@ public class Utils {
         columnNamesOutletAttendance = Arrays.copyOf(outletAttendanceArray, outletAttendanceArray.length);
 
         String[] stockArray = {"A_id","Barcodes","Brand","Category","SubCategory","SingleOffer",
-                "ProductName","PTT","size","ba_code","opening_stock","stock_received","stock_in_hand","close_bal",
+                "ProductName","ShortName","PTT","size","ba_code","opening_stock","stock_received","stock_in_hand","close_bal",
         "sold_stock","total_gross_amount","total_net_amount","savedServer","insert_date",
         "last_modified_date","month","year","updateDate","outletcode"};
         columnNamesStock = Arrays.copyOf(stockArray, stockArray.length);

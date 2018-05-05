@@ -160,11 +160,11 @@ public class DataBaseCon {
     }
 
 
-    public Cursor fetchallSpecifyMSelect(String Productname, String Brand, String offer) {
+    public Cursor fetchallSpecifyMSelect(String ProductName, String Brand, String offer) {
 
         String query = null;
         try {
-            query = "select * from table_master_sync where ProductName = " + "'" + Productname + "'" + " AND Brand = " + "'" + Brand + "'" + " AND SingleOffer = " + "'" + offer + "'";
+            query = "select * from table_master_sync where ProductName = " + "'" + ProductName + "'" + " AND Brand = " + "'" + Brand + "'" + " AND SingleOffer = " + "'" + offer + "'";
             Log.i("TAG", "query :" + query);
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,9 +259,9 @@ public class DataBaseCon {
         return dbHelper.rawQuery(query);
     }
 
-    public String fetchStockDbID(String productName, String mrp, String offer) {
+    public String fetchStockDbID(String shortName, String mrp, String offer) {
 
-        String sql = "select A_Id from table_master_sync where ProductName like '%" + productName + "%' and PTT = '" + mrp + "' and SingleOffer ='" + offer + "'";
+        String sql = "select A_Id from table_master_sync where ShortName like '%" + shortName + "%' and PTT = '" + mrp + "' and SingleOffer ='" + offer + "'";
 
         Log.e("sql", sql);
 

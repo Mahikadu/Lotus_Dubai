@@ -85,7 +85,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
     String ClosingBal,  FreshStock, GrossAmount, Message1, NetAmount, OutletCode1, ProductId, SoldStock, StockDate;
 
-    String barcodes, brand, category, subCategory, singleOffer, productName, PTTamt, Size, Year, month;
+    String barcodes, brand, category, subCategory, singleOffer, productName,shortName, PTTamt, Size, Year, month;
 
     String A_id, ba_code, stock_received, opening_stock, sold_stock, close_bal, total_gross_amount, discount, total_net_amount, stroutletcode;
 
@@ -1170,7 +1170,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                             getProductDetailsagainstID(ProductId);
 
-                            String valuesArray[] = {ProductId, barcodes, brand, category, subCategory, singleOffer, productName,
+                            String valuesArray[] = {ProductId, barcodes, brand, category, subCategory, singleOffer, productName,shortName,
                                     PTTamt, Size, username, "0", FreshStock, FreshStock, ClosingBal, SoldStock, GrossAmount,
                                     NetAmount, "1", StockDate, StockDate, month, Year, StockDate, OutletCode1};
                             boolean rowid = LOTUS.dbCon.updateBulk(DbHelper.TABLE_STOCK, " A_id = ? AND outletcode = ? ", valuesArray, utils.columnNamesStock, new String[]{ProductId, OutletCode1});
@@ -1263,6 +1263,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                         subCategory = String.valueOf(cursor.getString(cursor.getColumnIndex("SubCategory")));
                         singleOffer = String.valueOf(cursor.getString(cursor.getColumnIndex("SingleOffer")));
                         productName = String.valueOf(cursor.getString(cursor.getColumnIndex("ProductName")));
+                        shortName = String.valueOf(cursor.getString(cursor.getColumnIndex("ShortName")));
                         PTTamt = String.valueOf(cursor.getString(cursor.getColumnIndex("PTT")));
                         Size = String.valueOf(cursor.getString(cursor.getColumnIndex("size")));
 

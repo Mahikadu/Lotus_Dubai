@@ -462,7 +462,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
 
                                                 productModel = productDetailsArraylist.get(i);
 
-                                                cb.setText(productModel.getProductName());
+                                                cb.setText(productModel.getShortName());
 
                                                 //strMrpArray[i] = productModel.getPTT();
 
@@ -563,6 +563,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                                         productModel.setA_Id(cursor.getString(cursor.getColumnIndex("A_Id")));
                                         productModel.setBarcodes(cursor.getString(cursor.getColumnIndex("Barcodes")));
                                         productModel.setProductName(cursor.getString(cursor.getColumnIndex("ProductName")));
+                                        productModel.setShortName(cursor.getString(cursor.getColumnIndex("ShortName")));
                                         productModel.setPTT(cursor.getString(cursor.getColumnIndex("PTT")));
                                         productModel.setSingleOffer(cursor.getString(cursor.getColumnIndex("SingleOffer")));
                                         productModel.setSize(cursor.getString(cursor.getColumnIndex("size")));
@@ -895,6 +896,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                     productModel.setA_Id(cursor.getString(cursor.getColumnIndex("A_id")));
                     productModel.setBarcodes(cursor.getString(cursor.getColumnIndex("Barcodes")));
                     productModel.setProductName(cursor.getString(cursor.getColumnIndex("ProductName")));
+                    productModel.setShortName(cursor.getString(cursor.getColumnIndex("ShortName")));
                     productModel.setPTT(cursor.getString(cursor.getColumnIndex("PTT")));
                     productModel.setSize(cursor.getString(cursor.getColumnIndex("size")));
                     productModel.setBrand(cursor.getString(cursor.getColumnIndex("Brand")));
@@ -1031,7 +1033,7 @@ public class StockActivity extends Activity implements View.OnClickListener {
                             comma_mrps[i] = c.getString(c.getColumnIndex("PTT"));
                             comma_size[i] = c.getString(c.getColumnIndex("size"));
                             comma_barcode[i] = c.getString(c.getColumnIndex("Barcodes"));
-                            comma_product[i] = c.getString(c.getColumnIndex("ProductName"));
+                            comma_product[i] = c.getString(c.getColumnIndex("ShortName"));
 
                             c.moveToNext();
 

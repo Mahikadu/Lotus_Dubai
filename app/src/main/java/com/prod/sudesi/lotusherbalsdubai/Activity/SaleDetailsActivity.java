@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -177,8 +178,9 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
 
                 String a_id = productModel.getA_Id();
 
-                product.setText(productModel.getProductName());
+                product.setText(productModel.getShortName());
                 amount.setText(productModel.getPTT());
+
 
                 tablel_sale_calculation.addView(tr);
 
@@ -355,6 +357,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                     String SubCategory = productModel.getSubCategory();
                                     String SingleOffer = productModel.getSingleOffer();
                                     String ProductName = productModel.getProductName();
+                                    String shortName = productModel.getShortName();
 
                                     float calc_gross = Float.parseFloat(tv_mrp
                                             .getText().toString())
@@ -560,7 +563,7 @@ public class SaleDetailsActivity extends Activity implements View.OnClickListene
                                             // WHERE clause arguments
                                             String[] selectionArgs = {A_Id, outletcode};
 
-                                            String valuesArray[] = {A_Id, Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName, price, size, username,
+                                            String valuesArray[] = {A_Id, Barcodes, Brand, Category, SubCategory, SingleOffer, ProductName,shortName, price, size, username,
                                                     str_openingstock, String.valueOf(i_stokreceive), String.valueOf(i_stokinhand),
                                                     String.valueOf(i_clstk), String.valueOf(i_sold), String.valueOf(gross), String.valueOf(net1),
                                                     "0", insert_timestamp, insert_timestamp,
