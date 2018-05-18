@@ -227,11 +227,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public Cursor fetchallSpecify(String tbl, String names[], String fName,
-                                  String fValue, String order) {
+                                  String fValue, String sName, String sValue, String order) {
         if (db != null && !db.isOpen())
             open();
-        Cursor mCursor = db.query(true, tbl, names, fName + "= '"
-                + fValue + "'", null, null, null, order, null);
+        Cursor mCursor = db.query(true, tbl, names, fName + " = '"+ fValue + "' AND "+ sName + " = '"+ sValue + "'",
+                null, null, null, order, null);
 
         if (mCursor != null) {
             mCursor.moveToFirst();

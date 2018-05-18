@@ -993,7 +993,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
 
                     LOTUS.dbCon.close();
 
-                    cd.displayMessage("Connectivity Error, Please check Internet connection!!");
+                    //cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1201,7 +1201,7 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                         boolean output = LOTUS.dbCon.updateBulk(DbHelper.SYNC_LOG, selection, valuesArray, utils.columnNamesSyncLog, selectionArgs);
 
                         LOTUS.dbCon.close();
-                        cd.displayMessage("Connectivity Error, Please check Internet connection!!");
+                        //cd.displayMessage("Connectivity Error, Please check Internet connection!!");
                     }
 
                 }
@@ -1244,6 +1244,8 @@ public class SyncMasterActivity extends Activity implements View.OnClickListener
                     AlertDialog alert = builder.create();
                     alert.show();
                 }
+            }else{
+                cd.displayMessage("Connectivity Error, Please check Internet connection!!");
             }
 
         }

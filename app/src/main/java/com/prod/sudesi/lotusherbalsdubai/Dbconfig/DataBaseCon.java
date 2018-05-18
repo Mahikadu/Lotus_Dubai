@@ -348,8 +348,8 @@ public class DataBaseCon {
     }
 
     public Cursor fetchallSpecify(String tbl, String names[], String fName,
-                                  String fValue, String order) {
-        return dbHelper.fetchallSpecify(tbl, names, fName, fValue, order);
+                                  String fValue, String sName,String sValue,String order) {
+        return dbHelper.fetchallSpecify(tbl, names, fName, fValue,sName, sValue, order);
 
     }
 

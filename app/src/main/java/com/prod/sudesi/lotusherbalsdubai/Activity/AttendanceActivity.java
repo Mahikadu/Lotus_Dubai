@@ -480,7 +480,7 @@ public class AttendanceActivity extends Activity implements OnClickListener {
                 String colnames[] = new String[] { "Adate", "attendance", "year" };
                 LOTUS.dbCon.open();
                 // Cursor c=db.fetchallOrder("attendance", colnames, null);
-                Cursor c = LOTUS.dbCon.fetchallSpecify("attendance", colnames, "month",String.valueOf(month), null);
+                Cursor c = LOTUS.dbCon.fetchallSpecify("attendance", colnames, "month",String.valueOf(month), "emp_id", username,null);
                 Log.v("", "c======" + c.getCount());
                 if (c != null && c.getCount() > 0) {
                     c.moveToFirst();
