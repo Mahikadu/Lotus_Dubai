@@ -9,13 +9,13 @@
     android:paddingBottom="@dimen/_30sdp"
     android:stretchColumns="*"
     android:visibility="visible"
-    android:weightSum="3">
+    android:weightSum="2">
 
     <TextView
         android:id="@+id/txtproductsale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1.6"
+        android:layout_weight="0.9"
         android:gravity="center"
         android:text="Product"
         android:maxLines="4"
@@ -28,7 +28,7 @@
         android:id="@+id/edtquantitysale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7"
+        android:layout_weight="0.6"
         android:gravity="center"
         android:hint="0"
         android:textColorHint="@android:color/white"
@@ -46,7 +46,7 @@
         android:id="@+id/txtmrpsale"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7"
+        android:layout_weight="0.5"
         android:gravity="center"
         android:text="PTT"
         android:textColor="@android:color/white"

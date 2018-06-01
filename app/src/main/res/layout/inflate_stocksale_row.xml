@@ -15,6 +15,7 @@
         android:button="@drawable/checkbox_selection"
         android:ems="7"
         android:gravity="left|center"
+        android:layout_gravity="center_vertical"
         android:text="CheckBox"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/_7sdp"

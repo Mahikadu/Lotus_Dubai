@@ -53,12 +53,12 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="@dimen/_3sdp"
-                android:weightSum="3">
+                android:weightSum="2">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.6"
+                    android:layout_weight="0.9"
                     android:gravity="center"
                     android:text="Product"
                     android:textColor="@android:color/black"
@@ -70,7 +70,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
+                    android:layout_weight="0.6"
                     android:gravity="center"
                     android:text="Quantity"
                     android:textColor="@android:color/black"
@@ -81,7 +81,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
+                    android:layout_weight="0.5"
                     android:gravity="center"
                     android:text="PTT"
                     android:textColor="@android:color/black"
